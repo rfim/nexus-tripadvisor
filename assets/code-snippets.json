@@ -1,0 +1,26 @@
+{
+  "nexus": {
+    "filename": "icebergwappipeline_controller.go",
+    "language": "GO",
+    "source": "Nexus operator · local reference source · lines 290–324",
+    "link": "mailto:firman.insan.m@gmail.com?subject=Nexus%20operator%20source",
+    "linkText": "Request full Nexus source",
+    "code": "func findPublishedRun(state *catalog.TableState, runID string, branch *catalog.Ref, base int64, baseOK bool) *catalog.Snapshot {\n\tif state.Main == nil {\n\t\treturn nil\n\t}\n\t// Fast-forward detection. CRITICAL: require the branch to have actually\n\t// ADVANCED past its base. A freshly created branch sits AT base == main's\n\t// head, so a bare IsAncestor check is trivially true and would declare\n\t// every run published the instant its branch is created — before the\n\t// write job has done anything.\n\tif branch != nil && (!baseOK || branch.SnapshotID != base) &&\n\t\tstate.IsAncestor(branch.SnapshotID, state.Main) {\n\t\tif s, ok := state.Snapshots[branch.SnapshotID]; ok {\n\t\t\treturn &s\n\t\t}\n\t\treturn &catalog.Snapshot{ID: branch.SnapshotID}\n\t}\n\t// Walk main's ancestry looking for the writer-stamped run-id.\n\tcur := state.Main.SnapshotID\n\tseen := map[int64]bool{}\n\tfor !seen[cur] {\n\t\tseen[cur] = true\n\t\ts, ok := state.Snapshots[cur]\n\t\tif !ok {\n\t\t\treturn nil\n\t\t}\n\t\tif s.Summary[SnapshotSummaryRunID] == runID {\n\t\t\treturn &s\n\t\t}\n\t\tif s.ParentID == nil {\n\t\t\treturn nil\n\t\t}\n\t\tcur = *s.ParentID\n\t}\n\treturn nil\n}"
+  },
+  "test": {
+    "filename": "wap_recovery_test.go",
+    "language": "GO TEST",
+    "source": "Nexus operator · local reference test · lines 68–98",
+    "link": "mailto:firman.insan.m@gmail.com?subject=Nexus%20operator%20source",
+    "linkText": "Request full Nexus source",
+    "code": "// TestPublishedDetection is the Challenge B disambiguation: after an\n// ambiguous commit, re-observation must correctly report whether the publish\n// happened.\nfunc TestPublishedDetection(t *testing.T) {\n\t// Case 1: commit did NOT apply — main still at 200, branch at 300.\n\ts := fixtureState()\n\tbr := catalog.Ref{Name: \"b\", SnapshotID: 300}\n\tif got := findPublishedRun(s, \"run123\", &br, 200, true); got != nil {\n\t\tt.Fatalf(\"publish not applied, but detector claims snapshot %d published\", got.ID)\n\t}\n\n\t// Case 2: commit DID apply — main fast-forwarded to 300.\n\ts.Main.SnapshotID = 300\n\tgot := findPublishedRun(s, \"run123\", &br, 200, true)\n\tif got == nil || got.ID != 300 {\n\t\tt.Fatal(\"publish applied (branch head is main): detector must report it\")\n\t}\n\n\t// Case 3: total amnesia — status lost AND branch already cleaned up.\n\t// The writer-stamped snapshot summary is the only surviving evidence.\n\tdelete(s.Branches, \"b\")\n\tgot = findPublishedRun(s, \"run123\", nil, 0, false)\n\tif got == nil || got.ID != 300 {\n\t\tt.Fatal(\"run-id summary stamp in main lineage must be sufficient on its own\")\n\t}\n\n\t// Case 4: different run's stamp must not match.\n\tif findPublishedRun(s, \"other-run\", nil, 0, false) != nil {\n\t\tt.Fatal(\"detector matched a foreign run-id\")\n\t}\n}"
+  },
+  "runid": {
+    "filename": "common.go",
+    "language": "GO",
+    "source": "Nexus operator · local reference source · lines 108–113",
+    "link": "mailto:firman.insan.m@gmail.com?subject=Nexus%20operator%20source",
+    "linkText": "Request full Nexus source",
+    "code": "// RunID is the deterministic identity of one logical execution:\n// hash(uid, generation, triggerInstance). Retries of the same logical run\n// produce the same ID across operator restarts and API partitions.\nfunc RunID(uid types.UID, generation int64, triggerInstance string) string {\n\treturn hash12(uid, generation, triggerInstance)\n}"
+  }
+}
