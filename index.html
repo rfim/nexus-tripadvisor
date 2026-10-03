@@ -12,12 +12,13 @@
   <script src="assets/site.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#conversation">Skip to conversation</a>
+  <a class="skip-link" href="#system">Skip to architecture</a>
   <header class="site-header">
     <a class="brand" href="#top" aria-label="Nexus presentation, back to top"><span class="brand-mark" aria-hidden="true">N</span><span><strong>NEXUS</strong><small>VIM · Data engineering</small></span></a>
     <nav aria-label="Primary navigation">
-      <a href="#conversation">Conversation</a>
       <a href="#system">System</a>
+      <a href="#conversation">Conversation</a>
+      <a href="#math">Equations</a>
       <a href="#proof">Code & proof</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -54,6 +55,33 @@
       <div class="opening-meta page-width"><span>London, United Kingdom</span><span>Python · Spark · Kafka · AWS · dbt · Snowflake</span><span>Scroll to explore ↓</span></div>
     </section>
 
+    <section id="system" class="system-section" aria-labelledby="system-title">
+      <div class="page-width">
+        <div class="system-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Inside the system</p><h2 id="system-title">One dependable path from event to answer.</h2></div><p>Nexus joins streaming and batch work around a governed layer. The operator example below explores a stricter control-plane contract for that idea.</p></div>
+        <div class="system-flow" role="list" aria-label="Nexus data flow">
+          <div class="flow-node" role="listitem"><span class="flow-num">01 / Acquire</span><h3>Sources arrive</h3><p>PostgreSQL change events, APIs and partner files.</p><span class="flow-tech">Kafka · Debezium · AWS</span></div>
+          <div class="flow-node" role="listitem"><span class="flow-num">02 / Govern</span><h3>Rules travel with data</h3><p>Reusable ingestion, quality gates, freshness and ownership.</p><span class="flow-tech">Python · checks · SLAs</span></div>
+          <div class="flow-node" role="listitem"><span class="flow-num">03 / Model</span><h3>Meanings settle</h3><p>Curated Bronze, Silver and Gold models with agreed metrics.</p><span class="flow-tech">Spark · dbt · SQL</span></div>
+          <div class="flow-node" role="listitem"><span class="flow-num">04 / Serve</span><h3>Teams can trust it</h3><p>Analytics, CRM, data science and governed agent tools.</p><span class="flow-tech">BI · MCP · RAG</span></div>
+        </div>
+        <figure class="architecture-map" aria-labelledby="architecture-title" aria-describedby="architecture-caption">
+          <figcaption class="architecture-header">
+            <div><span class="map-overline">System map / production platform</span><h3 id="architecture-title">How Nexus moves from source to decision</h3><p>The streaming and scheduled paths meet in one governed lakehouse.</p></div>
+            <div class="map-legend" aria-label="Path legend"><span><i class="legend-dot hot"></i> Streaming path</span><span><i class="legend-dot batch"></i> Batch path</span></div>
+          </figcaption>
+          <div class="architecture-flow" role="list" aria-label="Nexus platform architecture">
+            <section class="architecture-stage" role="listitem" aria-labelledby="map-sources-title"><div class="stage-heading"><span>01 / Input</span><h4 id="map-sources-title">Sources</h4></div><div class="architecture-card hot"><span class="card-kind">Change events</span><strong>PostgreSQL</strong><small>Operational records</small></div><div class="architecture-card batch"><span class="card-kind">Scheduled data</span><strong>APIs & partner files</strong><small>External and batch sources</small></div></section>
+            <section class="architecture-stage" role="listitem" aria-labelledby="map-ingest-title"><div class="stage-heading"><span>02 / Move</span><h4 id="map-ingest-title">Ingestion</h4></div><div class="architecture-card hot"><span class="card-kind">Streaming path</span><strong>Kafka + Debezium</strong><small>Change data capture</small></div><div class="architecture-card batch"><span class="card-kind">Batch path</span><strong>Airflow + Python</strong><small>Config-driven source adapters</small></div></section>
+            <section class="architecture-stage lake-stage" role="listitem" aria-labelledby="map-lake-title"><div class="stage-heading"><span>03 / Shape</span><h4 id="map-lake-title">Governed lakehouse</h4></div><div class="architecture-layer"><b>Bronze</b><span>Delta · source history</span></div><div class="architecture-layer"><b>Silver</b><span>Typed, deduplicated data</span></div><div class="architecture-layer"><b>Gold</b><span>dbt · curated Kimball models</span></div><p class="lake-foot">Databricks · Spark · SQL</p></section>
+            <section class="architecture-stage" role="listitem" aria-labelledby="map-serve-title"><div class="stage-heading"><span>04 / Use</span><h4 id="map-serve-title">Trusted use</h4></div><div class="architecture-card serve"><strong>Analytics & BI</strong><small>Shared, agreed metrics</small></div><div class="architecture-card serve"><strong>CRM & data science</strong><small>Curated data products</small></div><div class="architecture-card serve"><strong>MCP agents & RAG</strong><small>Governed access to models</small></div></section>
+          </div>
+          <div class="architecture-rails"><div class="architecture-rail"><strong>Trust across the flow</strong><span>500+ quality checks</span><span>Freshness & volume alerts</span><span>SLAs & incident runbooks</span><span>Certified models</span></div><div class="architecture-rail foundation"><strong>Platform foundation</strong><span>AWS services</span><span>Databricks & Delta Lake</span><span>Reusable Python framework</span><span>Observability</span></div></div>
+          <p class="architecture-caption" id="architecture-caption">This maps the Lifepal platform work described in my CV. The separate Go/Iceberg operator is explored in the <a href="#proof">code section</a>.</p>
+        </figure>
+        <div class="system-principle"><span class="principle-mark" aria-hidden="true">↳</span><p><strong>Operating principle:</strong> If a pipeline cannot explain what it last published, how fresh it is, and who owns the failure, it is not finished.</p></div>
+      </div>
+    </section>
+
     <section id="conversation" class="conversation page-width" aria-labelledby="conversation-title">
       <div class="section-intro"><p class="eyebrow"><span class="eyebrow-line"></span> The conversation</p><h2 id="conversation-title">Pull up a chair.</h2><p>Four questions I would expect from a data platform team. Each answer points to a design choice, an outcome, or code you can inspect.</p></div>
       <div class="conversation-list">
@@ -81,30 +109,52 @@
       <p class="claim-note">Career outcomes in this section come from my attached CV and cover letter. The Go operator below is a separate portfolio reference implementation; its tests do not measure Lifepal production outcomes.</p>
     </section>
 
-    <section id="system" class="system-section" aria-labelledby="system-title">
+    <section id="math" class="math-section" aria-labelledby="math-title">
       <div class="page-width">
-        <div class="system-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Inside the system</p><h2 id="system-title">One dependable path from event to answer.</h2></div><p>Nexus joins streaming and batch work around a governed layer. The operator example below explores a stricter control-plane contract for that idea.</p></div>
-        <div class="system-flow" role="list" aria-label="Nexus data flow">
-          <div class="flow-node" role="listitem"><span class="flow-num">01 / Acquire</span><h3>Sources arrive</h3><p>PostgreSQL change events, APIs and partner files.</p><span class="flow-tech">Kafka · Debezium · AWS</span></div>
-          <div class="flow-node" role="listitem"><span class="flow-num">02 / Govern</span><h3>Rules travel with data</h3><p>Reusable ingestion, quality gates, freshness and ownership.</p><span class="flow-tech">Python · checks · SLAs</span></div>
-          <div class="flow-node" role="listitem"><span class="flow-num">03 / Model</span><h3>Meanings settle</h3><p>Curated Bronze, Silver and Gold models with agreed metrics.</p><span class="flow-tech">Spark · dbt · SQL</span></div>
-          <div class="flow-node" role="listitem"><span class="flow-num">04 / Serve</span><h3>Teams can trust it</h3><p>Analytics, CRM, data science and governed agent tools.</p><span class="flow-tech">BI · MCP · RAG</span></div>
+        <div class="math-heading">
+          <div><p class="eyebrow"><span class="eyebrow-line"></span> The numbers behind the design</p><h2 id="math-title">The math behind trust.</h2></div>
+          <p>Open a topic to see how I would measure the platform, diagnose a failure, and make a trade-off explicit. These are engineering definitions, not claimed Tripadvisor production metrics.</p>
         </div>
-        <figure class="architecture-map" aria-labelledby="architecture-title" aria-describedby="architecture-caption">
-          <figcaption class="architecture-header">
-            <div><span class="map-overline">System map / production platform</span><h3 id="architecture-title">How Nexus moves from source to decision</h3><p>The streaming and scheduled paths meet in one governed lakehouse.</p></div>
-            <div class="map-legend" aria-label="Path legend"><span><i class="legend-dot hot"></i> Streaming path</span><span><i class="legend-dot batch"></i> Batch path</span></div>
-          </figcaption>
-          <div class="architecture-flow" role="list" aria-label="Nexus platform architecture">
-            <section class="architecture-stage" role="listitem" aria-labelledby="map-sources-title"><div class="stage-heading"><span>01 / Input</span><h4 id="map-sources-title">Sources</h4></div><div class="architecture-card hot"><span class="card-kind">Change events</span><strong>PostgreSQL</strong><small>Operational records</small></div><div class="architecture-card batch"><span class="card-kind">Scheduled data</span><strong>APIs & partner files</strong><small>External and batch sources</small></div></section>
-            <section class="architecture-stage" role="listitem" aria-labelledby="map-ingest-title"><div class="stage-heading"><span>02 / Move</span><h4 id="map-ingest-title">Ingestion</h4></div><div class="architecture-card hot"><span class="card-kind">Streaming path</span><strong>Kafka + Debezium</strong><small>Change data capture</small></div><div class="architecture-card batch"><span class="card-kind">Batch path</span><strong>Airflow + Python</strong><small>Config-driven source adapters</small></div></section>
-            <section class="architecture-stage lake-stage" role="listitem" aria-labelledby="map-lake-title"><div class="stage-heading"><span>03 / Shape</span><h4 id="map-lake-title">Governed lakehouse</h4></div><div class="architecture-layer"><b>Bronze</b><span>Delta · source history</span></div><div class="architecture-layer"><b>Silver</b><span>Typed, deduplicated data</span></div><div class="architecture-layer"><b>Gold</b><span>dbt · curated Kimball models</span></div><p class="lake-foot">Databricks · Spark · SQL</p></section>
-            <section class="architecture-stage" role="listitem" aria-labelledby="map-serve-title"><div class="stage-heading"><span>04 / Use</span><h4 id="map-serve-title">Trusted use</h4></div><div class="architecture-card serve"><strong>Analytics & BI</strong><small>Shared, agreed metrics</small></div><div class="architecture-card serve"><strong>CRM & data science</strong><small>Curated data products</small></div><div class="architecture-card serve"><strong>MCP agents & RAG</strong><small>Governed access to models</small></div></section>
-          </div>
-          <div class="architecture-rails"><div class="architecture-rail"><strong>Trust across the flow</strong><span>500+ quality checks</span><span>Freshness & volume alerts</span><span>SLAs & incident runbooks</span><span>Certified models</span></div><div class="architecture-rail foundation"><strong>Platform foundation</strong><span>AWS services</span><span>Databricks & Delta Lake</span><span>Reusable Python framework</span><span>Observability</span></div></div>
-          <p class="architecture-caption" id="architecture-caption">This maps the Lifepal platform work described in my CV. The separate Go/Iceberg operator is explored in the <a href="#proof">code section</a>.</p>
-        </figure>
-        <div class="system-principle"><span class="principle-mark" aria-hidden="true">↳</span><p><strong>Operating principle:</strong> If a pipeline cannot explain what it last published, how fresh it is, and who owns the failure, it is not finished.</p></div>
+        <div class="math-feature" aria-label="Reported Lifepal reporting delay improvement">
+          <span class="math-feature-label">Reported Lifepal outcome · derived ratio</span>
+          <strong>24 h ÷ (&lt;5 min) &gt; 288×</strong>
+          <p>The reporting delay changed from 24 hours to under five minutes, as stated in my CV. The ratio expresses how much smaller the delay became.</p>
+        </div>
+        <div class="math-accordion" aria-label="Data platform equations">
+          <details class="math-panel" name="nexus-math" open>
+            <summary><span class="math-index">01</span><span class="math-topic">Freshness &amp; flow<small>Kafka · Spark · source-to-answer latency</small></span><span class="math-count">3 equations</span><span class="math-toggle" aria-hidden="true">+</span></summary>
+            <div class="math-panel-body">
+              <article class="math-card"><span class="math-card-label">End-to-end latency</span><p class="math-formula">L<sub>e2e</sub> = L<sub>capture</sub> + L<sub>queue</sub> + L<sub>transform</sub> + L<sub>publish</sub></p><p>Budget each stage separately; a fast Spark job cannot rescue a stalled capture or publish step.</p></article>
+              <article class="math-card"><span class="math-card-label">Age of visible data</span><p class="math-formula">F = t<sub>now</sub> − max(t<sub>event, visible</sub>)</p><p>Measure freshness from the newest source event a consumer can actually query. Source clocks must be trustworthy.</p></article>
+              <article class="math-card"><span class="math-card-label">Streaming backlog</span><p class="math-formula">B<sub>t+1</sub> = max(0, B<sub>t</sub> + λ<sub>t</sub> − μ<sub>t</sub>)</p><p>Arrivals λ and processing μ use the same time interval. If μ stays below λ during a travel-event spike, Kafka lag grows.</p></article>
+            </div>
+          </details>
+          <details class="math-panel" name="nexus-math">
+            <summary><span class="math-index">02</span><span class="math-topic">Quality &amp; reconciliation<small>dbt · curated models · release gates</small></span><span class="math-count">3 equations</span><span class="math-toggle" aria-hidden="true">+</span></summary>
+            <div class="math-panel-body">
+              <article class="math-card"><span class="math-card-label">Eligible-record completeness</span><p class="math-formula">C = N<sub>loaded eligible</sub> / N<sub>source eligible</sub></p><p>Compare the same filtered population at source and target; define eligibility before calling a load complete.</p></article>
+              <article class="math-card"><span class="math-card-label">Duplicate event rate</span><p class="math-formula">D = (N<sub>rows</sub> − N<sub>distinct event IDs</sub>) / N<sub>rows</sub></p><p>Catch replay or join amplification before a duplicate reaches a certified model.</p></article>
+              <article class="math-card"><span class="math-card-label">Critical quality gate</span><p class="math-formula">G = ∧<sub>i ∈ critical checks</sub> pass<sub>i</sub></p><p>A release needs every critical check to pass. An average score must not hide a broken business rule.</p></article>
+            </div>
+          </details>
+          <details class="math-panel" name="nexus-math">
+            <summary><span class="math-index">03</span><span class="math-topic">Safe publish &amp; recovery<small>Nexus Go operator · Iceberg snapshots</small></span><span class="math-count">3 equations</span><span class="math-toggle" aria-hidden="true">+</span></summary>
+            <div class="math-panel-body">
+              <article class="math-card"><span class="math-card-label">Stable run identity</span><p class="math-formula">r = hash(uid ∥ generation ∥ trigger)</p><p>A restarted controller derives the same logical run ID rather than inventing a second publication attempt.</p></article>
+              <article class="math-card"><span class="math-card-label">Idempotent retry</span><p class="math-formula">apply(apply(S, r), r) = apply(S, r)</p><p>Applying the same run twice should leave the published state S exactly where one application leaves it.</p></article>
+              <article class="math-card"><span class="math-card-label">Proof after timeout</span><p class="math-formula">published(r) ⇔ ∃s ∈ ancestry(main): run_id(s) = r</p><p>Inspect main’s snapshot history for the run ID before deciding whether an ambiguous commit took effect.</p></article>
+            </div>
+          </details>
+          <details class="math-panel" name="nexus-math">
+            <summary><span class="math-index">04</span><span class="math-topic">Service levels &amp; cost<small>Operations · warehouse economics · ownership</small></span><span class="math-count">3 equations</span><span class="math-toggle" aria-hidden="true">+</span></summary>
+            <div class="math-panel-body">
+              <article class="math-card"><span class="math-card-label">On-time run rate</span><p class="math-formula">A = N<sub>on-time</sub> / N<sub>eligible runs</sub></p><p>Count runs that delivered usable data by the agreed deadline, not jobs that merely ended successfully.</p></article>
+              <article class="math-card"><span class="math-card-label">Error budget</span><p class="math-formula">E = (1 − SLO) × N<sub>eligible runs</sub></p><p>An illustrative SLO turns a reliability target into a finite number of late runs that incident reviews can track.</p></article>
+              <article class="math-card"><span class="math-card-label">Cost per trusted record</span><p class="math-formula">C<sub>unit</sub> = (C<sub>compute</sub> + C<sub>storage</sub> + C<sub>transfer</sub>) / N<sub>trusted</sub></p><p>Compare like-for-like workloads while tuning Spark jobs or warehouse models; include only records that clear quality gates.</p></article>
+            </div>
+          </details>
+        </div>
+        <p class="math-footnote">The formulas are design and monitoring tools. Only the 24 h to under 5 min result above is a reported Lifepal outcome; the other symbols do not imply measured Tripadvisor or Lifepal SLO values.</p>
       </div>
     </section>
 
