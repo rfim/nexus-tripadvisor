@@ -17,8 +17,8 @@
     <a class="brand" href="#top" aria-label="Nexus presentation, back to top"><span class="brand-mark" aria-hidden="true">N</span><span><strong>NEXUS</strong><small>VIM · Data engineering</small></span></a>
     <nav aria-label="Primary navigation">
       <a href="#system">System</a>
-      <a href="#conversation">Conversation</a>
       <a href="#math">Equations</a>
+      <a href="#conversation">Conversation</a>
       <a href="#proof">Code & proof</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -82,33 +82,6 @@
       </div>
     </section>
 
-    <section id="conversation" class="conversation page-width" aria-labelledby="conversation-title">
-      <div class="section-intro"><p class="eyebrow"><span class="eyebrow-line"></span> The conversation</p><h2 id="conversation-title">Pull up a chair.</h2><p>Four questions I would expect from a data platform team. Each answer points to a design choice, an outcome, or code you can inspect.</p></div>
-      <div class="conversation-list">
-        <article class="conversation-turn">
-          <div class="turn-index">01 <span>Freshness</span></div>
-          <div class="turn-body"><p class="prompt">What would you change first in a fragmented data estate?</p><div class="response"><span class="speaker">Firman</span><p>I would make the path from source to trusted model explicit. At Lifepal, I led a move from scattered batch jobs toward one governed lakehouse. Kafka and Debezium carried change events; APIs and partner files took the batch path. Both landed behind common quality and ownership rules.</p><p>Reporting delay went from 24 hours to under five minutes. The point was not speed alone: teams could find the same certified definitions when they came to the data later.</p></div></div>
-          <div class="turn-aside"><strong>24 h <span aria-hidden="true">→</span> &lt;5 min</strong><span>Reported change in reporting delay at Lifepal</span></div>
-        </article>
-        <article class="conversation-turn">
-          <div class="turn-index">02 <span>Reliability</span></div>
-          <div class="turn-body"><p class="prompt">What happens when the publish call times out?</p><div class="response"><span class="speaker">Firman</span><p>A timeout is an unknown outcome, not proof of failure. In the Nexus operator reference implementation, a run writes to an isolated Iceberg branch, audits it, then tries to fast-forward main. If the commit response is ambiguous, the controller re-observes the catalog and checks the run ID in snapshot history before it decides what happened.</p><p>That is a small code path with a big operational consequence: no blind second publish during a network partition.</p></div></div>
-          <a class="aside-link" href="#failure-drill">Try the failure drill <span aria-hidden="true">↗</span></a>
-        </article>
-        <article class="conversation-turn">
-          <div class="turn-index">03 <span>Standards</span></div>
-          <div class="turn-body"><p class="prompt">How do you make quality the default for other engineers?</p><div class="response"><span class="speaker">Firman</span><p>Put repeatable decisions in the platform. I built a config-driven ingestion framework, curated models for Finance, Marketing, CRM and Product, and checks that hold anomalous loads before consumers see them. The team had SLAs, freshness and volume alerts, runbooks, and incident reviews.</p><p>That work included more than 500 data-quality checks and cut data-trust escalations by 60%, as reported in my CV.</p></div></div>
-          <div class="turn-aside"><strong>500+</strong><span>Quality checks in the Lifepal platform</span></div>
-        </article>
-        <article class="conversation-turn">
-          <div class="turn-index">04 <span>Scale & access</span></div>
-          <div class="turn-body"><p class="prompt">How does the platform help teams use data without losing control?</p><div class="response"><span class="speaker">Firman</span><p>I prefer certified models, clear lineage, and read-only agent access over a new ungoverned route to the warehouse. My work has included an MCP server for governed natural-language queries, a RAG copilot, and Spark and SQL tuning that reduced a nightly batch from six hours to 90 minutes.</p><p>For Tripadvisor, I would bring those engineering patterns to a larger estate, measure their behavior there, and be candid about where I need to learn its Java services and specific warehouse choices.</p></div></div>
-          <div class="turn-aside"><strong>6 h <span aria-hidden="true">→</span> 90 min</strong><span>Reported nightly batch improvement at Lifepal</span></div>
-        </article>
-      </div>
-      <p class="claim-note">Career outcomes in this section come from my attached CV and cover letter. The Go operator below is a separate portfolio reference implementation; its tests do not measure Lifepal production outcomes.</p>
-    </section>
-
     <section id="math" class="math-section" aria-labelledby="math-title">
       <div class="page-width">
         <div class="math-heading">
@@ -156,6 +129,33 @@
         </div>
         <p class="math-footnote">The formulas are design and monitoring tools. Only the 24 h to under 5 min result above is a reported Lifepal outcome; the other symbols do not imply measured Tripadvisor or Lifepal SLO values.</p>
       </div>
+    </section>
+
+    <section id="conversation" class="conversation page-width" aria-labelledby="conversation-title">
+      <div class="section-intro"><p class="eyebrow"><span class="eyebrow-line"></span> The conversation</p><h2 id="conversation-title">Pull up a chair.</h2><p>Four questions I would expect from a data platform team. Each answer points to a design choice, an outcome, or code you can inspect.</p></div>
+      <div class="conversation-list">
+        <article class="conversation-turn">
+          <div class="turn-index">01 <span>Freshness</span></div>
+          <div class="turn-body"><p class="prompt">What would you change first in a fragmented data estate?</p><div class="response"><span class="speaker">Firman</span><p>I would make the path from source to trusted model explicit. At Lifepal, I led a move from scattered batch jobs toward one governed lakehouse. Kafka and Debezium carried change events; APIs and partner files took the batch path. Both landed behind common quality and ownership rules.</p><p>Reporting delay went from 24 hours to under five minutes. The point was not speed alone: teams could find the same certified definitions when they came to the data later.</p></div></div>
+          <div class="turn-aside"><strong>24 h <span aria-hidden="true">→</span> &lt;5 min</strong><span>Reported change in reporting delay at Lifepal</span></div>
+        </article>
+        <article class="conversation-turn">
+          <div class="turn-index">02 <span>Reliability</span></div>
+          <div class="turn-body"><p class="prompt">What happens when the publish call times out?</p><div class="response"><span class="speaker">Firman</span><p>A timeout is an unknown outcome, not proof of failure. In the Nexus operator reference implementation, a run writes to an isolated Iceberg branch, audits it, then tries to fast-forward main. If the commit response is ambiguous, the controller re-observes the catalog and checks the run ID in snapshot history before it decides what happened.</p><p>That is a small code path with a big operational consequence: no blind second publish during a network partition.</p></div></div>
+          <a class="aside-link" href="#failure-drill">Try the failure drill <span aria-hidden="true">↗</span></a>
+        </article>
+        <article class="conversation-turn">
+          <div class="turn-index">03 <span>Standards</span></div>
+          <div class="turn-body"><p class="prompt">How do you make quality the default for other engineers?</p><div class="response"><span class="speaker">Firman</span><p>Put repeatable decisions in the platform. I built a config-driven ingestion framework, curated models for Finance, Marketing, CRM and Product, and checks that hold anomalous loads before consumers see them. The team had SLAs, freshness and volume alerts, runbooks, and incident reviews.</p><p>That work included more than 500 data-quality checks and cut data-trust escalations by 60%, as reported in my CV.</p></div></div>
+          <div class="turn-aside"><strong>500+</strong><span>Quality checks in the Lifepal platform</span></div>
+        </article>
+        <article class="conversation-turn">
+          <div class="turn-index">04 <span>Scale & access</span></div>
+          <div class="turn-body"><p class="prompt">How does the platform help teams use data without losing control?</p><div class="response"><span class="speaker">Firman</span><p>I prefer certified models, clear lineage, and read-only agent access over a new ungoverned route to the warehouse. My work has included an MCP server for governed natural-language queries, a RAG copilot, and Spark and SQL tuning that reduced a nightly batch from six hours to 90 minutes.</p><p>For Tripadvisor, I would bring those engineering patterns to a larger estate, measure their behavior there, and be candid about where I need to learn its Java services and specific warehouse choices.</p></div></div>
+          <div class="turn-aside"><strong>6 h <span aria-hidden="true">→</span> 90 min</strong><span>Reported nightly batch improvement at Lifepal</span></div>
+        </article>
+      </div>
+      <p class="claim-note">Career outcomes in this section come from my attached CV and cover letter. The Go operator below is a separate portfolio reference implementation; its tests do not measure Lifepal production outcomes.</p>
     </section>
 
     <section id="failure-drill" class="drill-section page-width" aria-labelledby="drill-title">
