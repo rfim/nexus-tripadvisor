@@ -20,6 +20,7 @@
       <a href="#math">Equations</a>
       <a href="#conversation">Conversation</a>
       <a href="#proof">Code & proof</a>
+      <a href="#flink">Flink</a>
       <a href="#contact">Contact</a>
       <a href="index.html">NEXUS home →</a>
     </nav>
@@ -176,6 +177,43 @@
         </div>
       </div>
     </section>
+
+    <section id="flink" class="proof-section" aria-labelledby="flink-title">
+      <div class="page-width">
+        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Apache Flink 1.20 · DataStream API · Java 17</p><h2 id="flink-title">The same stream, on Flink.</h2></div><p>The Nexus stream job written for Flink: dead letters instead of a crash loop, dedupe in keyed state with a TTL, per-partition watermarks with idleness, event-time windows with allowed lateness, and a side output for what is too late. CI replays a week of Kafka records through it on a local MiniCluster and compares it with the Python job, window for window. Stated plainly: real Flink, run locally; my production streaming was Kafka + Debezium with Spark.</p></div>
+        <div class="proof-layout">
+          <div class="code-panel"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="flink-file">NexusJobs.java</span><span class="language-tag">JAVA · FLINK 1.20</span></div>
+            <div id="flink-tabs-story" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 0"></div>
+            <pre id="flink-code-story" style="margin:0;padding:14px 16px;max-height:560px;overflow:auto;font:400 12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8efe9;white-space:pre"></pre></div>
+          <aside class="proof-notes" aria-label="Flink evidence">
+            <div class="proof-note primary"><span class="note-num">01 / Same answer</span><h3 id="flink-n1">Identical windows.</h3><p id="flink-n1p">Flink and the Python job agree on every window of the week.</p></div>
+            <div class="proof-note"><span class="note-num">02 / The incident's lesson</span><h3>A bad record is data.</h3><p id="flink-n2p">Parse sends what it can't read to a dead-letter output. Production adds failureRateRestart(3, 10 min): three restarts, then fail and page, never a 74-restart loop.</p></div>
+            <div class="proof-note"><span class="note-num">03 / Exactly once</span><h3>State and offsets together.</h3><p>Checkpoints every 10 minutes hold Kafka offsets, window state and the dedupe flags; transactional Kafka sinks upsert on (window, group), so a restore re-sends nothing twice.</p></div>
+            <div class="proof-note"><span class="note-num">04 / One honest difference</span><h3>3 a.m. watermarks.</h3><p>Python carries the watermark on processing time when every partition is quiet; Flink's idleness doesn't. So Flink kept one late click the Python job set aside, and matched the nightly batch exactly.</p></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+<script>
+(async () => {
+  const F = [["NexusJobs.java", "flink/job/src/main/java/nexus/flink/NexusJobs.java"], ["Parse.java", "flink/job/src/main/java/nexus/flink/Parse.java"],
+    ["Dedupe.java", "flink/job/src/main/java/nexus/flink/Dedupe.java"], ["PartitionWatermarks.java", "flink/job/src/main/java/nexus/flink/PartitionWatermarks.java"],
+    ["Windows.java", "flink/job/src/main/java/nexus/flink/Windows.java"], ["NexusKafka.java", "flink/job/src/main/java/nexus/flink/NexusKafka.java"],
+    ["NexusLocal.java", "flink/job/src/main/java/nexus/flink/NexusLocal.java"]];
+  const tabs = document.getElementById("flink-tabs-story"), pre = document.getElementById("flink-code-story"), name = document.getElementById("flink-file");
+  const show = async (i) => { [...tabs.children].forEach((b, k) => { b.style.background = k === i ? "#34e0a1" : "transparent"; b.style.color = k === i ? "#0a1b15" : "#cfe3db"; });
+    name.textContent = F[i][0]; pre.textContent = await fetch(F[i][1]).then((r) => r.text()); };
+  tabs.innerHTML = F.map(([n]) => `<button type="button" style="border:1px solid #34584b;border-radius:8px;padding:4px 10px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer">${n}</button>`).join("");
+  tabs.addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) show([...tabs.children].indexOf(b)); });
+  show(0);
+  try {
+    const d = await fetch("assets/data/site.json").then((r) => r.json()), v = d.flink.location_views_hourly, p = d.flink.partner_revenue_15m;
+    document.getElementById("flink-n1").textContent = `${v.windows.toLocaleString("en-GB")} windows, ${v.identical_to_python ? "identical" : "different"}.`;
+    document.getElementById("flink-n1p").textContent = `Flink ${d.flink.flink} on a MiniCluster: ${v.duplicates} duplicates dropped, ${v.late_dropped} too late, ${v.firings.toLocaleString("en-GB")} firings, exactly what the Python job did.`;
+    document.getElementById("flink-n2p").textContent = `${p.dead_letter_records[0]}: dead-lettered, and the job carried on. Production adds failureRateRestart(3, 10 min): three restarts, then fail and page, never a 74-restart loop.`;
+  } catch (e) {}
+})();
+</script>
 
 
     <section id="contact" class="contact-section" aria-labelledby="contact-title"><div class="page-width contact-inner"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Continue the conversation</p><h2 id="contact-title">Ask me where a platform would bend first.</h2><p>We can talk through a data model, an ambiguous commit, an incident, or the trade-offs behind this platform.</p></div><div class="contact-actions"><a class="button button-light" href="mailto:firman.insan.m@gmail.com?subject=Data%20platform%20conversation">Email Firman</a><a class="text-link light-link" href="https://www.linkedin.com/in/firmaninsan" target="_blank" rel="noopener noreferrer">Connect on LinkedIn <span aria-hidden="true">↗</span></a></div></div></section>

@@ -142,5 +142,5 @@
     <p style="margin-top:.7rem;font-size:.86rem">Ledger: read ${NX.int(J.ledger.read)} = ${NX.int(J.ledger.accepted)} counted + ${J.ledger.duplicates} duplicates + ${J.ledger.late_dropped} side output; ${J.ledger.late_updates} late re-fires. Ran here on ${NX.esc(J.java)}; CI runs it on Temurin 17.</p>
     <p style="font-size:.86rem">Records, keys and windows are Java records and a <code>TreeMap</code>; the JSON reader is fifty lines, so the job has no dependencies to explain. <a class="linkish" href="run.html#code=java%2Fsrc%2Fnexus%2FWindowJob.java">Read it →</a></p>`
     : `<p>The Java twin runs in CI; this build had no JDK.</p>`;
-  $("flink").textContent = (await fetch("flink/page_views_hourly.sql").then((r) => r.text())).split("\n").slice(3).join("\n");
+  NXFlink.mount({ tabs: "flink-tabs", why: "flink-why", code: "flink-code", tiles: "flink-tiles", map: "flink-map" });
 })();

@@ -70,12 +70,12 @@
       <p>Five steps from a tap in the app to a table an analyst, a model or an agent can trust. Every number on this page comes from the last run of the code in this repository.</p></div>
     <div class="path">
       <div class="step"><div class="n">01 · CAPTURE</div><div class="big">Kafka</div><p>Three topics, <b data-k="partitions">–</b> partitions, <b data-k="records">–</b> records in a week. Offsets follow arrival, not event time.</p></div>
-      <div class="step"><div class="n">02 · STREAM</div><div class="big">Event time</div><p>Watermarks, idle partitions, an hour of allowed lateness, dedupe on id, a dead-letter topic. Python, with a Java twin.</p></div>
+      <div class="step"><div class="n">02 · STREAM</div><div class="big">Event time</div><p>Watermarks, idle partitions, an hour of allowed lateness, dedupe on id, a dead-letter topic. Python, and the same job on Apache Flink.</p></div>
       <div class="step"><div class="n">03 · CHECK</div><div class="big">Spark</div><p>The nightly batch recomputes every window. <b data-k="unexplained">–</b> differences are left unexplained.</p></div>
       <div class="step"><div class="n">04 · PUBLISH</div><div class="big">2 warehouses</div><p>One contract renders the DDL, MERGE, masking and erasure for Snowflake and BigQuery.</p></div>
       <div class="step"><div class="n">05 · WATCH</div><div class="big">SLAs</div><p>Freshness from published completeness, error budgets, and an incident record that writes itself.</p></div>
     </div>
-    <div class="callout" style="margin-top:1.2rem"><b>The stack, as the role lists it:</b> <b>Kafka</b> → stream processing with <b>Flink</b> semantics (the job here is Python, its twin is <b>Java</b>, and <code>flink/</code> has the Flink SQL) → <b>Spark</b> for batch → <b>Snowflake</b> and <b>BigQuery</b> for the warehouse, with SLAs, monitoring and root-cause work around all of it.</div>
+    <div class="callout" style="margin-top:1.2rem"><b>The stack, as the role lists it:</b> <b>Kafka</b> → stream processing with <b>Flink</b> semantics (the job runs as Python and as a real <b>Flink 1.20</b> job in <b>Java</b>, checked against each other) → <b>Spark</b> for batch → <b>Snowflake</b> and <b>BigQuery</b> for the warehouse, with SLAs, monitoring and root-cause work around all of it.</div>
   </div>
 </section>
 
@@ -173,14 +173,16 @@
 
 <section class="section dark" id="java">
   <div class="shell">
-    <div class="index"><span>08 · Java and Flink</span><span>stated plainly</span></div>
-    <div class="head"><h2>Python first. <em>Java, checked.</em></h2>
-      <p>I'm a Python engineer first, and the role writes production code in Java too. So the page_views job has a Java twin: plain JDK 17, no framework, the same rules. CI compiles it, runs it on the same week and fails if a single window differs.</p></div>
-    <div class="grid g2">
-      <div class="card"><div class="kicker" style="color:var(--violet2)">java/src/nexus/WindowJob.java</div><h3 style="margin:.3rem 0 .6rem">Same week, same windows</h3><div id="java-result"></div></div>
-      <div class="card"><div class="kicker" style="color:var(--violet2)">flink/page_views_hourly.sql</div><h3 style="margin:.3rem 0 .6rem">The same job on Flink SQL</h3><pre id="flink" style="max-height:340px;overflow:auto"></pre></div>
+    <div class="index"><span>08 · Java and Flink</span><span>real Apache Flink 1.20, run in CI · stated plainly</span></div>
+    <div class="head"><h2>Python first. <em>Flink and Java, checked.</em></h2>
+      <p>The stream job is also an Apache Flink job: the DataStream API in Java 17, with keyed state, per-partition watermarks, allowed lateness and side outputs. CI builds it with Maven, replays the week on Flink's local MiniCluster, and fails if a window differs from the Python job.</p></div>
+    <div class="grid g3" id="flink-tiles"></div>
+    <div class="card" style="margin-top:1rem"><div class="sqltabs" id="flink-tabs"></div><div class="mono" id="flink-why" style="font-size:.8rem;color:#9cc0b7;margin:.2rem 0 .6rem"></div><pre id="flink-code" style="max-height:520px;overflow:auto"></pre></div>
+    <div class="grid g2" style="margin-top:1rem">
+      <div class="card"><div class="kicker" style="color:var(--violet2)">Python job ↔ Flink API</div><h3 style="margin:.3rem 0 .6rem;color:#fff">Same rule, Flink's name for it</h3><div id="flink-map"></div></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">java/src/nexus/WindowJob.java</div><h3 style="margin:.3rem 0 .6rem;color:#fff">And a plain-Java twin</h3><div id="java-result"></div></div>
     </div>
-    <div class="callout pink" style="margin-top:1rem"><b>Depth, honestly:</b> Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is production experience from Deloitte. BigQuery I haven't run in production: the SQL here is mapped from Snowflake and Databricks (partitioning and clustering for bytes scanned, MERGE, policy tags), and it's where I'd learn first. Java is the part of the stack I'd be ramping up on, and this twin is how I'd start: same semantics, tested against a reference.</div>
+    <div class="callout pink" style="margin-top:1rem"><b>Depth, honestly:</b> Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. The Flink job here is real Flink 1.20 and runs in CI on a MiniCluster, not on a production cluster. Snowflake is production experience from Deloitte. BigQuery I haven't run in production: the SQL here is mapped from Snowflake and Databricks (partitioning and clustering for bytes scanned, MERGE, policy tags), and it's where I'd learn first. Java is the part of the stack I'd be ramping up on, and the Flink job and the twin are how I've started: same semantics, tested against a reference.</div>
   </div>
 </section>
 
@@ -198,7 +200,7 @@
       <tr><td class="k">Governance tooling</td><td>PII masking, role-based access, lineage, certified models, an MCP server giving agents governed access.</td><td><a href="#warehouses">Snowflake + BigQuery</a></td></tr>
       <tr><td class="k">GenAI, analytics and ML at scale</td><td>A production RAG copilot (1,000+ outcomes a day), a dbt semantic layer, feature pipelines for data science.</td><td><a href="story.html">Fireside story</a></td></tr>
       <tr><td class="k">Senior: standards and people</td><td>Set standards for modelling, testing and observability; led 3–5 engineers, two promoted to Senior; taught 100+ learners.</td><td><a href="run.html#tests">The tests</a></td></tr>
-      <tr><td class="k">Flink, specifically</td><td>Stated plainly: not in production. The semantics are here in Python and Java, and the Flink SQL is in <code>flink/</code>.</td><td><a href="#java">Java and Flink</a></td></tr>
+      <tr><td class="k">Flink, specifically</td><td>Stated plainly: not in production. Here it's real Flink 1.20 (DataStream API, keyed state, watermarks, side outputs) run in CI on a MiniCluster, with the same windows as the Python job.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/tree/main/flink/job"><code>flink/job/</code></a></td></tr>
     </table></div>
   </div>
 </section>
@@ -211,6 +213,7 @@
   <p style="margin-top:.8rem">R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · Right to work in the UK, no sponsorship required · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a></p>
 </div></footer>
 <script src="assets/common.js"></script>
+<script src="assets/flink.js"></script>
 <script src="assets/home.js"></script>
 <script src="assets/strip.js"></script>
 </body></html>

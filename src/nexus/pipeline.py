@@ -163,14 +163,15 @@ def run() -> dict:
     }
     (TARGET / "stream_page_views.json").write_text(json.dumps(
         {"ledger": pv_clean.s.ledger, "windows": sorted([iso(k[0]), k[1][0], v["value"]["n"]] for k, v in pv_clean.sink.items())}))
+    (TARGET / "batch_partner_clicks.json").write_text(json.dumps(
+        sorted([iso(k[0]), k[1][0], w["n"], w["sum"]] for k, w in b_pc["windows"].items())))
     site["java"] = steps.run("java_twin", "Java twin of the page_views job: same windows?", _java_twin)
+    site["flink"] = steps.run("flink", "Apache Flink 1.20 on a MiniCluster: same windows?", _flink)
     site["spark"] = steps.run("spark_batch", "PySpark batch: same windows as the plain-Python batch?", _spark_batch, b_pv, b_pc)
     site["run"]["seconds"] = round(time.time() - steps.t0, 1)
     SITE.parent.mkdir(parents=True, exist_ok=True)
     SITE.write_text(json.dumps(site, indent=1, default=str))
     (ROOT / "assets" / "data" / "incident.md").write_text(md)
-    (TARGET / "batch_partner_clicks.json").write_text(json.dumps(
-        sorted([iso(k[0]), k[1][0], w["n"], w["sum"]] for k, w in b_pc["windows"].items())))
     return site
 
 
@@ -194,6 +195,30 @@ def _java_twin() -> dict | None:
     return {"windows": len(jv), "identical": jv == py["windows"] and all(led[k] == py["ledger"][k] for k in keys),
             "ledger": {k: led[k] for k in keys}, "emits": led["emits"], "millis": led["millis"],
             "java": subprocess.run(["java", "-version"], capture_output=True, text=True).stderr.strip().splitlines()[-3]}
+
+
+def _flink() -> dict | None:
+    """Run flink/job (built by scripts/build.sh with Maven) on the week; compare with the Python job and the batch.
+    Skipped when the job isn't built (and in the browser)."""
+    import csv
+    import shutil
+    import subprocess
+    job = ROOT / "flink/job"
+    if not shutil.which("java") or not (job / "target/cp.txt").exists():
+        return None
+    cp = f"{job / 'target/classes'}:{(job / 'target/cp.txt').read_text().strip()}"
+    subprocess.run(["java", "--add-opens", "java.base/java.util=ALL-UNNAMED", "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+                    "-cp", cp, "nexus.flink.NexusLocal", str(ROOT)], check=True, capture_output=True)
+    led = json.loads((TARGET / "flink_ledger.json").read_text())
+    rows = lambda n: {(r["window_start"].replace("Z", "")[:19], r["group"]): (int(r["n"]), float(r["sum"]))  # noqa: E731
+                      for r in csv.DictReader((TARGET / f"flink_{n}.csv").open())}
+    py = {(w[0][:19], w[1]): w[2] for w in json.loads((TARGET / "stream_page_views.json").read_text())["windows"]}
+    batch = {(w[0][:19], w[1]): (w[2], w[3]) for w in json.loads((TARGET / "batch_partner_clicks.json").read_text())}
+    pc = rows("partner_revenue_15m")
+    led["location_views_hourly"]["identical_to_python"] = py == {k: v[0] for k, v in rows("location_views_hourly").items()}
+    led["partner_revenue_15m"]["identical_to_batch"] = pc.keys() == batch.keys() and all(
+        pc[k][0] == n and abs(pc[k][1] - s) < 1e-6 for k, (n, s) in batch.items())
+    return led
 
 
 def _spark_batch(b_pv: dict, b_pc: dict) -> dict | None:

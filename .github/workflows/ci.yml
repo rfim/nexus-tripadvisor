@@ -13,7 +13,9 @@ jobs:
       - uses: actions/setup-java@v4
         with: {distribution: temurin, java-version: "17"}   # Spark 3.5, and the Java twin of the stream job
       - run: pip install -r requirements.txt
-      - name: Tests (topics, stream rules, Java twin, Spark batch, reconciliation, SLAs, warehouse SQL, published data, site)
+      - name: Build the Flink job (Flink 1.20, Java 17; Maven is on the runner)
+        run: mvn -q -B -f flink/job/pom.xml compile dependency:build-classpath -Dmdep.outputFile=target/cp.txt
+      - name: Tests (topics, stream rules, Flink on a MiniCluster, Java twin, Spark batch, reconciliation, SLAs, warehouse SQL, published data, site)
         run: PYTHONPATH=src python -m pytest -q --junitxml=target/junit.xml
       - name: Test report for the site
         run: python scripts/test_report.py target/junit.xml target/tests.json

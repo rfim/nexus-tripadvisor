@@ -21,7 +21,7 @@ checks = D["warehouse"]["checks"]
 passed = sum(c["status"] == "pass" for c in checks)
 hold = D["volume"]["holds"][0]
 sla = {r["product"]: r for r in D["sla"]}
-J, SP = D.get("java"), D.get("spark")
+J, SP, FL = D.get("java"), D.get("spark"), D.get("flink")
 KW = r"\b(def|return|if|not|for|in|else|and|or|import|from|with|lambda|while|try|except|raise|class|MERGE|INTO|USING|ON|WHEN|MATCHED|THEN|UPDATE|SET|INSERT|SELECT|FROM|WHERE|DELETE|AND|NOT|BY|GROUP|CREATE|TABLE|WATERMARK|FOR|AS|INTERVAL|long|void|final|private|static|new|public|boolean)\b"
 
 
@@ -106,6 +106,7 @@ def deck():
             ("05", "Stream first, batch checks", "Reconciliation, record for record; Spark agrees"),
             ("06", "Snowflake and BigQuery from one contract", "Governance as generated code"),
             ("07", "SLAs and an incident", "Detection, root cause, postmortem"),
+            ("08", "Apache Flink", "The job on Flink 1.20: topology, state, watermarks, production on Kafka"),
             ("08", "Java", "A twin of the job, tested against the reference"),
             ("09", "My first 90 days", "How I'd start in Data Platform")]) + "</table>"))
     s.append(slide("01 · Measured outcomes", "What changed at Lifepal", "Figures from my CV and production work, described at the level I can share publicly.",
@@ -118,11 +119,11 @@ def deck():
     s.append(slide("02 · The role, line by line", "How my experience maps to the role", "The job description's asks, what I've done, and where it shows in this repository.",
         table([("ETL/ELT across Snowflake and BigQuery", "Snowflake + dbt at Deloitte; Databricks + dbt at Lifepal", "warehouse/ · warehouse.py"),
                ("Own pipelines: SLAs, monitoring, root cause", "SLAs, freshness and volume alerts, runbooks, RCA after every incident", "sla.py · oncall.html"),
-               ("Streaming and batch: Flink, Spark, Kafka", "Kafka + Debezium with Spark; 6 h → 90 min batch", "stream.py · spark_batch.py"),
+               ("Streaming and batch: Flink, Spark, Kafka", "Kafka + Debezium with Spark; 6 h → 90 min batch", "flink/job · stream.py · spark_batch.py"),
                ("Production Java and Python", "Python for ten years; Java is my ramp", "java/WindowJob.java"),
                ("Shared frameworks, governance tooling", "Config-driven ingestion; PII masking, RBAC, lineage", "contracts/ · governance.sql"),
                ("GenAI, analytics, ML", "RAG copilot; MCP server; feature pipelines", "Fireside story"),
-               ("Flink, specifically", "Not in production. Semantics here in Python and Java; Flink SQL in flink/", "flink/*.sql")],
+               ("Flink, specifically", "Not in production. Here: real Flink 1.20 in CI, identical windows to the Python job", "flink/job/")],
               ["The role asks for", "What I've done", "Here"])))
     s.append(slide("03 · Six streaming problems", "What Kafka really delivers", f"A week of a travel site: {n(sum(G['records'].values()))} records on {sum(G['partitions'].values())} partitions. Each problem is planted, handled and tested.",
         table([(a, b, c) for a, b, c in PROBLEMS], ["Problem", "In the run", "What handles it"])))
@@ -154,6 +155,22 @@ def deck():
           <div class="card"><div class="big p">{I['minutes']['would_detect_with_restart_alert']} min</div><p>with a restart alert: {I['restarts']} restarts said it early</p></div></div>
           <div class="callout pink" style="margin-top:4mm"><b>Root cause:</b> a record the job couldn't parse was treated as a reason to stop; a restart reads the same offset again. <b>Fix:</b> dead-letter by default in the shared template (done), page on restarts, alert on DLQ depth, a producer contract test.</div>
           <p class="src" style="margin-top:3mm">Error budget for the week: {sla['partner_revenue_15m']['budget_samples']} late samples allowed at 99.9%; the incident used {sla['partner_revenue_15m']['late_samples']}. {I['windows_delayed']} windows late, none wrong; one record in the DLQ.</p></div></div>'''))
+    fv, fp = (FL or {}).get("location_views_hourly", {}), (FL or {}).get("partner_revenue_15m", {})
+    s.append(code_slide("08 · Apache Flink 1.20 · DataStream API", "The same job, on Flink",
+        "Parse with a dead-letter output, dedupe in keyed state, per-partition watermarks, event-time windows with allowed lateness, a side output for what's too late.",
+        "flink/job/.../NexusJobs.java", "Flink 1.20.1 · Java 17", code("flink/job/src/main/java/nexus/flink/NexusJobs.java", "    public static Outputs build(", "    }\n}", limit=24),
+        side(("On a MiniCluster, in CI", [f"<b>{n(fv.get('windows', 0))}</b> windows, <b>{'identical' if fv.get('identical_to_python') else 'different'}</b> to the Python job: {fv.get('duplicates')} duplicates, {fv.get('late_dropped')} too late, {n(fv.get('firings', 0))} firings.",
+                                          f"partner_clicks: the poison pill <b>dead-lettered</b> (partition 3, offset 171), revenue windows <b>{'identical' if fp.get('identical_to_batch') else 'different'}</b> to the batch."]),
+             ("One honest difference", ["Python carries the watermark on processing time when every partition is quiet; Flink's idleness doesn't. So at 3 a.m. Flink kept one late click the Python job sent to the side output. Both are explained."]),
+             ("Stated plainly", ["Real Flink, run locally, not on a production cluster. At Lifepal my streaming was Kafka + Debezium with Spark."])),
+        formula="records → Parse ⟶ DLQ · keyBy(id) → Dedupe(TTL 24 h) · keyBy(group) → Tumbling(1 h) → allowedLateness(1 h) ⟶ late"))
+    s.append(code_slide("08 · Apache Flink · production", "On Kafka, with the incident's lessons built in",
+        "NexusKafka runs the same topology from KafkaSource to transactional Kafka sinks. Compiled in CI; there is no cluster behind a portfolio.",
+        "flink/job/.../NexusKafka.java", "KafkaSource · KafkaSink", code("flink/job/src/main/java/nexus/flink/NexusKafka.java", "        StreamExecutionEnvironment env", "        env.execute(", limit=26),
+        side(("What the incident changed", ["<b>Dead letters</b> to <code>dlq.partner_clicks</code>, never a crash loop.",
+                                            "<b>failureRateRestart(3, 10 min)</b>: three restarts, then fail and page. 74 restarts can't happen again.",
+                                            "<b>Exactly-once</b> checkpoints every 10 minutes and transactional sinks: a restore re-sends nothing twice."]),
+             ("Watermarks", ["Per split from the source: <b>forBoundedOutOfOrderness(ooo).withIdleness(5 min)</b>, so a quiet partition can't hold the job back."]))))
     s.append(code_slide("08 · Java", "Python first. Java, checked.",
         "The page_views job, in plain JDK 17 with no framework. CI compiles it, runs it on the same week, and fails if a single window differs from the Python job.",
         "java/src/nexus/WindowJob.java", "JDK 17 · no dependencies", code("java/src/nexus/WindowJob.java", "    void process(", "    void tick("),
@@ -186,7 +203,7 @@ def one_page():
 <div class="sec"><div class="sh"><b>Six problems, planted and caught</b><i>each tested</i></div>''' + table(PROBLEMS, ["Problem", "In the run", "What handles it"]) + f'''</div>
 <div class="sec cols"><div><div class="sh"><b>The role, and where it shows</b><i>stated plainly</i></div>''' + table([
         ("Snowflake · BigQuery", "warehouse/ from one contract"), ("SLAs · RCA", "sla.py, the incident page"), ("Kafka · Spark", "stream.py, spark_batch.py"),
-        ("Java", "WindowJob.java, identical to Python"), ("Flink", "flink/*.sql; not in production, said so")], ["Ask", "Here"]) + '''</div>
+        ("Java", "WindowJob.java, identical to Python"), ("Flink", "flink/job: real Flink 1.20 in CI, identical windows; not in production, said so")], ["Ask", "Here"]) + '''</div>
 <div><div class="sh"><b>Questions I'd bring</b><i>for Data Platform</i></div><div class="plain"><b>1.</b> Which pipelines page most, and why?<br><b>2.</b> How are freshness SLAs measured today?<br><b>3.</b> Where do Snowflake and BigQuery each fit?<br><b>4.</b> How is streaming split between Flink and Spark?<br><b>5.</b> What would a great first 90 days look like?</div></div></div>
 <p class="src" style="margin-top:5mm">R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · right to work in the UK, no sponsorship · firman.insan.m@gmail.com · ''' + SITE + '''. Synthetic data; an independent application, not affiliated with or endorsed by Tripadvisor.</p>
 </div></body></html>'''

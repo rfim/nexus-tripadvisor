@@ -3,11 +3,11 @@ import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-GLOBS = ["examples/*.py", "src/nexus/*.py", "java/src/nexus/*.java", "flink/*.sql", "contracts/*.yml", "tests/*.py",
+GLOBS = ["examples/*.py", "src/nexus/*.py", "java/src/nexus/*.java", "flink/job/src/main/java/nexus/flink/*.java", "flink/job/pom.xml", "flink/*.sql", "contracts/*.yml", "tests/*.py",
          "warehouse/snowflake/*.sql", "warehouse/bigquery/*.sql", "scripts/*.sh", "scripts/*.py", "docs/pdf-src/build.py",
          ".github/workflows/ci.yml", "requirements.txt"]
 SPARK = {"spark_batch.py", "test_spark_batch.py"}
-JAVA = {"test_java_twin.py"}
+JAVA = {"test_java_twin.py", "test_flink.py"}
 
 
 def kind(rel: str, name: str) -> str:
@@ -15,6 +15,8 @@ def kind(rel: str, name: str) -> str:
         return "browser"
     if name in SPARK:
         return "spark"
+    if rel.startswith("flink/job/"):
+        return "flink"
     if rel.startswith("java/") or name in JAVA:
         return "java"
     if rel.startswith(("flink/", "warehouse/")):

@@ -63,7 +63,7 @@
   "path": "src/nexus/pipeline.py",
   "folder": "src/nexus",
   "runs": "browser",
-  "lines": 257
+  "lines": 282
  },
  {
   "path": "src/nexus/sla.py",
@@ -100,6 +100,60 @@
   "folder": "java/src/nexus",
   "runs": "java",
   "lines": 179
+ },
+ {
+  "path": "flink/job/src/main/java/nexus/flink/Dedupe.java",
+  "folder": "flink/job/src/main/java/nexus/flink",
+  "runs": "flink",
+  "lines": 39
+ },
+ {
+  "path": "flink/job/src/main/java/nexus/flink/Model.java",
+  "folder": "flink/job/src/main/java/nexus/flink",
+  "runs": "flink",
+  "lines": 54
+ },
+ {
+  "path": "flink/job/src/main/java/nexus/flink/NexusJobs.java",
+  "folder": "flink/job/src/main/java/nexus/flink",
+  "runs": "flink",
+  "lines": 66
+ },
+ {
+  "path": "flink/job/src/main/java/nexus/flink/NexusKafka.java",
+  "folder": "flink/job/src/main/java/nexus/flink",
+  "runs": "flink",
+  "lines": 107
+ },
+ {
+  "path": "flink/job/src/main/java/nexus/flink/NexusLocal.java",
+  "folder": "flink/job/src/main/java/nexus/flink",
+  "runs": "flink",
+  "lines": 93
+ },
+ {
+  "path": "flink/job/src/main/java/nexus/flink/Parse.java",
+  "folder": "flink/job/src/main/java/nexus/flink",
+  "runs": "flink",
+  "lines": 72
+ },
+ {
+  "path": "flink/job/src/main/java/nexus/flink/PartitionWatermarks.java",
+  "folder": "flink/job/src/main/java/nexus/flink",
+  "runs": "flink",
+  "lines": 45
+ },
+ {
+  "path": "flink/job/src/main/java/nexus/flink/Windows.java",
+  "folder": "flink/job/src/main/java/nexus/flink",
+  "runs": "flink",
+  "lines": 36
+ },
+ {
+  "path": "flink/job/pom.xml",
+  "folder": "flink/job",
+  "runs": "flink",
+  "lines": 38
  },
  {
   "path": "flink/page_views_hourly.sql",
@@ -154,6 +208,12 @@
   "folder": "tests",
   "runs": "tests",
   "lines": 29
+ },
+ {
+  "path": "tests/test_flink.py",
+  "folder": "tests",
+  "runs": "java",
+  "lines": 47
  },
  {
   "path": "tests/test_generate.py",
@@ -297,31 +357,31 @@
   "path": "scripts/build.sh",
   "folder": "scripts",
   "runs": "view",
-  "lines": 7
+  "lines": 10
  },
  {
   "path": "scripts/manifest.py",
   "folder": "scripts",
   "runs": "view",
-  "lines": 37
+  "lines": 39
  },
  {
   "path": "scripts/test_report.py",
   "folder": "scripts",
   "runs": "view",
-  "lines": 45
+  "lines": 46
  },
  {
   "path": "docs/pdf-src/build.py",
   "folder": "docs/pdf-src",
   "runs": "view",
-  "lines": 197
+  "lines": 214
  },
  {
   "path": ".github/workflows/ci.yml",
   "folder": ".github/workflows",
   "runs": "view",
-  "lines": 23
+  "lines": 25
  },
  {
   "path": "requirements.txt",

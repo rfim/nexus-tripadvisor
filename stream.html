@@ -77,6 +77,12 @@
       <div class="card"><div class="kicker" style="color:var(--violet2)">Lateness</div><h3 style="color:#fff">Re-fire within the hour, side output after</h3><p>A window keeps its state an hour past the watermark. A record inside that hour updates the window and fires it again; the sink upserts. After it, the batch is the place.</p></div>
       <div class="card"><div class="kicker" style="color:var(--violet2)">Exactly once, from outside</div><h3 style="color:#fff">Checkpointed state, keyed sinks</h3><p>Offsets, windows, dedupe state and the ledger are restored together. The sink and side outputs are keyed, so what a restore re-sends changes nothing.</p></div>
     </div>
+    <div class="index" style="margin-top:3rem"><span>The same job on Apache Flink 1.20</span><span>DataStream API · Java 17 · run in CI on a MiniCluster</span></div>
+    <div class="head" style="margin-top:.6rem"><h2 style="font-size:clamp(1.6rem,3vw,2.4rem)">Every step above, <em>in Flink.</em></h2>
+      <p>The caption under each step shows the Flink call that makes the same decision. Here is the whole job: CI replays the week through it on a local MiniCluster and checks it window for window against the Python job.</p></div>
+    <div class="grid g3" id="flink-tiles"></div>
+    <div class="card" style="margin-top:1rem"><div class="sqltabs" id="flink-tabs"></div><div class="mono" id="flink-why" style="font-size:.8rem;color:#9cc0b7;margin:.2rem 0 .6rem"></div><pre id="flink-code" style="max-height:560px;overflow:auto"></pre></div>
+    <div class="card" style="margin-top:1rem"><h3 style="color:#fff;margin-bottom:.6rem">Python job ↔ Flink API</h3><div id="flink-map"></div></div>
   </div>
 </section>
 </main>
@@ -84,5 +90,7 @@
   <p>R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a>. Synthetic data; an independent application, not affiliated with or endorsed by Tripadvisor.</p>
 </div></footer>
 <script src="assets/common.js"></script>
+<script src="assets/flink.js"></script>
 <script src="assets/stream.js"></script>
+<script>NXFlink.mount({ tabs: "flink-tabs", why: "flink-why", code: "flink-code", tiles: "flink-tiles", map: "flink-map" });</script>
 </body></html>

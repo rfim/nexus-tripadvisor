@@ -42,12 +42,12 @@
         <pre id="out" class="console" aria-live="polite"><span class="o-note">Pick a file on the left. Files marked green run here; press Run. Start with examples/: 03 is instant and yours to break, 04 runs the whole week, 05 replays the incident.</span></pre>
       </div>
     </div>
-    <div class="legend"><span><i class="dot-browser"></i>runs in your browser</span><span><i class="dot-spark"></i>needs Spark · runs in CI</span><span><i class="dot-java"></i>Java · runs in CI</span><span><i class="dot-local"></i>Flink SQL · warehouse SQL</span><span><i class="dot-tests"></i>tests</span><span><i class="dot-view"></i>read only</span></div>
+    <div class="legend"><span><i class="dot-browser"></i>runs in your browser</span><span><i class="dot-spark"></i>needs Spark · runs in CI</span><span><i class="dot-flink"></i>Apache Flink · runs in CI</span><span><i class="dot-java"></i>Java · runs in CI</span><span><i class="dot-local"></i>Flink SQL · warehouse SQL</span><span><i class="dot-tests"></i>tests</span><span><i class="dot-view"></i>read only</span></div>
     <div class="grid g4" style="margin-top:1.4rem">
       <div class="card"><div class="kicker" style="color:var(--violet2)">examples/03</div><h3>Watermarks by hand</h3><p>Six records: a retry, a late one inside the hour, one two hours late. Change a time and run it again.</p></div>
       <div class="card"><div class="kicker" style="color:var(--violet2)">examples/04</div><h3>The whole week</h3><p>Three jobs, a lost TaskManager, a poison pill, the batch, the warehouse checks and the SLAs.</p></div>
       <div class="card"><div class="kicker" style="color:var(--violet2)">examples/05</div><h3>The incident</h3><p>The crash loop without a dead-letter topic, the freshness curve, and the postmortem it writes.</p></div>
-      <div class="card"><div class="kicker" style="color:var(--violet2)">java/ · flink/</div><h3>The twins</h3><p>WindowJob.java is the page_views job in plain JDK 17; the Flink SQL is the same job as a cluster would run it.</p></div>
+      <div class="card"><div class="kicker" style="color:#ff9db2">flink/job/</div><h3>The jobs on Apache Flink</h3><p>NexusJobs.java is the topology: parse with a dead-letter output, keyed dedupe with TTL, per-partition watermarks, windows with allowed lateness. NexusKafka runs it on Kafka.</p></div>
     </div>
   </div>
 </section>
@@ -56,7 +56,7 @@
   <div class="shell">
     <div class="index"><span>The tests</span><span>pytest · CI on every push</span></div>
     <div class="head"><h2>Everything here is <em>tested.</em></h2>
-      <p>The full suite, including the Java twin and the Spark batch, ran with pytest; the report below is its output. Run the Python suites again here, in your browser, against the same files.</p></div>
+      <p>The full suite, including Flink on a MiniCluster, the Java twin and the Spark batch, ran with pytest; the report below is its output. Run the Python suites again here, in your browser, against the same files.</p></div>
     <p id="t-sum"></p>
     <div id="t-suites"></div>
     <div class="cta"><button id="t-run" class="button b-primary">▶ Run the browser-safe tests here</button></div>

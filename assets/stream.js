@@ -88,6 +88,30 @@
     ] },
   };
 
+  // ---------- the same step on Flink (flink/job): the API call that makes this decision ----------
+  const FL = {
+    retries: ['records.process(new Parse("page_views"))', 'parsed.keyBy(e -> e.id).process(new Dedupe())   // ValueState<Boolean>, TTL 24 h',
+              'if (seen.value() != null) { ctx.output(DUPLICATES, e); return; }'],
+    late: ['.window(TumblingEventTimeWindows.of(Duration.ofHours(1))).allowedLateness(Duration.ofHours(1))',
+           '// EventTimeTrigger fires again on each late element inside allowedLateness; the KafkaSink upserts on (start, group)',
+           'WatermarkStrategy.forBoundedOutOfOrderness(Duration.ofMinutes(10)).withIdleness(Duration.ofMinutes(5))',
+           '.sideOutputLateData(TOO_LATE)   →   windows.getSideOutput(TOO_LATE).sinkTo(sink(brokers, "late.page_views"))',
+           '// the nightly batch counts late.page_views; Flink on the MiniCluster: 192 too late, same as the Python job'],
+    schema: ['e.amount = v.get("cpc_gbp").asDouble();   // v1', 'Double rate = FX_TO_GBP.get(v.path("price").path("currency").asText());   // v2',
+             'if (rate == null) { ctx.output(DEAD_LETTERS, new DeadLetter(r, "unknown currency")); return; }'],
+    poison: ['try { v = json.readTree(r.value); } catch (Exception e) { ctx.output(DEAD_LETTERS, new DeadLetter(r, "not JSON: ...")); return; }',
+             '// without that catch: an exception, a restore, the same offset, the same exception',
+             'env.setRestartStrategy(RestartStrategies.failureRateRestart(3, Time.minutes(10), Time.seconds(30)));   // fail and page',
+             'o.deadLetters().map(NexusKafka::dead).sinkTo(sink(brokers, "dlq.partner_clicks"))'],
+    bots: ['// the stream counts them: a valid page view is a valid page view', '// the hold is a batch rule on Gold, not a stream rule', '// (Spark: hourly volume vs the same hour on earlier days)'],
+    erasure: ['// not in flink/job yet: reviews_current runs in the Python job only. On Flink it would be:',
+              'reviews.keyBy(v -> v.reviewId).process(new LatestVersion())   // ValueState<Integer> version',
+              'if (version.value() != null && version.value() >= v.version) { ctx.output(STALE, v); return; }'],
+    crash: ['env.enableCheckpointing(Duration.ofMinutes(10).toMillis(), CheckpointingMode.EXACTLY_ONCE);',
+            '// restore: Kafka offsets + window state + dedupe state, from one checkpoint', 'KafkaSink ... .setDeliveryGuarantee(DeliveryGuarantee.EXACTLY_ONCE)'],
+  };
+  Object.entries(FL).forEach(([k, xs]) => SCEN[k].steps.forEach((st, i) => { st.flink = xs[Math.min(i, xs.length - 1)]; }));
+
   // ---------- rendering ----------
   const NODES = ["kafka", "read", "dedupe", "window", "sink", "side", "batch", "dlq"];
   const WIRES = [...document.querySelectorAll(".wire")].map((w) => w.id);
@@ -118,7 +142,8 @@
     WIRES.forEach((w) => $(w).setAttribute("class", "wire" + (st.wires.includes(w) ? ((st.hot || []).length ? " hot" : " on") : "")));
     document.querySelectorAll("[id^=kp]").forEach((r) => (r.style.fill = r.id === `kp${st.part}` ? "#0b6b53" : "#0a2a21"));
     if (st.wm) $("wm-label").textContent = `watermark ${t(st.wm).slice(6)}`;
-    $("caption").innerHTML = `<b>${st.title}.</b> ${st.text}`;
+    $("caption").innerHTML = `<b>${st.title}.</b> ${st.text}` +
+      (st.flink ? `<code class="on-flink"><span>On Flink</span>${NX.esc(st.flink)}</code>` : "");
     const m = document.createElement("div");
     m.className = `msg ${(st.hot || []).length ? "err" : "res"}`;
     m.innerHTML = `<span class="dir">step ${i + 1} · ${sc.topic}</span>${NX.esc(JSON.stringify(st.log, null, 1).replace(/\n\s*/g, " "))}`;

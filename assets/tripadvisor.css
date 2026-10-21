@@ -35,3 +35,7 @@ svg .grid{stroke:var(--line)}svg .ax{font:500 11px var(--font);fill:var(--muted)
 .tablewrap.wrap table td,.tablewrap.wrap table th{white-space:normal;overflow-wrap:anywhere}
 .brand-owl{width:26px;height:26px;flex:none;display:block}
 .ta-presented{display:inline-flex;align-items:center;gap:.6rem}.ta-presented img{width:40px;height:40px;display:block}
+.dot-flink{display:inline-block;width:8px;height:8px;border-radius:50%;flex:none;background:#e6526f}
+.b-flink{background:#4a1626;color:#ff9db2}
+.on-flink{display:block;margin-top:.55rem;padding:.45rem .7rem;background:#04130f;border-left:3px solid #e6526f;border-radius:6px;font:400 .76rem/1.5 var(--mono);color:#ffd2dc;white-space:pre-wrap}
+.on-flink span{display:block;font:700 .62rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#ff9db2;margin-bottom:.15rem}

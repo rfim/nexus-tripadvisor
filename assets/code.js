@@ -6,8 +6,8 @@
   const byPath = Object.fromEntries(files.map((f) => [f.path, f]));
   const BADGE = { browser: ["runs in your browser", "b-run"], spark: ["needs Spark · runs in CI", "b-spark"],
                   tests: ["tests · run below", "b-test"], view: ["read only", "b-view"],
-                  java: ["Java · runs in CI", "b-java"], local: ["Flink SQL · warehouse SQL: read, not run here", "b-local"] };
-  const MODE = { py: "python", yml: "yaml", yaml: "yaml", sql: "sql", sh: "shell", txt: null, js: "javascript", json: "javascript", java: "javascript" };
+                  java: ["Java · runs in CI", "b-java"], flink: ["Apache Flink 1.20 · runs in CI on a MiniCluster", "b-flink"], local: ["Flink SQL · warehouse SQL: read, not run here", "b-local"] };
+  const MODE = { py: "python", yml: "yaml", yaml: "yaml", sql: "sql", sh: "shell", txt: null, js: "javascript", json: "javascript", java: "javascript", xml: null };
   const original = {}, edited = {};
   // a missing file must fail loudly: never hand Python an HTML 404 page as source
   const text = (p) => fetch(p).then((r) => { if (!r.ok) throw new Error(`${p}: HTTP ${r.status} from the site`); return r.text(); });
@@ -38,12 +38,16 @@
     $("run").disabled = f.runs !== "browser";
     $("run").title = f.runs === "spark" ? "This module needs Spark. It runs in CI and with ./scripts/build.sh." :
       f.runs === "java" ? "Java runs in CI: javac + java on the same week of page_views." :
+      f.runs === "flink" ? "Flink runs in CI: Maven builds it, NexusLocal replays the week on a MiniCluster." :
       f.runs === "tests" ? "Run the tests with the panel below." : "";
     $("dirty").hidden = (edited[path] ?? original[path]) === original[path];
     if (f.runs === "local") note(`<b>${NX.esc(path)}</b> is SQL for Flink, Snowflake or BigQuery. The warehouse SQL is generated from ` +
       `the contract and checked in CI; it is written to be read, as there is no cluster or warehouse account behind a portfolio.`);
     if (f.runs === "spark") note(`<b>${NX.esc(path)}</b> needs PySpark, which can't run in a browser. ` +
       `It ran for real in the build and matched the plain-Python batch window for window; run it with <code>./scripts/build.sh</code>.`);
+    if (f.runs === "flink") note(`<b>${NX.esc(path)}</b> is part of the Flink job (Apache Flink 1.20, DataStream API, Java 17). ` +
+      `It can't run in a browser. In the build it ran on a local MiniCluster over the same week: the same windows as the Python job, ` +
+      `the poison pill dead-lettered. <code>NexusKafka</code> is the production entry point; <code>tests/test_flink.py</code> checks it in CI.`);
     if (f.runs === "java") note(`<b>${NX.esc(path)}</b> is Java (JDK 17, no dependencies). It ran in the build on the same week of page_views ` +
       `and reached exactly the Python job's windows; <code>tests/test_java_twin.py</code> checks it in CI.`);
     history.replaceState(null, "", `#code=${encodeURIComponent(path)}`);

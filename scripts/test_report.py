@@ -6,11 +6,12 @@ from collections import defaultdict
 from datetime import datetime, timezone
 
 SPARK = {"test_spark_batch"}
-LOCAL = {"test_java_twin"}
+LOCAL = {"test_java_twin", "test_flink"}
 ABOUT = {
     "test_generate": "The simulated topics: deterministic, every planted problem really in the log",
     "test_contracts": "Schema v1 and v2 read as one; the registry would reject v2; no guessing on bad records",
     "test_stream": "Watermarks, idle partitions, lateness, dedupe, dead letters, crash and restore, tombstones",
+    "test_flink": "Apache Flink 1.20 on a MiniCluster: the Python job's windows, the batch's revenue, the poison pill dead-lettered",
     "test_java_twin": "The Java job reaches exactly the Python job's windows and ledger (JDK 17)",
     "test_spark_batch": "The PySpark batch matches the plain-Python batch window for window",
     "test_batch": "Every stream/batch difference explained; only the scraper hour held",

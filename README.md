@@ -41,14 +41,15 @@ Kafka (simulated) → stream job → Snowflake / BigQuery      nightly batch (Py
 
 Plus a lost TaskManager on 8 October at 09:17: restored from the checkpoint, sink identical to a run without the crash.
 
-## Java and Flink
+## Apache Flink and Java
 
+- `flink/job/`: the stream jobs on **Apache Flink 1.20** (DataStream API, Java 17, Maven). `NexusJobs` is the topology: `Parse` (both schema versions, a dead-letter output), `Dedupe` (keyed `ValueState` with a 24-hour TTL), `PartitionWatermarks` (min over active partitions less out-of-orderness, idle partitions left out), tumbling event-time windows with `allowedLateness` and `sideOutputLateData`. `NexusLocal` replays the week on a MiniCluster; `NexusKafka` is the production entry point (`KafkaSource` with `withIdleness`, exactly-once checkpoints, `failureRateRestart`, transactional `KafkaSink`s for gold, DLQ and late). `tests/test_flink.py` requires the Python job's windows exactly on page_views, the batch's revenue exactly on partner_clicks, and the poison pill dead-lettered.
 - `java/src/nexus/WindowJob.java`: the page_views job in plain JDK 17, no dependencies. `tests/test_java_twin.py` compiles it, runs it on the same week, and requires exactly the Python job's windows and ledger.
-- `flink/*.sql`: the same jobs as Flink SQL (idle timeout, allowed lateness, late firing, upsert sinks). Written to be read; there is no Flink cluster behind a portfolio.
+- `flink/*.sql`: the same jobs as Flink SQL (idle timeout, allowed lateness, late firing, upsert sinks). Written to be read.
 
 ## Run it
 
-Python 3.11 and Java 17:
+Python 3.11, Java 17 and Maven (for the Flink job):
 
 ```bash
 pip install -r requirements.txt
@@ -63,6 +64,6 @@ On the site, `run.html` opens every file in an editor and runs the Python in you
 
 - **Real:** the Lifepal outcomes (from my CV and production work) and all the code here, which runs end to end in CI.
 - **Synthetic:** every page view, click, review, partner and location. The Tripadvisor side comes from the job description and public information; no Tripadvisor systems or data were used.
-- **Depth:** Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is production experience from Deloitte. BigQuery I haven't run in production: the SQL here is mapped from Snowflake and Databricks (partitioning and clustering for bytes scanned, MERGE, policy tags), and it's where I'd learn first. Java is the part of the stack I'd be ramping up on.
+- **Depth:** Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. The Flink job here is real Flink 1.20, run on a MiniCluster in CI, not on a production cluster. Snowflake is production experience from Deloitte. BigQuery I haven't run in production: the SQL here is mapped from Snowflake and Databricks (partitioning and clustering for bytes scanned, MERGE, policy tags), and it's where I'd learn first. Java is the part of the stack I'd be ramping up on.
 
 This is an independent application. It is not affiliated with or endorsed by Tripadvisor.

@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-10-21T04:20:16+00:00",
- "total": 48,
- "passed": 48,
+ "generated_at": "2026-10-21T10:00:41+00:00",
+ "total": 50,
+ "passed": 50,
  "failed": 0,
  "skipped": 0,
- "seconds": 28.4,
+ "seconds": 61.3,
  "suites": [
   {
    "file": "tests/test_generate.py",
@@ -15,37 +15,37 @@
     {
      "name": "test_deterministic",
      "outcome": "passed",
-     "seconds": 0.73
+     "seconds": 0.753
     },
     {
      "name": "test_offsets_follow_arrival_within_a_partition",
      "outcome": "passed",
-     "seconds": 0.139
+     "seconds": 0.199
     },
     {
      "name": "test_retries_resend_the_same_event_id",
      "outcome": "passed",
-     "seconds": 0.16
+     "seconds": 0.18
     },
     {
      "name": "test_the_offline_upload_arrives_hours_after_it_happened",
      "outcome": "passed",
-     "seconds": 0.175
+     "seconds": 0.204
     },
     {
      "name": "test_schema_v2_only_from_the_74_app",
      "outcome": "passed",
-     "seconds": 0.007
+     "seconds": 0.008
     },
     {
      "name": "test_exactly_one_poison_pill_where_planted",
      "outcome": "passed",
-     "seconds": 0.008
+     "seconds": 0.01
     },
     {
      "name": "test_the_erasure_is_followed_by_a_stale_version",
      "outcome": "passed",
-     "seconds": 0.012
+     "seconds": 0.014
     }
    ]
   },
@@ -58,27 +58,27 @@
     {
      "name": "test_v2_would_be_rejected_by_a_backward_compatibility_check",
      "outcome": "passed",
-     "seconds": 0.0
+     "seconds": 0.001
     },
     {
      "name": "test_both_versions_read_as_revenue_in_gbp[{\"click_id\":\"c\",\"event_time\":\"2026-10-07T09:00:00.000Z\",\"cpc_gbp\":0.5}-0.5]",
      "outcome": "passed",
-     "seconds": 0.0
+     "seconds": 0.001
     },
     {
      "name": "test_both_versions_read_as_revenue_in_gbp[{\"click_id\":\"c\",\"event_time\":\"2026-10-07T09:00:00.000Z\",\"price\":{\"amount\":1.0,\"currency\":\"EUR\"}}-0.86]",
      "outcome": "passed",
-     "seconds": 0.0
+     "seconds": 0.001
     },
     {
      "name": "test_both_versions_read_as_revenue_in_gbp[{\"click_id\":\"c\",\"event_time\":\"2026-10-07T09:00:00.000Z\",\"price\":{\"amount\":1.0,\"currency\":\"USD\"}}-0.79]",
      "outcome": "passed",
-     "seconds": 0.0
+     "seconds": 0.001
     },
     {
      "name": "test_an_unknown_currency_is_a_dead_letter_not_a_guess",
      "outcome": "passed",
-     "seconds": 0.0
+     "seconds": 0.001
     }
    ]
   },
@@ -111,7 +111,7 @@
     {
      "name": "test_an_idle_partition_does_not_hold_the_watermark_back",
      "outcome": "passed",
-     "seconds": 0.004
+     "seconds": 0.005
     },
     {
      "name": "test_a_poison_pill_without_a_dead_letter_topic_stops_the_job",
@@ -146,6 +146,24 @@
    ]
   },
   {
+   "file": "tests/test_flink.py",
+   "about": "Apache Flink 1.20 on a MiniCluster: the Python job's windows, the batch's revenue, the poison pill dead-lettered",
+   "spark": false,
+   "java": true,
+   "tests": [
+    {
+     "name": "test_flink_matches_the_python_job_window_for_window",
+     "outcome": "passed",
+     "seconds": 11.839
+    },
+    {
+     "name": "test_flink_dead_letters_the_poison_pill_and_agrees_with_the_batch",
+     "outcome": "passed",
+     "seconds": 10.104
+    }
+   ]
+  },
+  {
    "file": "tests/test_java_twin.py",
    "about": "The Java job reaches exactly the Python job's windows and ledger (JDK 17)",
    "spark": false,
@@ -154,7 +172,7 @@
     {
      "name": "test_java_matches_python_window_for_window",
      "outcome": "passed",
-     "seconds": 2.292
+     "seconds": 1.751
     }
    ]
   },
@@ -167,12 +185,12 @@
     {
      "name": "test_spark_matches_python[page_views]",
      "outcome": "passed",
-     "seconds": 1.605
+     "seconds": 2.257
     },
     {
      "name": "test_spark_matches_python[partner_clicks]",
      "outcome": "passed",
-     "seconds": 0.817
+     "seconds": 1.026
     }
    ]
   },
@@ -185,17 +203,17 @@
     {
      "name": "test_every_difference_between_stream_and_batch_is_explained",
      "outcome": "passed",
-     "seconds": 22.289
+     "seconds": 32.765
     },
     {
      "name": "test_the_batch_counts_every_event_exactly_once",
      "outcome": "passed",
-     "seconds": 0.001
+     "seconds": 0.002
     },
     {
      "name": "test_only_the_scraper_hour_is_held",
      "outcome": "passed",
-     "seconds": 0.0
+     "seconds": 0.001
     }
    ]
   },
@@ -231,12 +249,12 @@
     {
      "name": "test_the_committed_sql_is_what_the_contract_renders",
      "outcome": "passed",
-     "seconds": 0.009
+     "seconds": 0.007
     },
     {
      "name": "test_every_personal_field_is_masked_in_both_warehouses",
      "outcome": "passed",
-     "seconds": 0.0
+     "seconds": 0.001
     },
     {
      "name": "test_reviews_merge_never_lets_an_older_version_win",
@@ -292,12 +310,12 @@
     {
      "name": "test_every_id_each_script_fills_exists",
      "outcome": "passed",
-     "seconds": 0.002
+     "seconds": 0.003
     },
     {
      "name": "test_pages_link_to_each_other",
      "outcome": "passed",
-     "seconds": 0.0
+     "seconds": 0.001
     },
     {
      "name": "test_repository_links_point_at_real_paths",
@@ -307,7 +325,7 @@
     {
      "name": "test_local_assets_exist",
      "outcome": "passed",
-     "seconds": 0.001
+     "seconds": 0.002
     },
     {
      "name": "test_strip_has_one_pill_per_section",
