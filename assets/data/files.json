@@ -45,7 +45,7 @@
   "path": "src/nexus/benchmarks.py",
   "folder": "src/nexus",
   "runs": "browser",
-  "lines": 169
+  "lines": 191
  },
  {
   "path": "src/nexus/contracts.py",
