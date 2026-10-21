@@ -11,19 +11,32 @@ window.NXChoice = (() => {
       <span class="ch-l">${esc(l)}</span>
       <span class="ch-track"><i style="width:${Math.max(2, 100 * (+v || 0) / max)}%"></i></span>
       <span class="ch-v">${esc(num(v))}${note ? `<small>${esc(note)}</small>` : ""}</span></div>`).join("")}</div>
-      <div class="ch-unit">${esc(c.unit)} · ${c.low === false ? "higher is better" : c.low === null ? "" : "lower is better"}</div>`;
+      <div class="ch-unit">${esc(c.unit)}${c.low === false ? " · higher is better" : c.low === null ? "" : " · lower is better"}</div>`;
   };
   const mark = (m) => m === 1 ? `<b class="y">✓</b>` : m === 0 ? `<b class="n">✗</b>` : `<b class="h">~</b>`;
   const matrix = (c) => `<table class="ch-mx"><tr><th></th>${c.crit.map((k) => `<th>${esc(k)}</th>`).join("")}</tr>${c.o.map(([l, ms, pick]) =>
     `<tr class="${pick ? "pick" : ""}"><td>${esc(l)}</td>${ms.map((m) => `<td>${mark(m)}</td>`).join("")}</tr>`).join("")}</table>`;
+  // open or closed is the reader's choice, kept across steps (and visits, where storage works)
+  let open = true;
+  try { open = localStorage.getItem("nx-choice") !== "closed"; } catch (e) {}
+  const pickOf = (c) => (c.o.find((x) => x[2]) || [])[0];
+  const rival = (c) => (c.o.find((x) => !x[2]) || [])[0];
+  const ask = (c) => c.ask || (pickOf(c) && rival(c) ? `Why “${pickOf(c)}” and not “${rival(c)}”?` : `${c.q.charAt(0).toUpperCase()}${c.q.slice(1)}`);
   const render = (el, c) => {
     if (!el) return;
     if (!c) { el.innerHTML = ""; el.hidden = true; return; }
     el.hidden = false;
     const measured = !!c.unit;
-    el.innerHTML = `<div class="ch-head"><span class="ch-tag ${measured ? "m" : "d"}">${esc(c.tag || (measured ? "Measured on this week" : "Design call · scored on criteria"))}</span>
-      <span class="ch-q">How it was chosen: ${esc(c.q)}</span></div>
-      ${measured ? bars(c) : matrix(c)}${c.why ? `<p class="ch-why">${c.why}</p>` : ""}`;
+    el.innerHTML = `<details class="ch-box" ${open ? "open" : ""}><summary>
+        <span class="ch-tag ${measured ? "m" : "d"}">${esc(c.tag || (measured ? "Measured on this week" : "Design call · scored on criteria"))}</span>
+        <span class="ch-q ch-when-open">How it was chosen: ${esc(c.q)}</span>
+        <span class="ch-q ch-when-closed">${esc(ask(c))}</span>
+        <span class="ch-toggle"><span class="ch-when-open">Hide ↑</span><span class="ch-when-closed">See how it was chosen ↓</span></span></summary>
+      <div class="ch-body">${measured ? bars(c) : matrix(c)}${c.why ? `<p class="ch-why">${c.why}</p>` : ""}</div></details>`;
+    el.querySelector("details").addEventListener("toggle", (e) => {
+      open = e.target.open;
+      try { localStorage.setItem("nx-choice", open ? "open" : "closed"); } catch (err) {}
+    });
   };
   return { render };
 })();

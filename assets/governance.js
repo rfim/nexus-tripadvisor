@@ -170,20 +170,20 @@
   // ---------- how each step's decision was chosen (assets/choice.js): measured on this week, or scored on criteria ----------
   const B = await fetch("assets/data/benchmarks.json").then((r) => r.json()).catch(() => null);
   const ly = B && B.layout, vr = B && B.volume_rule;
-  const gate = { q: "what does a failing rule do?", crit: ["Bad numbers never published", "Evidence kept", "Other products keep flowing"],
+  const gate = { q: "what does a failing rule do?", ask: "Why hold the product instead of deleting the bad rows?", crit: ["Bad numbers never published", "Evidence kept", "Other products keep flowing"],
     o: [["Warn only", [0, 1, 1]], ["Delete the bad rows", [.5, 0, 1]], ["Hold this product · keep the rows", [1, 1, 1], 1]],
     why: "Consumers never see a number that failed a rule, and the rows stay for whoever investigates." };
-  const upcast = { q: "how does v2 ship?", crit: ["App ships on time", "Consumers unchanged", "One history"],
+  const upcast = { q: "how does v2 ship?", ask: "Why not just refuse v2 at the schema registry?", crit: ["App ships on time", "Consumers unchanged", "One history"],
     o: [["Refuse v2 at the registry", [0, 1, 1]], ["A new topic for v2", [1, 0, 0]], ["One reader upcasts both", [1, 1, 1], 1]],
     why: "The app team ships. Every consumer still reads one topic and one meaning: revenue in GBP." };
   const CH = {
     model: [
-      { q: "what do we keep from Kafka?", crit: ["Replay any day", "Trace a row to its record", "Cheap"],
+      { q: "what do we keep from Kafka?", ask: "Why keep raw tables when Kafka already has the data?", crit: ["Replay any day", "Trace a row to its record", "Cheap"],
         o: [["Only Gold", [0, 0, 1]], ["Kafka retention only", [.5, 0, 1]], ["A raw table per topic", [1, 1, .5], 1]],
         why: "Kafka retention runs out. Raw keeps every record, so any Gold row can be rebuilt and traced." },
       { q: "what goes in a raw table?", crit: ["Survives a schema change", "Traceable", "Easy to query"],
         o: [["The JSON as a string", [1, 1, 0]], ["Only today's fields", [0, 1, 1]], ["Every field of every version · typed · plus offsets", [1, 1, 1], 1]] },
-      { q: "what is a Gold table's grain?", crit: ["A late re-fire updates one row", "Answers the question directly", "Small"],
+      { q: "what is a Gold table's grain?", ask: "Why hourly by location and not one row per event?", crit: ["A late re-fire updates one row", "Answers the question directly", "Small"],
         o: [["One row per event", [0, 0, 0]], ["Location by day", [1, .5, 1]], ["Location by hour: the stream's window", [1, 1, 1], 1]],
         why: "The grain is the window, so the key is the window: a late re-fire becomes an update, never a second row." },
       { q: "where does a location's city come from?", crit: ["Same city in every product", "One place to fix it"],
@@ -196,10 +196,10 @@
       { q: "where do the rules live?", crit: ["One place to review", "Every engine agrees", "No drift"],
         o: [["In each job's code", [0, 0, 0]], ["A wiki page", [1, 0, 0]], ["One YAML contract every job reads", [1, 1, 1], 1]],
         why: "The stream job, the batch, the SQL and the SLA monitor read the same file, so they can't disagree." },
-      { q: "who writes the warehouse SQL?", crit: ["Both dialects agree", "No drift from the contract", "No extra tool"],
+      { q: "who writes the warehouse SQL?", ask: "Why not just use dbt?", crit: ["Both dialects agree", "No drift from the contract", "No extra tool"],
         o: [["Hand-written per warehouse", [0, 0, 1]], ["dbt per warehouse", [1, .5, 0]], ["Rendered from the contract", [1, 1, 1], 1]],
         why: "At Tripadvisor's size dbt would do this job. Here a small renderer was enough, and CI proves the output matches." },
-      ly ? { tag: "Modelled from this run's row counts", q: "how to lay out partner revenue in BigQuery?", unit: `bytes scanned for ${ly.query} · modelled at ${ly.row_bytes_assumed} bytes a row`,
+      ly ? { tag: "Modelled from this run's row counts", q: "how to lay out partner revenue in BigQuery?", ask: "Why does clustering by partner cut the bill 42×?", unit: `bytes scanned for ${ly.query} · modelled at ${ly.row_bytes_assumed} bytes a row`,
         o: [["No partitioning", ly.no_partitioning], ["Partition by day", ly.partition_by_day], ["Partition by day · cluster by partner", ly.partition_by_day_cluster_by_partner, 1]],
         why: `${Math.round(ly.no_partitioning / ly.partition_by_day_cluster_by_partner)}× less scanned. BigQuery bills bytes scanned, so the ratio is the bill. Cluster on what consumers filter by.` } : null,
       { q: "how does a re-fired window land in Snowflake?", crit: ["A re-fire is idempotent", "Same result as BigQuery"],
@@ -210,9 +210,9 @@
     pii: [
       { q: "where are personal fields named?", crit: ["One place", "Every warehouse follows"],
         o: [["By hand, per warehouse", [0, 0]], ["A column-naming rule", [.5, .5]], ["A pii: list in the contract", [1, 1], 1]] },
-      { q: "drop personal data at ingest?", crit: ["Platform can still join users", "Erasure possible", "Nobody sees it in the clear"],
+      { q: "drop personal data at ingest?", ask: "Why not drop personal data at the door?", crit: ["Platform can still join users", "Erasure possible", "Nobody sees it in the clear"],
         o: [["Drop it at ingest", [0, 1, 1]], ["Keep it in the clear", [1, 1, 0]], ["Keep it · masked without the role", [1, 1, 1], 1]] },
-      { q: "how to hide a column in BigQuery?", crit: ["One rule per column", "By role", "Queries unchanged"],
+      { q: "how to hide a column in BigQuery?", ask: "Why policy tags and not a restricted view?", crit: ["One rule per column", "By role", "Queries unchanged"],
         o: [["Authorized views", [0, 1, 0]], ["A separate restricted dataset", [0, 1, 0]], ["Policy tag + data masking", [1, 1, 1], 1]] },
       { q: "how to hide a column in Snowflake?", crit: ["One rule per column", "By role", "Queries unchanged"],
         o: [["Secure views", [0, 1, 0]], ["A masking policy on the column", [1, 1, 1], 1]] },
@@ -220,7 +220,7 @@
         o: [["An audit once a quarter", [0, .5]], ["A check per personal field in CI", [1, 1], 1]] },
     ],
     quality: [gate, gate, gate,
-      vr ? { q: "which volume rule holds the scraper and nothing else?", unit: "false holds in the week",
+      vr ? { q: "which volume rule holds the scraper and nothing else?", ask: "Why isn't 2σ enough to flag a scraper?", unit: "false holds in the week",
         o: Object.entries(vr).map(([k, v]) => [k.replace(" (chosen)", ""), v.false_holds, k.includes("chosen"), v.caught_scraper ? "caught the scraper" : "missed it"]),
         why: "A week of history makes σ small and Saturdays look odd. Requiring at least double left only the scraper." } : null,
       { q: "publish per product, or all or nothing?", crit: ["One bad product doesn't block others", "Each product is consistent"],
@@ -229,7 +229,7 @@
     erasure: [
       { q: "keep every version in raw?", crit: ["An audit of edits", "Erasure finds every copy"],
         o: [["Latest only", [0, 1]], ["Every version, with the reviewer's hash", [1, 1], 1]] },
-      { q: "which version of a review wins?", crit: ["Stale replay blocked", "Erasure sticks", "No extra state"],
+      { q: "which version of a review wins?", ask: "Why can't dedupe stop a stale version?", crit: ["Stale replay blocked", "Erasure sticks", "No extra state"],
         o: [["Last arrival wins", [0, 0, 1]], ["Dedupe by event_id", [0, 0, 0]], ["Highest version wins · tombstone is final", [1, 1, 0], 1]],
         why: "A replay re-sends version 3 with a new event_id. Only the version number blocks it." },
       { q: "how to delete in both warehouses?", crit: ["Same ids in both", "Reviewed SQL", "Repeatable"],
@@ -241,7 +241,7 @@
     schema: [upcast,
       { q: "when do we find a breaking change?", crit: ["Before users see it", "No bad data in raw"],
         o: [["In production", [0, 0]], ["In the nightly checks", [0, .5]], ["At the registry and in CI", [1, 1], 1]] },
-      { q: "how does raw take v2?", crit: ["Old rows untouched", "Both versions queryable"],
+      { q: "how does raw take v2?", ask: "Why add columns instead of a new table for v2?", crit: ["Old rows untouched", "Both versions queryable"],
         o: [["Rewrite the old rows", [0, 1]], ["A new table for v2", [1, 0]], ["Add columns next to the old ones", [1, 1], 1]] },
       { q: "where does the change stop?", crit: ["Gold grain unchanged", "Dashboards unchanged"],
         o: [["Gold carries both fields", [1, 0]], ["The reader upcasts to GBP", [1, 1], 1]] },

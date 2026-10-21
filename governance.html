@@ -34,6 +34,7 @@
 
     <div class="tabs" id="views" role="tablist" aria-label="Which part of the model"></div>
     <div class="stage" id="stage">
+      <div class="choice" id="choice" hidden aria-live="polite"></div>
       <div class="svgwrap"><svg viewBox="0 0 1200 470" role="img" aria-labelledby="g-title">
         <title id="g-title">The contract feeds the raw tables; Kafka topics land in raw tables; raw tables build Gold products with a location dimension; Gold passes quality gates, policy tags and erasure on its way to BigQuery and Snowflake.</title>
         <g id="g-wires"></g>
@@ -41,7 +42,6 @@
         <g id="packets"></g>
       </svg></div>
       <div class="caption" id="caption">Pick a part above, then press Play or step through.</div>
-      <div class="choice" id="choice" hidden aria-live="polite"></div>
       <div class="stage-ui">
         <ol class="steps-list" id="steps"></ol>
         <div class="wirelog" id="log" aria-live="polite"></div>

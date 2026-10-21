@@ -34,6 +34,7 @@
 
     <div class="tabs" id="views" role="tablist" aria-label="Which problem"></div>
     <div class="stage" id="stage" data-view="run">
+      <div class="choice" id="choice" hidden aria-live="polite"></div>
       <div class="svgwrap"><svg viewBox="0 0 1200 430" role="img" aria-labelledby="stage-title">
         <title id="stage-title">Kafka partitions feed a stream job that reads, de-duplicates and windows records; windows go to Snowflake and BigQuery, late records to a side output the nightly batch counts, and unreadable records to a dead-letter topic.</title>
         <path id="w-kr" class="wire" d="M200 200 L250 200"/>
@@ -75,7 +76,6 @@
         <g id="packets"></g>
       </svg></div>
       <div class="caption" id="caption">Pick a problem above, then press Play or step through.</div>
-      <div class="choice" id="choice" hidden aria-live="polite"></div>
       <div class="stage-ui">
         <ol class="steps-list" id="steps"></ol>
         <div class="wirelog" id="log" aria-live="polite"></div>

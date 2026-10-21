@@ -80,7 +80,7 @@ svg .grid{stroke:var(--line)}svg .ax{font:500 11px var(--font);fill:var(--muted)
 /* "How it was chosen" under each step (assets/choice.js) */
 .choice{margin:0;padding:14px 22px 16px;border-top:1px solid rgba(255,255,255,.07);background:rgba(4,18,14,.55)}
 .choice[hidden]{display:none}
-.ch-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-bottom:10px}
+
 .ch-tag{font:700 10.5px "JetBrains Mono",ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:6px}
 .ch-tag.m{background:rgba(52,224,161,.16);color:#34e0a1}.ch-tag.d{background:rgba(255,210,122,.14);color:#ffd27a}
 .ch-q{font:600 15px Inter,system-ui,sans-serif;color:#fff}
@@ -102,3 +102,13 @@ svg .grid{stroke:var(--line)}svg .ax{font:500 11px var(--font);fill:var(--muted)
 .ch-mx b.y{color:#34e0a1}.ch-mx b.n{color:#ff7a6b}.ch-mx b.h{color:#ffd27a}
 .ch-why{margin:10px 0 0;font:500 13.5px/1.5 Inter,system-ui,sans-serif;color:#cfe3db;max-width:860px}
 @media (max-width:640px){.choice{padding:12px 14px}.ch-row{grid-template-columns:1fr auto}.ch-track{grid-column:1/-1;grid-row:2}.ch-mx{display:block;overflow-x:auto}}
+.choice{border-top:0;border-bottom:1px solid rgba(255,255,255,.07)}
+.ch-box>summary{list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:10px;cursor:pointer}
+.ch-box>summary::-webkit-details-marker{display:none}
+.ch-box[open]>summary{margin-bottom:10px}
+.ch-toggle{margin-left:auto;font:600 12px Inter,system-ui,sans-serif;color:#9cc0b7;border:1px solid #34584b;border-radius:8px;padding:4px 10px;white-space:nowrap}
+.ch-box>summary:hover .ch-toggle{color:#fff;border-color:#34e0a1}
+.ch-box:not([open]) .ch-when-open,.ch-box[open] .ch-when-closed{display:none}
+.ch-box:not([open]) .ch-q{font-style:italic;color:#ffd27a}
+.choice details.ch-box{background:transparent;border:0;border-radius:0;padding:0;margin:0;box-shadow:none;color:inherit}
+.choice details.ch-box>summary{background:transparent;padding:0;color:inherit}
