@@ -220,6 +220,115 @@ def one_page():
 </div></body></html>'''
 
 
-for name, fn in (("deck.html", deck), ("one_page.html", one_page)):
+def companion():
+    v = (FL or {}).get("location_views_hourly", {})
+    led = S["page_views"]["ledger"]
+    return head("Nexus for Tripadvisor · Companion note", "companion.css") + f"""<div class="page">
+
+<div class="kicker">Companion note · prepared for Data Platform · Senior Data Engineer</div>
+<div class="top">
+  <div>
+    <h1>Different market, <b>same job.</b></h1>
+    <div class="tl">Why Lifepal's insurance marketplace maps onto Tripadvisor's travel marketplace. In Lifepal, the other side was the insurers; at Tripadvisor, it's hotels, restaurants, experiences and the booking partners behind every "check prices" click.</div>
+    <p>Both businesses sit in the middle. Lifepal helped people compare insurance and sent them on to the insurers that cover them; Tripadvisor helps travellers compare places and sends them on to the partners that sell the stay. In both, events arrive late or twice, partners describe the same thing in their own shapes, records change after the fact, people can ask to be forgotten, and partner revenue depends on every click being counted once. The data problems that follow are the ones NEXUS was built to solve.</p>
+  </div>
+  <div>
+    <div class="tiles"><span>Kafka</span><span>Flink</span><span>Spark</span><span>BigQuery</span><span>Snowflake</span></div>
+    <div class="built"><div><div class="k2">Built in</div><img src="lifepal.png" alt="Lifepal"></div><span class="arrow">→</span><div><div class="k2" style="text-align:right">Presented to</div><span class="codat"><img src="tripadvisor-owl.png" alt="" style="height:22px;display:inline;vertical-align:-3px;margin-right:4px">Tripadvisor</span></div></div>
+    <div class="k2" style="margin-top:5px;text-align:right;color:var(--violet)">Nexus · Lifepal best practices</div>
+  </div>
+</div>
+
+<div class="sec"><div class="sh"><b>One flow, two businesses</b><i>Tripadvisor side from public material</i></div>
+  <div class="spheres" style="grid-template-columns:repeat(5,1fr)">
+    <div class="sph"><div class="ball"><small>01</small><b>Visit</b></div><div class="lbl"><b>Lifepal</b> · a customer comes to compare cover</div><div class="lbl c"><b>Tripadvisor</b> · a traveller searches a city</div></div>
+    <div class="sph"><div class="ball"><small>02</small><b>Compare</b></div><div class="lbl"><b>Lifepal</b> · products, prices, insurer terms</div><div class="lbl c"><b>Tripadvisor</b> · places, reviews, rankings</div></div>
+    <div class="sph"><div class="ball"><small>03</small><b>Click</b></div><div class="lbl"><b>Lifepal</b> · a quote or application to an insurer</div><div class="lbl c"><b>Tripadvisor</b> · "check prices" to a booking partner</div></div>
+    <div class="sph"><div class="ball"><small>04</small><b>Change</b></div><div class="lbl"><b>Lifepal</b> · CDC and late insurer statuses</div><div class="lbl c"><b>Tripadvisor</b> · late app events, review edits, schema changes</div></div>
+    <div class="sph"><div class="ball"><small>05</small><b>Earn</b></div><div class="lbl"><b>Lifepal</b> · the insurer binds; commission</div><div class="lbl c"><b>Tripadvisor</b> · the partner pays for the click</div></div>
+  </div>
+</div>
+
+<div class="sec"><div class="sh"><b>The closest parallel: partner clicks</b><i>a marketplace sends people to partners</i></div>
+  <div class="b2b">
+    <div>
+      <div class="who" style="color:var(--violet)">Lifepal · person → insurer</div>
+      <div class="lane">
+        <div><b>Visitor</b>Comes to compare insurance, on web or app.</div>
+        <div><b>Compares</b>Products and prices from many insurers.</div>
+        <div><b>Applies</b>A quote or application goes to one insurer.</div>
+        <div><b>Decision</b>Quote, bind, renew. Statuses arrive late, for days.</div>
+      </div>
+      <div class="who" style="color:var(--pink);margin-top:8px">Tripadvisor · traveller → partner</div>
+      <div class="lane ta">
+        <div><b>Traveller</b>Searches, reads, comes back on another device.</div>
+        <div><b>Reads</b>Reviews and rankings; every view is an event.</div>
+        <div><b>Clicks</b>"Check prices" sends them to a partner.</div>
+        <div><b>Revenue</b>The partner pays; app events can land hours late.</div>
+      </div>
+    </div>
+    <div>
+      <table class="map b2bt">
+        <tr><th>The same problem</th><th>How I handled it at Lifepal</th><th>Where it shows here</th></tr>
+        <tr><td><b>Events twice, or late</b></td><td>Kafka + Debezium CDC, merged so the newest wins and every reload is safe to rerun.</td><td>Dedupe on id, watermarks, a side output: {led['duplicates']} retries dropped, {led['late_dropped']} late events explained by the batch.</td></tr>
+        <tr><td><b>Partners in their own shapes</b></td><td>A config-driven framework: a new source was configuration, not code.</td><td>One contract reads schema v1 and v2; an unknown currency is a dead letter, never a guess.</td></tr>
+        <tr><td><b>Pipelines people depend on</b></td><td>SLAs, 500+ checks, a root-cause review after every incident; escalations −60%.</td><td>Freshness from completeness; the incident found in {I['minutes']['to_detect']} minutes, {I['minutes']['would_detect_with_restart_alert']} with the new alert.</td></tr>
+        <tr><td><b>One number for every team</b></td><td>Kimball models and a dbt semantic layer; ad-hoc requests −60%.</td><td>Gold products with a stated grain and key, rendered to BigQuery and Snowflake from one file.</td></tr>
+      </table>
+      <p class="src" style="margin-top:5px">Described at the level I can share publicly; I'm happy to walk through the details in conversation.</p>
+    </div>
+  </div>
+</div>
+
+<div class="sec"><div class="sh"><b>What Tripadvisor runs</b><i>as the Data Platform roles list it · data here is synthetic</i></div>
+  <div class="ints">
+    <div class="card"><div class="kicker">Streaming</div><p><span class="chip">Kafka</span><span class="chip">Flink</span><span class="chip">event time</span><span class="chip">SLAs</span></p><p style="margin-top:4px">Here: three Kafka topics, six planted problems, and a Flink 1.20 job that reaches {n(v.get('windows', 0))} windows identical to the Python reference.</p></div>
+    <div class="card"><div class="kicker">Batch and warehouses</div><p><span class="chip">Spark</span><span class="chip">BigQuery</span><span class="chip">Snowflake</span><span class="chip">Hive</span></p><p style="margin-top:4px">Here: a PySpark batch that checks the stream; SQL for BigQuery and Snowflake from one contract.</p></div>
+    <div class="card"><div class="kicker">Languages</div><p><span class="chip">Java</span><span class="chip">Python</span><span class="chip">SQL</span></p><p style="margin-top:4px">Here: the Flink job and a plain-Java twin in Java 17, the reference in Python.</p></div>
+    <div class="card"><div class="kicker" style="color:var(--violet2)">Scale</div><div class="big" style="color:#fff;font-size:20pt">Petabytes</div><p>of data behind GenAI, analytics and ML, as the role describes the platform.</p></div>
+  </div>
+</div>
+
+<div class="sec"><div class="sh"><b>Concept map</b><i>same grain, different names</i></div>
+  <table class="map">
+    <tr><th>Lifepal · insurance marketplace</th><th>Tripadvisor · travel marketplace (my reading)</th><th>Grain</th><th>Shared data problem</th></tr>
+    <tr><td><b>Insurer partner</b><span class="chip">consumer insurers</span><span class="chip">partner files</span></td><td><b>Booking partner</b><span class="chip dark">check-prices clicks</span><span class="chip dark">CPC</span></td><td class="g">one row per click</td><td>Count every click once; revenue per partner reconciles</td></tr>
+    <tr><td><b>Product page views</b><span class="chip">web and app</span></td><td><b>Location page views</b><span class="chip dark">hotel</span><span class="chip dark">restaurant</span><span class="chip dark">attraction</span></td><td class="g">location × hour</td><td>Late and duplicated app events</td></tr>
+    <tr><td><b>Application status</b><span class="chip">late insurer updates</span></td><td><b>Review versions</b><span class="chip dark">submitted</span><span class="chip dark">moderated</span><span class="chip dark">edited</span></td><td class="g">one row per review, latest version</td><td>Newest version wins; a tombstone can't be undone</td></tr>
+    <tr><td><b>Insurer format changes</b><span class="chip">new fields mid-year</span></td><td><b>App release changes a field</b><span class="chip dark">price {{amount, currency}}</span></td><td class="g">raw record × schema version</td><td>Read both versions as one, before anyone reads it</td></tr>
+    <tr><td><b>PII masking, role-based access</b><span class="chip">customer data</span></td><td><b>Reviewer and user identifiers</b><span class="chip dark">policy tags</span><span class="chip dark">erasure</span></td><td class="g">column × role</td><td>Personal data never in the clear; erasure everywhere</td></tr>
+    <tr><td><b>Insurer and finance reporting</b><span class="chip">one bind rate</span></td><td><b>Partner and internal reporting</b><span class="chip dark">revenue</span><span class="chip dark">views</span></td><td class="g">one product per audience</td><td>Many audiences, one number</td></tr>
+    <tr><td><b>RAG copilot, MCP agents</b><span class="chip">1,000+ outcomes a day</span></td><td><b>GenAI on the platform</b><span class="chip dark">certified products</span></td><td class="g">one certified metric</td><td>Agents read the same truth as people, with permissions</td></tr>
+  </table>
+  <p class="src">Lifepal examples are from my own work. Tripadvisor examples come from the role, public information, and the synthetic data in this project.</p>
+</div>
+
+<div class="sec"><div class="sh"><b>What carries over directly</b><i>proven at Lifepal</i></div>
+  <div class="carry">
+    <div class="card"><h3>Exactly once, from at-least-once</h3><p><b>Lifepal:</b> CDC merged so the newest wins and reloads are safe to rerun.</p><div class="here"><b>Here:</b> a lost TaskManager restored from a checkpoint; the sink {'identical' if D['replay']['identical'] else 'different'}.</div></div>
+    <div class="card"><h3>Reliability as a feature</h3><p><b>Lifepal:</b> SLAs, runbooks, RCA after every incident; escalations −60%.</p><div class="here"><b>Here:</b> a postmortem written by the run, and a restart alert that pages in {I['minutes']['would_detect_with_restart_alert']} minutes.</div></div>
+    <div class="card"><h3>Spark, fast and cheap</h3><p><b>Lifepal:</b> nightly batch 6 h → 90 min; $11k a month against $19k.</p><div class="here"><b>Here:</b> a PySpark batch, identical to the reference, that checks the stream.</div></div>
+    <div class="card"><h3>One definition per metric</h3><p><b>Lifepal:</b> a dbt semantic layer for five teams; ad-hoc requests −60%.</p><div class="here"><b>Here:</b> one contract, rendered to BigQuery and Snowflake, checked in CI.</div></div>
+    <div class="card"><h3>Tests before trust</h3><p><b>Lifepal:</b> 500+ checks in production.</p><div class="here"><b>Here:</b> {json.loads((ROOT / 'assets/data/tests.json').read_text())['passed']} tests, Flink and Java parity included; {passed}/{len(checks)} warehouse checks pass.</div></div>
+  </div>
+</div>
+
+<div class="sec"><div class="sh"><b>What is different, and how I would adapt</b><i></i></div>
+  <table>
+    <tr><th>Difference</th><th>Lifepal</th><th>Tripadvisor</th><th>How I would adapt</th></tr>
+    <tr><td class="k">Stream engine</td><td>Kafka + Debezium with Spark</td><td>Kafka with Flink</td><td>The semantics are already written on Flink 1.20 here; learn the team's operators, state backend and deployment</td></tr>
+    <tr><td class="k">Language</td><td>Python in production</td><td>Java and Python in production</td><td>Start where a Java twin tested against a reference is enough; pair early on existing services</td></tr>
+    <tr><td class="k">Warehouse</td><td>Databricks and Delta with dbt; Snowflake at Deloitte</td><td>Snowflake, BigQuery and Hive</td><td>One contract for all of them; learn BigQuery's cost model (bytes scanned, slots) first</td></tr>
+    <tr><td class="k">Scale</td><td>A high-traffic national marketplace</td><td>Petabyte scale, every data user in the company</td><td>Same contracts and tests; partitioning, clustering and incremental builds from day one</td></tr>
+    <tr><td class="k">Who reads it</td><td>Internal teams and insurer partners</td><td>Analytics, ML, GenAI and every product team</td><td>Products with an owner, a grain, a published freshness and an SLA; breaking changes need approval</td></tr>
+  </table>
+</div>
+
+<div class="sec plain"><b>From NEXUS, built in Lifepal.</b> The practices on this page are NEXUS best practices from my production work at Lifepal. <b>Stated plainly.</b> Lifepal outcomes come from my own record of the work. The Tripadvisor side is built from outside, from the role and public information; every page view, click, review, partner and location in the demo is synthetic. No Tripadvisor systems or data were used. My production streaming was Kafka with Spark, not Flink; BigQuery I haven't run in production.<br><b>Open questions for week one:</b> which pipelines page most and why, how freshness SLAs are measured today, how Snowflake, BigQuery and Hive split across teams, and how streaming splits between Flink and Spark.</div>
+<div class="sec footline"><span>R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · firman.insan.m@gmail.com</span><span>Companion to <b>Nexus for Tripadvisor</b> · 21 October 2026</span></div>
+</div></body></html>"""
+
+
+for name, fn in (("deck.html", deck), ("one_page.html", one_page), ("companion.html", companion)):
     (HERE / name).write_text(fn())
-print("wrote deck.html, one_page.html")
+print("wrote deck.html, one_page.html, companion.html")

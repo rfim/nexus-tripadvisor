@@ -1,11 +1,12 @@
-// Render the two downloads to PDF with Chromium (Playwright): node scripts/pdfs.js
-// The deck is A4 landscape, one slide per page; the one-pager is one tall page.
+// Render the three downloads to PDF with Chromium (Playwright): node scripts/pdfs.js
+// The deck is A4 landscape, one slide per page; the one-pager and companion note are one tall page each.
 const path = require("path");
 const { chromium } = require(process.env.PLAYWRIGHT || "playwright");
 const src = path.join(__dirname, "..", "docs", "pdf-src"), out = path.join(__dirname, "..", "assets");
 (async () => {
   const b = await chromium.launch();
-  for (const [html, pdf, tall] of [["deck.html", "Nexus_Tripadvisor_VIM.pdf", false], ["one_page.html", "VIM_Tripadvisor_one_page.pdf", true]]) {
+  for (const [html, pdf, tall] of [["deck.html", "Nexus_Tripadvisor_VIM.pdf", false], ["one_page.html", "VIM_Tripadvisor_one_page.pdf", true],
+                                   ["companion.html", "VIM_Tripadvisor_companion_note.pdf", true]]) {
     const p = await b.newPage();
     await p.goto("file://" + path.join(src, html), { waitUntil: "networkidle" });
     if (tall) {
