@@ -218,17 +218,17 @@
 
     <section id="governance" class="proof-section" aria-labelledby="gov-title">
       <div class="page-width">
-        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Modeling &amp; governance · BigQuery and Snowflake</p><h2 id="gov-title">Grain first. Rules travel with the data.</h2></div><p>Kafka topics land in raw tables that keep every field and where it came from. Gold products state their grain and their key, and the MERGE is built from the key. One file, <code>contracts/sources.yml</code>, names the personal fields, the quality rules and the SLAs; the SQL for BigQuery and Snowflake is generated from it, committed, and checked on every build. Stated plainly: written and checked here, not run on a cloud project.</p></div>
+        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Modeling &amp; governance · BigQuery · Snowflake</p><h2 id="gov-title">Grain first · rules travel with the data</h2></div><p>Kafka topics land in raw tables that keep every field and where it came from. Gold products state their grain and their key, and the MERGE is built from the key. One file, <code>contracts/sources.yml</code>, names the personal fields, the quality rules and the SLAs; the SQL for BigQuery and Snowflake is generated from it, committed, and checked on every build. Stated plainly: written and checked here, not run on a cloud project.</p></div>
         <div id="gov-lineage" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px;font:600 13px Inter,system-ui,sans-serif"></div>
         <div class="proof-layout">
           <div class="code-panel"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="gov-file">contracts/sources.yml</span><span class="language-tag" id="gov-lang">YAML</span></div>
             <div id="gov-tabs" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 0"></div>
             <pre id="gov-code" style="margin:0;padding:14px 16px;max-height:560px;overflow:auto;font:400 12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8efe9;white-space:pre"></pre></div>
           <aside class="proof-notes" aria-label="Modeling and governance evidence">
-            <div class="proof-note primary"><span class="note-num">01 / The model</span><h3 id="gov-n1">Three products, three grains.</h3><p id="gov-n1p"></p></div>
-            <div class="proof-note"><span class="note-num">02 / Personal data</span><h3>Named once.</h3><p id="gov-n2p"></p></div>
-            <div class="proof-note"><span class="note-num">03 / Quality gates</span><h3 id="gov-n3">Checked before it's published.</h3><p id="gov-n3p"></p></div>
-            <div class="proof-note"><span class="note-num">04 / Erasure</span><h3>Gone everywhere, with a date.</h3><p id="gov-n4p"></p></div>
+            <div class="proof-note primary"><span class="note-num">01 / The model</span><h3 id="gov-n1">Three products · three grains</h3><p id="gov-n1p"></p></div>
+            <div class="proof-note"><span class="note-num">02 / Personal data</span><h3>Named once</h3><p id="gov-n2p"></p></div>
+            <div class="proof-note"><span class="note-num">03 / Quality gates</span><h3 id="gov-n3">Checked before it's published</h3><p id="gov-n3p"></p></div>
+            <div class="proof-note"><span class="note-num">04 / Erasure</span><h3>Gone everywhere · with a date</h3><p id="gov-n4p"></p></div>
             <p style="margin-top:12px"><a class="text-link light-link" href="governance.html">Step through it: Modeling &amp; governance <span aria-hidden="true">↗</span></a></p>
           </aside>
         </div>
@@ -251,13 +251,13 @@
     const pill = (t, c) => `<span style="padding:6px 12px;border-radius:999px;border:1px solid ${c};color:${c}">${t}</span>`, ar = `<span style="color:#6f8f87">→</span>`;
     $("gov-lineage").innerHTML = [pill("Kafka · 3 topics", "#c3caff"), ar, pill("Raw · " + M.raw.length + " tables", "#9cc0b7"), ar,
       pill("Gold · " + M.gold.length + " products + dim_location", "#34e0a1"), ar, pill("Quality · policy tags · erasure", "#ffd27a"), ar, pill("BigQuery + Snowflake", "#a9d0ff")].join("");
-    $("gov-n1p").textContent = M.gold.map((g) => `${g.table}: ${g.grain} (key ${g.key.join(", ")})`).join(". ") + ".";
+    $("gov-n1p").innerHTML = M.gold.map((g) => `<b>${g.table}</b> · ${g.grain} · key ${g.key.join(" + ")}`).join("<br>");
     const pii = M.raw.flatMap((r) => r.columns.filter((c) => c.pii).map((c) => `${r.table}.${c.name}`));
-    $("gov-n2p").textContent = `${pii.join(", ")}: a policy tag in BigQuery and a masking policy in Snowflake, from one line of the contract, with a check per field.`;
+    $("gov-n2p").innerHTML = pii.map((x) => `<code>${x}</code>`).join("<br>") + `<br>a policy tag in BigQuery · a masking policy in Snowflake · a check per field`;
     const pass = C.filter((c) => c.status === "pass").length;
-    $("gov-n3").textContent = `${pass}/${C.length} checks pass.`;
-    $("gov-n3p").textContent = `Rules per product from quality.yml, masking, and the erasure, run on every build; a volume gate held the scraper hour (${d.volume.holds[0].views} views) before it reached Gold.`;
-    $("gov-n4p").textContent = `A review's tombstone deletes it from raw and Gold in both warehouses: ${W.erased_rows_removed} rows removed, 0 left. The SQL states how long time travel keeps deleted rows, so the erasure has a completion date.`;
+    $("gov-n3").textContent = `${pass}/${C.length} checks pass`;
+    $("gov-n3p").textContent = `Rules per product from quality.yml · masking · erasure · run on every build. A volume gate held the scraper hour (${d.volume.holds[0].views} views) before Gold.`;
+    $("gov-n4p").textContent = `A review's tombstone deletes it from raw and Gold in both warehouses · ${W.erased_rows_removed} rows removed · 0 left. The SQL states how long time travel keeps deleted rows so the erasure has a completion date.`;
   } catch (e) {}
 })();
 </script>
