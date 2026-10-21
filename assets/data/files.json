@@ -63,7 +63,7 @@
   "path": "src/nexus/pipeline.py",
   "folder": "src/nexus",
   "runs": "browser",
-  "lines": 282
+  "lines": 301
  },
  {
   "path": "src/nexus/sla.py",
@@ -357,7 +357,7 @@
   "path": "scripts/build.sh",
   "folder": "scripts",
   "runs": "view",
-  "lines": 10
+  "lines": 23
  },
  {
   "path": "scripts/manifest.py",

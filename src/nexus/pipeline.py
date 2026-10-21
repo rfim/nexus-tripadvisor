@@ -278,5 +278,24 @@ def _window_examples(job, b) -> list:
 
 if __name__ == "__main__":
     s = run()
-    print(json.dumps({k: s[k] for k in ("replay", "batch")}, indent=1))
-    print("tasks:", [(t["key"], t["duration_s"]) for t in s["run"]["tasks"]], "total", s["run"]["seconds"], "s")
+    for t in s["run"]["tasks"]:
+        print(f"[{t['start_s']:6.2f}s] {t['key']:<26} {t['duration_s']:6.2f}s  {t['label']}")
+    for name, st in s["streams"].items():
+        print(f"[ledger] {name:<15} " + " ".join(f"{k}={v}" for k, v in st["ledger"].items()))
+    for name, r in s["reconcile"].items():
+        print(f"[reconcile] {name:<15} windows={r['windows']} equal={r['equal']} explained={r['explained_by_side_output']} "
+              f"unexplained={r['unexplained']}")
+    if s.get("flink"):
+        v, p = s["flink"]["location_views_hourly"], s["flink"]["partner_revenue_15m"]
+        print(f"[flink {s['flink']['flink']}] location_views_hourly windows={v['windows']} firings={v['firings']} "
+              f"identical_to_python={v['identical_to_python']} · partner_revenue_15m dead_letters={p['dead_letters']} "
+              f"identical_to_batch={p['identical_to_batch']}")
+    if s.get("java"):
+        print(f"[java] WindowJob windows={s['java']['windows']} identical={s['java']['identical']} {s['java']['millis']}ms")
+    if s.get("spark"):
+        print(f"[spark {s['spark']['version']}] " + " ".join(f"{t}: identical={s['spark'][t]['identical']}"
+                                                          for t in ("page_views", "partner_clicks")))
+    print(f"[sla] " + " · ".join(f"{r['product']} on_time={r['on_time']:.2%} breaches={len(r['breaches'])}" for r in s["sla"]))
+    print(f"[incident] {s['incident']['product']} started={s['incident']['started'][11:16]} detected={s['incident']['detected'][11:16]} "
+          f"restarts={s['incident']['restarts']} recovered={s['incident']['recovered'][11:16]}")
+    print(f"done in {s['run']['seconds']}s → assets/data/site.json")

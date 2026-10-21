@@ -47,21 +47,30 @@
         <g class="node" id="n-kafka" transform="translate(30,120)"><rect width="170" height="160" rx="14"/>
           <text x="85" y="34" text-anchor="middle">Kafka</text><text class="sm" x="85" y="54" text-anchor="middle" id="k-topic">topic</text>
           <g id="k-parts"></g></g>
-        <g class="node off" id="n-read" transform="translate(250,155)"><rect width="150" height="90" rx="14"/>
-          <text x="75" y="38" text-anchor="middle">Read</text><text class="sm" x="75" y="58" text-anchor="middle">upcast v1 · v2</text></g>
-        <g class="node off" id="n-dedupe" transform="translate(450,155)"><rect width="150" height="90" rx="14"/>
-          <text x="75" y="38" text-anchor="middle">Dedupe</text><text class="sm" x="75" y="58" text-anchor="middle">id, 24 h state</text></g>
-        <g class="node off" id="n-window" transform="translate(650,140)"><rect width="170" height="120" rx="16"/>
-          <text x="85" y="36" text-anchor="middle">Window</text><text class="sm" x="85" y="56" text-anchor="middle">event time</text>
-          <text class="xs" x="85" y="82" text-anchor="middle" id="wm-label">watermark –</text></g>
+        <g id="flink-frame"><rect x="232" y="104" width="606" height="190" rx="20" class="flink-frame"/>
+          <text x="250" y="126" class="flink-label">APACHE FLINK 1.20 · DataStream job · TaskManager</text>
+          <text x="820" y="126" text-anchor="end" class="flink-label dim" id="flink-job">nexus location_views_hourly</text></g>
+        <path id="w-ck" class="wire" d="M535 104 L535 72"/>
+        <g class="node off" id="n-ckpt" transform="translate(430,14)"><rect width="210" height="58" rx="12"/>
+          <text x="105" y="25" text-anchor="middle" style="font-size:13.5px">Checkpoints</text><text class="sm" x="105" y="44" text-anchor="middle">offsets + state · every 10 min</text></g>
+        <g class="node off" id="n-read" transform="translate(250,150)"><rect width="150" height="100" rx="14"/>
+          <text x="75" y="34" text-anchor="middle">Read</text><text class="sm" x="75" y="54" text-anchor="middle">ProcessFunction</text>
+          <text class="sm" x="75" y="72" text-anchor="middle">upcast v1 · v2 · DLQ</text></g>
+        <g class="node off" id="n-dedupe" transform="translate(450,150)"><rect width="150" height="100" rx="14"/>
+          <text x="75" y="34" text-anchor="middle">Dedupe</text><text class="sm" x="75" y="54" text-anchor="middle">keyBy(id)</text>
+          <text class="sm" x="75" y="72" text-anchor="middle">ValueState · TTL 24 h</text></g>
+        <g class="node off" id="n-window" transform="translate(650,140)"><rect width="170" height="140" rx="16"/>
+          <text x="85" y="32" text-anchor="middle">Window</text><text class="sm" x="85" y="52" text-anchor="middle">TumblingEventTime</text>
+          <text class="sm" x="85" y="69" text-anchor="middle">allowedLateness</text>
+          <text class="xs" x="85" y="96" text-anchor="middle" id="wm-label">watermark –</text></g>
         <g class="node off" id="n-sink" transform="translate(920,50)"><rect width="160" height="90" rx="14"/>
-          <text x="80" y="36" text-anchor="middle">Snowflake</text><text x="80" y="58" text-anchor="middle">BigQuery</text><text class="sm" x="80" y="76" text-anchor="middle">upsert by window</text></g>
+          <text x="80" y="36" text-anchor="middle">BigQuery</text><text x="80" y="58" text-anchor="middle">Snowflake</text><text class="sm" x="80" y="76" text-anchor="middle">KafkaSink · upsert</text></g>
         <g class="node off" id="n-side" transform="translate(920,260)"><rect width="160" height="70" rx="14"/>
-          <text x="80" y="32" text-anchor="middle">Side output</text><text class="sm" x="80" y="52" text-anchor="middle">too late for the stream</text></g>
+          <text x="80" y="32" text-anchor="middle">Side output</text><text class="sm" x="80" y="52" text-anchor="middle">sideOutputLateData</text></g>
         <g class="node off" id="n-batch" transform="translate(920,360)"><rect width="160" height="60" rx="14"/>
           <text x="80" y="27" text-anchor="middle">Nightly batch</text><text class="sm" x="80" y="45" text-anchor="middle">Spark · checks the stream</text></g>
         <g class="node off" id="n-dlq" transform="translate(450,340)"><rect width="170" height="70" rx="14"/>
-          <text x="85" y="32" text-anchor="middle">Dead letters</text><text class="sm" x="85" y="52" text-anchor="middle">kept, never guessed</text></g>
+          <text x="85" y="32" text-anchor="middle">Dead letters</text><text class="sm" x="85" y="52" text-anchor="middle">OutputTag · dlq topic</text></g>
         <g id="packets"></g>
       </svg></div>
       <div class="caption" id="caption">Pick a problem above, then press Play or step through.</div>
@@ -69,6 +78,10 @@
         <ol class="steps-list" id="steps"></ol>
         <div class="wirelog" id="log" aria-live="polite"></div>
       </div>
+      <div class="term-wrap"><div class="term-bar"><span class="window-dots"><i></i><i></i><i></i></span><div id="term-tabs">
+          <button data-p="term" class="on">Terminal</button><button data-p="py">Python · the code that decided</button></div>
+          <span class="term-note">$ lines run on this repo · "# on a cluster" blocks use this run's records</span></div>
+        <pre class="term" id="term-out"></pre></div>
       <div class="controls"><button id="prev">← Back</button><button id="play" class="primary">▶ Play</button><button id="next">Next →</button>
         <span class="grow"></span><label>Speed <select id="speed"><option value="1600">calm</option><option value="900" selected>normal</option><option value="450">fast</option></select></label></div>
     </div>
@@ -77,6 +90,12 @@
       <div class="card"><div class="kicker" style="color:var(--violet2)">Lateness</div><h3 style="color:#fff">Re-fire within the hour, side output after</h3><p>A window keeps its state an hour past the watermark. A record inside that hour updates the window and fires it again; the sink upserts. After it, the batch is the place.</p></div>
       <div class="card"><div class="kicker" style="color:var(--violet2)">Exactly once, from outside</div><h3 style="color:#fff">Checkpointed state, keyed sinks</h3><p>Offsets, windows, dedupe state and the ledger are restored together. The sink and side outputs are keyed, so what a restore re-sends changes nothing.</p></div>
     </div>
+    <div class="index" style="margin-top:3rem"><span>The server, as it ran</span><span>the build's own console, kept by scripts/build.sh</span></div>
+    <div class="head" style="margin-top:.6rem"><h2 style="font-size:clamp(1.6rem,3vw,2.4rem)">What the machine <em>printed.</em></h2>
+      <p>The last build, word for word: the Flink job compiled with Maven, the week generated, three stream jobs, the batch, Flink on a MiniCluster, the Java twin, PySpark, the SLA monitor and the incident. Then the test suite.</p></div>
+    <div class="grid g2"><div class="term-wrap"><div class="term-bar"><span class="window-dots"><i></i><i></i><i></i></span><b>vim@nexus: ~/nexus-tripadvisor</b></div><pre class="term tall" id="server-log"></pre></div>
+      <div class="term-wrap"><div class="term-bar"><span class="window-dots"><i></i><i></i><i></i></span><b>pytest</b></div><pre class="term tall" id="server-tests"></pre></div></div>
+
     <div class="index" style="margin-top:3rem"><span>The same job on Apache Flink 1.20</span><span>DataStream API · Java 17 · run in CI on a MiniCluster</span></div>
     <div class="head" style="margin-top:.6rem"><h2 style="font-size:clamp(1.6rem,3vw,2.4rem)">Every step above, <em>in Flink.</em></h2>
       <p>The caption under each step shows the Flink call that makes the same decision. Here is the whole job: CI replays the week through it on a local MiniCluster and checks it window for window against the Python job.</p></div>

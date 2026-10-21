@@ -112,8 +112,131 @@
   };
   Object.entries(FL).forEach(([k, xs]) => SCEN[k].steps.forEach((st, i) => { st.flink = xs[Math.min(i, xs.length - 1)]; }));
 
+
+  // ---------- the checkpoint node lights where state is saved or restored ----------
+  const ck = (st) => { st.nodes = [...st.nodes, "ckpt"]; st.wires = [...st.wires, "w-ck"]; };
+  ck(SCEN.crash.steps[1]); ck(SCEN.poison.steps[1]); ck(SCEN.poison.steps[3]);
+  SCEN.crash.steps[0].hot = [...SCEN.crash.steps[0].hot];
+
+  // ---------- the terminal: what an operator would type, with output from this run ----------
+  // "$ jq ..." lines run on this repository's own files; "# on a cluster" blocks are the commands you'd type on a real
+  // one, with output built from the run's records and decisions (no cluster sits behind a portfolio).
+  const J = (o) => JSON.stringify(o);
+  const CLUSTER = "# on a cluster · the output below is this run's own records and decisions";
+  const kcat = (topic, recs) => [CLUSTER,
+    `$ kafka-console-consumer.sh --bootstrap-server $KAFKA --topic ${topic} --partition ${recs[0].partition} --offset ${recs[0].offset} \\`,
+    `    --max-messages ${recs.length} --property print.offset=true --property print.partition=true`,
+    ...recs.map((r) => `Partition:${r.partition}\tOffset:${r.offset}\t${r.raw}`)];
+  const jlog = (job, x) => `${x.processed.slice(0, 19).replace("T", " ")} INFO  [${job}] p${x.partition}/${x.offset} ${x.id || ""} → ${x.decision}`;
+  const jq = (expr, val) => [`$ jq -c '${expr}' assets/data/site.json`, J(val)];
+  const fcmd = (job) => [`$ flink list -r`, `${"08.10.2026 09:00:12"} : 7f3c…a91e : nexus ${job} (RUNNING)`];
+  const S_ = d.streams, Rp = d.reconcile;
+  const TERM = {
+    retries: [
+      [...kcat("page_views", [dupFirst, dup])],
+      [CLUSTER, "$ flink logs nexus-location-views-hourly | grep -E 'duplicate|counted' | tail -2", jlog("location_views_hourly", dupFirst), jlog("location_views_hourly", dup)],
+      [...jq(".streams.page_views.ledger", S_.page_views.ledger), "", ...jq(".flink.location_views_hourly | {duplicates, identical_to_python}",
+        d.flink ? { duplicates: d.flink.location_views_hourly.duplicates, identical_to_python: d.flink.location_views_hourly.identical_to_python } : null)],
+    ],
+    late: [
+      [...kcat("page_views", [lateOk])],
+      [CLUSTER, `$ flink logs nexus-location-views-hourly | grep ${lateOk.id}`, jlog("location_views_hourly", lateOk) + ` (window ${lateOk.window.slice(11, 16)}, n=${lateOk.n})`],
+      [...kcat("page_views", [tooLate[0]])],
+      [CLUSTER, "$ kafka-console-consumer.sh --topic late.page_views --from-beginning --max-messages 3",
+        ...tooLate.slice(0, 3).map((x) => J({ id: x.id, event_time: x.event_time, window: x.window, closed: x.closes }))],
+      [...jq(".reconcile.page_views | {windows, equal, explained_by_side_output, unexplained, late_events}",
+        { windows: Rp.page_views.windows, equal: Rp.page_views.equal, explained_by_side_output: Rp.page_views.explained_by_side_output,
+          unexplained: Rp.page_views.unexplained, late_events: Rp.page_views.late_events })],
+    ],
+    schema: [
+      [...kcat("partner_clicks", [v1])],
+      [...kcat("partner_clicks", [v2s[0]]), "", "$ curl -s $SCHEMA_REGISTRY/compatibility/subjects/partner_clicks-value/versions/latest -d @v2.avsc",
+        J({ is_compatible: false, messages: ["field 'cpc_gbp' was removed", "field 'price' is new in v2"] })],
+      ["$ PYTHONPATH=src python examples/02_read_a_record.py | head -2",
+        `${v1.revenue_gbp} GBP from {"click_id":"${v1.id}",…cpc_gbp…}`, `${v2s[v2s.length - 1].revenue_gbp} GBP from {"click_id":"${v2s[v2s.length - 1].id}",…price…}`],
+    ],
+    poison: [
+      [...kcat("partner_clicks", [fails]), "# 57 bytes: the JSON stops in the middle of event_time"],
+      [CLUSTER, ...fcmd("partner_revenue_15m").map((l) => l.replace("RUNNING", "RESTARTING")),
+        `2026-10-09 14:05:12 INFO  ExecutionGraph - Job nexus partner_revenue_15m switched from state RUNNING to RESTARTING.`,
+        `java.io.IOException: ${fails.reason} at partition ${fails.partition} offset ${fails.offset}`,
+        `2026-10-09 14:06:12 INFO  CheckpointCoordinator - Restoring job from Checkpoint 851 @ 2026-10-09 14:00:00`,
+        `… ${I.restarts} restarts until 15:20`],
+      [CLUSTER, "$ kafka-consumer-groups.sh --bootstrap-server $KAFKA --describe --group nexus-partner-revenue",
+        "GROUP                  TOPIC           PARTITION  LAG",
+        ...Object.entries(I.lag_at_detection).map(([p_, n]) => `nexus-partner-revenue  partner_clicks  ${p_.padEnd(9)}  ${n}`),
+        "", ...jq(".incident | {detected, worst_age_minutes, restarts}", { detected: I.detected, worst_age_minutes: I.worst_age_minutes, restarts: I.restarts })],
+      ["$ grep 'dlq: bool = True' src/nexus/stream.py   # the fix: dead letters are the template's default", "    def __init__(self, topic_name: str, dlq: bool = True):",
+        CLUSTER, "$ flink run -s s3://nexus/checkpoints/partner-revenue/chk-851 -c nexus.flink.NexusKafka nexus-flink.jar partner_clicks",
+        "Job has been submitted with JobID 2b7e…c04d",
+        "$ kafka-console-consumer.sh --topic dlq.partner_clicks --from-beginning --max-messages 1",
+        J({ partition: dl.partition, offset: dl.offset, reason: dl.reason, raw: dl.raw })],
+    ],
+    bots: [
+      [...jq(".volume.holds[0]", hold)],
+      ["$ PYTHONPATH=src python -c 'from nexus import batch, stream; …bot_users(…, \"" + hold.hour.slice(0, 13) + "\", 120)'", J(inv.top.slice(0, 4))],
+      [...jq(".volume | {bots, bot_views_removed, holds_after_filter}", { bots: V.bots, bot_views_removed: V.bot_views_removed, holds_after_filter: V.holds_after_filter })],
+    ],
+    erasure: T.reviews.map((x, i, a) => i === a.length - 1
+      ? [...kcat("reviews", [x]), "", CLUSTER, `$ flink logs nexus-reviews-current | grep ${x.event_id}`, jlog("reviews_current", x)]
+      : x.op === "erased"
+        ? [...kcat("reviews", [x]), "", "$ cat warehouse/bigquery/erasure.sql | head -2", "DELETE FROM `nexus-data.raw.reviews` WHERE review_id IN UNNEST(@review_ids);",
+           "DELETE FROM `nexus-data.gold.reviews_current` WHERE review_id IN UNNEST(@review_ids);"]
+        : [...kcat("reviews", [x])]),
+    crash: [
+      [CLUSTER, "$ flink list -r", "08.10.2026 09:00:12 : 7f3c…a91e : nexus location_views_hourly (RESTARTING)",
+        "2026-10-08 09:17:00 WARN  TaskManager tm-2 lost (heartbeat timeout); tasks failed: window-1, dedupe-1",
+        "2026-10-08 09:17:00 INFO  ExecutionGraph - Job switched from state RUNNING to RESTARTING."],
+      [CLUSTER, `2026-10-08 09:18:00 INFO  CheckpointCoordinator - Restoring job from Checkpoint (${d.replay.restored_from.split(",")[0]})`,
+        "2026-10-08 09:18:00 INFO  KafkaSourceReader - Seeking 6 partitions to checkpointed offsets",
+        "2026-10-08 09:18:00 INFO  ExecutionGraph - Job switched from state RESTARTING to RUNNING."],
+      [...jq(".replay", d.replay)],
+    ],
+  };
+  Object.entries(TERM).forEach(([k, xs]) => SCEN[k].steps.forEach((st, i) => { st.term = xs[Math.min(i, xs.length - 1)]; }));
+
+  // ---------- the Python that made the decision: the lines of the repository's own files ----------
+  const PY = {
+    retries: [["src/nexus/stream.py", "def read_topic("], ["src/nexus/stream.py", "if rid in st.seen:"], ["src/nexus/stream.py", "def _tick("]],
+    late: [["src/nexus/stream.py", "def _watermark("], ["src/nexus/stream.py", "if w[\"fired\"]:"], ["src/nexus/stream.py", "def _watermark("],
+           ["src/nexus/stream.py", "if start + self.size + self.lateness <= st.wm:"], ["src/nexus/batch.py", "def reconcile("]],
+    schema: [["src/nexus/contracts.py", "def upcast("], ["src/nexus/contracts.py", "def compatible("], ["src/nexus/contracts.py", "if \"price\" in v:"]],
+    poison: [["src/nexus/contracts.py", "except json.JSONDecodeError"], ["src/nexus/stream.py", "except Poison as p:"],
+             ["src/nexus/sla.py", "def incident("], ["src/nexus/stream.py", "except BadRecord as e:"]],
+    bots: [["src/nexus/batch.py", "def volume_holds("], ["src/nexus/batch.py", "def bot_users("], ["src/nexus/batch.py", "exclude_users"]],
+    erasure: [["src/nexus/stream.py", "def _apply_version("]],
+    crash: [["src/nexus/stream.py", "except _Crash as c:"], ["src/nexus/stream.py", "def _restore("], ["src/nexus/stream.py", "def _emit("]],
+  };
+  Object.entries(PY).forEach(([k, xs]) => SCEN[k].steps.forEach((st, i) => { st.py = xs[Math.min(i, xs.length - 1)]; }));
+  const SRC = {};
+  const src = async (f) => (SRC[f] ??= fetch(f).then((r) => r.text()));
+  let pane = "term";
+  const paint = async (st) => {
+    const box = $("term-out");
+    document.querySelectorAll("#term-tabs button").forEach((b) => b.classList.toggle("on", b.dataset.p === pane));
+    if (!st) { box.innerHTML = `<span class="t-dim">Step through a problem: its commands and its code appear here.</span>`; return; }
+    if (pane === "term") {
+      box.innerHTML = st.term.map((l) => `<span class="${l.startsWith("$") ? "t-cmd" : l.startsWith("#") ? "t-dim" : /WARN|RESTARTING|Exception|IOException/.test(l) ? "t-err" : ""}">${NX.esc(l)}</span>`).join("\n");
+    } else {
+      const [file, mark] = st.py, lines = (await src(file)).split("\n"), at = Math.max(0, lines.findIndex((l) => l.includes(mark)));
+      const from = Math.max(0, at - 3), to = Math.min(lines.length, at + 16);
+      box.innerHTML = `<span class="t-dim"># ${file}, lines ${from + 1}–${to}</span>\n` + lines.slice(from, to).map((l, i) =>
+        `<span class="${from + i === at ? "t-hit" : ""}"><i>${String(from + i + 1).padStart(4)}</i>  ${NX.esc(l)}</span>`).join("\n");
+    }
+  };
+  $("term-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return; pane = b.dataset.p; paint(SCEN[key].steps[i]); });
+
+  // ---------- the server, as it ran: the build's own console ----------
+  fetch("assets/data/build_log.txt").then((r) => r.ok ? r.text() : "").then((txt) => {
+    if (!txt) return;
+    $("server-log").innerHTML = txt.trim().split("\n").map((l) => `<span class="${l.startsWith("$") ? "t-cmd" : /^\[(flink|java|spark)/.test(l) ? "t-hit" : /^\[(ledger|reconcile|sla|incident)/.test(l) ? "t-ok" : ""}">${NX.esc(l)}</span>`).join("\n");
+  });
+  NX.get("assets/data/tests.json").then((r) => { $("server-tests").innerHTML = `<span class="t-cmd">$ PYTHONPATH=src python -m pytest -q</span>\n` +
+    r.suites.map((x) => `${x.file.padEnd(28)} ${x.tests.map((t) => t.outcome === "passed" ? "." : t.outcome === "skipped" ? "s" : "F").join("")}`).join("\n") +
+    `\n<span class="t-ok">${r.passed} passed</span>${r.failed ? `, <span class="t-err">${r.failed} failed</span>` : ""} in ${r.seconds}s`; }).catch(() => {});
+
   // ---------- rendering ----------
-  const NODES = ["kafka", "read", "dedupe", "window", "sink", "side", "batch", "dlq"];
+  const NODES = ["kafka", "read", "dedupe", "window", "sink", "side", "batch", "dlq", "ckpt"];
   const WIRES = [...document.querySelectorAll(".wire")].map((w) => w.id);
   let key = "retries", i = -1, timer = null;
   $("views").innerHTML = Object.entries(SCEN).map(([k, s]) => `<button role="tab" data-k="${k}" aria-selected="${k === key}">${s.label}</button>`).join("");
@@ -148,11 +271,13 @@
     m.className = `msg ${(st.hot || []).length ? "err" : "res"}`;
     m.innerHTML = `<span class="dir">step ${i + 1} · ${sc.topic}</span>${NX.esc(JSON.stringify(st.log, null, 1).replace(/\n\s*/g, " "))}`;
     $("log").prepend(m);
+    paint(st);
     for (const w of st.wires) await packet(w, (st.hot || []).length);
   };
   const go = (k) => { const n = SCEN[key].steps.length; i = Math.max(-1, Math.min(n - 1, k)); render(); };
   const stop = () => { clearInterval(timer); timer = null; $("play").textContent = "▶ Play"; };
-  const select = (k) => { stop(); key = k; parts(SCEN[k].topic); $("log").innerHTML = "";
+  const select = (k) => { stop(); key = k; parts(SCEN[k].topic); $("log").innerHTML = ""; paint(null);
+    $("flink-job").textContent = "nexus " + { page_views: "location_views_hourly", partner_clicks: "partner_revenue_15m", reviews: "reviews_current" }[SCEN[k].topic];
     document.querySelectorAll("#views [role=tab]").forEach((b) => b.setAttribute("aria-selected", b.dataset.k === k)); go(-1); };
   $("views").addEventListener("click", (e) => { const b = e.target.closest("[data-k]"); if (b) { select(b.dataset.k); history.replaceState(null, "", "#" + b.dataset.k); } });
   $("next").addEventListener("click", () => { stop(); go(i + 1); });

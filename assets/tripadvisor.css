@@ -51,3 +51,20 @@ svg .grid{stroke:var(--line)}svg .ax{font:500 11px var(--font);fill:var(--muted)
 .stack-tile.bq{border-color:#5fa8ff;background:linear-gradient(150deg,rgba(95,168,255,.28),rgba(95,168,255,.05))}.stack-tile.bq small{color:#a9d0ff}
 .hero .also{font:600 .8rem var(--mono);color:#9cc0b7;letter-spacing:.06em;margin-top:.3rem}
 @media (max-width:760px){.stack3{grid-template-columns:1fr}}
+.flink-frame{fill:rgba(230,82,111,.07);stroke:#e6526f;stroke-width:1.6;stroke-dasharray:7 5}
+.flink-label{font:700 11px var(--mono);letter-spacing:.12em;fill:#ff9db2}.flink-label.dim{fill:#c98a99;letter-spacing:.04em;font-weight:500}
+/* terminal panes */
+.term-wrap{border-top:1px solid #1f4a42;background:#030c09;min-width:0}
+.section .grid .term-wrap{border:1px solid #1f4a42;border-radius:14px;overflow:hidden}
+.term-bar{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap;padding:.45rem .9rem;background:#0a1d17;border-bottom:1px solid #1f4a42;color:#9cc0b7;font:600 .76rem var(--mono)}
+.term-bar b{color:#d3ece5;font-weight:600}
+.window-dots{display:inline-flex;gap:5px}.window-dots i{width:9px;height:9px;border-radius:50%;background:#ff5f57}.window-dots i:nth-child(2){background:#febc2e}.window-dots i:nth-child(3){background:#28c840}
+#term-tabs{display:flex;gap:4px}
+#term-tabs button{border:1px solid #2e5f55;background:none;color:#9cc0b7;border-radius:7px;padding:.22rem .6rem;font:600 .74rem var(--mono)}
+#term-tabs button.on{background:#e6526f;border-color:#e6526f;color:#fff}
+.term-note{margin-left:auto;font-weight:400;font-size:.68rem;color:#6f8f87}
+.term{margin:0;border-radius:0;background:#030c09;color:#cfe3db;font:400 .76rem/1.55 var(--mono);padding:.8rem 1rem;max-height:300px;min-height:150px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}
+.term.tall{max-height:520px}
+.term i{font-style:normal;color:#4f6f67}
+.t-cmd{color:#34e0a1;font-weight:600}.t-dim{color:#6f8f87}.t-err{color:#ff8a7a}.t-ok{color:#9be7c4}
+.t-hit{color:#fff;background:rgba(230,82,111,.22);display:inline-block;width:100%}

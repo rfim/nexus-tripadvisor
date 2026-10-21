@@ -1,108 +1,108 @@
 {
  "run": {
-  "seconds": 31.7,
+  "seconds": 30.6,
   "tasks": [
    {
     "key": "generate",
     "label": "Simulate a week of Kafka topics",
     "start_s": 0.0,
-    "duration_s": 0.66
+    "duration_s": 0.73
    },
    {
     "key": "stream_page_views",
     "label": "Stream job: page_views (TaskManager lost at 09:17)",
-    "start_s": 0.89,
-    "duration_s": 2.21
+    "start_s": 0.95,
+    "duration_s": 2.34
    },
    {
     "key": "replay_check",
     "label": "Same job, no crash: is the sink identical?",
-    "start_s": 3.1,
-    "duration_s": 2.13
+    "start_s": 3.29,
+    "duration_s": 2.33
    },
    {
     "key": "stream_partner_clicks",
     "label": "Stream job: partner_clicks (poison pill, crash loop, fix)",
-    "start_s": 5.23,
+    "start_s": 5.63,
     "duration_s": 0.17
    },
    {
     "key": "stream_reviews",
     "label": "Stream job: reviews (latest version wins, tombstones)",
-    "start_s": 5.41,
-    "duration_s": 2.22
+    "start_s": 5.81,
+    "duration_s": 2.28
    },
    {
     "key": "batch_page_views",
     "label": "Nightly batch: page_views",
-    "start_s": 7.62,
-    "duration_s": 0.12
+    "start_s": 8.09,
+    "duration_s": 0.14
    },
    {
     "key": "batch_partner_clicks",
     "label": "Nightly batch: partner_clicks",
-    "start_s": 7.74,
+    "start_s": 8.23,
     "duration_s": 0.01
    },
    {
     "key": "reconcile_page_views",
     "label": "Reconcile stream with batch: page_views",
-    "start_s": 7.75,
+    "start_s": 8.24,
     "duration_s": 0.02
    },
    {
     "key": "reconcile_partner_clicks",
     "label": "Reconcile stream with batch: partner_clicks",
-    "start_s": 7.76,
+    "start_s": 8.26,
     "duration_s": 0.0
    },
    {
     "key": "volume_check",
     "label": "Volume check: hold anomalous hours",
-    "start_s": 7.77,
+    "start_s": 8.26,
     "duration_s": 0.0
    },
    {
     "key": "gold_page_views",
     "label": "Gold: page views without the bots",
-    "start_s": 7.84,
-    "duration_s": 0.12
+    "start_s": 8.37,
+    "duration_s": 0.17
    },
    {
     "key": "render_sql",
     "label": "Render Snowflake and BigQuery SQL from the contract",
-    "start_s": 8.0,
+    "start_s": 8.58,
     "duration_s": 0.01
    },
    {
     "key": "load_check",
     "label": "Load, check quality, apply erasure",
-    "start_s": 8.02,
+    "start_s": 8.6,
     "duration_s": 0.05
    },
    {
     "key": "incident",
     "label": "Write the incident record and postmortem",
-    "start_s": 8.09,
+    "start_s": 8.66,
     "duration_s": 0.0
    },
    {
     "key": "java_twin",
     "label": "Java twin of the page_views job: same windows?",
-    "start_s": 8.19,
-    "duration_s": 1.84
+    "start_s": 8.74,
+    "duration_s": 1.77
    },
    {
     "key": "flink",
     "label": "Apache Flink 1.20 on a MiniCluster: same windows?",
-    "start_s": 10.03,
-    "duration_s": 7.04
+    "start_s": 10.51,
+    "duration_s": 6.83
    },
    {
     "key": "spark_batch",
     "label": "PySpark batch: same windows as the plain-Python batch?",
-    "start_s": 17.08,
-    "duration_s": 14.6
+    "start_s": 17.34,
+    "duration_s": 13.26
    }
   ],
   "week": [
@@ -9668,6 +9668,7 @@
     "processed": "2026-10-06T11:30:17.138Z",
     "wm": "2026-10-06T11:15:35.054Z",
     "decision": "counted",
+    "raw": "{\"event_id\":\"pv0003647\",\"event_time\":\"2026-10-06T11:30:15.384Z\",\"session_id\":\"s001131\",\"user_hash\":\"u8020caa52e\",\"location_id\":\"d187036\",\"page_type\":\"hotel\",\"platform\":\"web\",\"app_version\":\"web\"}",
     "event_time": "2026-10-06T11:30:15.384Z",
     "window": "2026-10-06T11:00:00.000Z",
     "group": [
@@ -9685,6 +9686,7 @@
     "processed": "2026-10-06T11:30:25.989Z",
     "wm": "2026-10-06T11:15:35.054Z",
     "decision": "duplicate",
+    "raw": "{\"event_id\":\"pv0003647\",\"event_time\":\"2026-10-06T11:30:15.384Z\",\"session_id\":\"s001131\",\"user_hash\":\"u8020caa52e\",\"location_id\":\"d187036\",\"page_type\":\"hotel\",\"platform\":\"web\",\"app_version\":\"web\"}",
     "first_seen": "2026-10-06T11:30:17.138Z"
    },
    {
@@ -9695,6 +9697,7 @@
     "processed": "2026-10-06T12:38:28.567Z",
     "wm": "2026-10-06T12:25:01.979Z",
     "decision": "late: window updated and re-fired",
+    "raw": "{\"event_id\":\"pv0003697\",\"event_time\":\"2026-10-06T11:47:29.421Z\",\"session_id\":\"s001141\",\"user_hash\":\"u3423ef5835\",\"location_id\":\"d188590\",\"page_type\":\"search\",\"platform\":\"android\",\"app_version\":\"7.3\"}",
     "event_time": "2026-10-06T11:47:29.421Z",
     "window": "2026-10-06T11:00:00.000Z",
     "group": [
@@ -9712,6 +9715,7 @@
     "processed": "2026-10-07T18:00:08.880Z",
     "wm": "2026-10-07T17:45:32.255Z",
     "decision": "too late: side output",
+    "raw": "{\"event_id\":\"pv0022412\",\"event_time\":\"2026-10-07T13:37:11.877Z\",\"session_id\":\"s900032\",\"user_hash\":\"u7154ea2061\",\"location_id\":\"d186703\",\"page_type\":\"restaurant\",\"platform\":\"ios\",\"app_version\":\"7.4\"}",
     "event_time": "2026-10-07T13:37:11.877Z",
     "window": "2026-10-07T13:00:00.000Z",
     "closes": "2026-10-07T15:00:00.000Z"
@@ -9724,6 +9728,7 @@
     "processed": "2026-10-07T18:00:15.596Z",
     "wm": "2026-10-07T17:45:32.255Z",
     "decision": "too late: side output",
+    "raw": "{\"event_id\":\"pv0022298\",\"event_time\":\"2026-10-07T14:11:30.556Z\",\"session_id\":\"s900008\",\"user_hash\":\"ue2cf4162dd\",\"location_id\":\"d188479\",\"page_type\":\"restaurant\",\"platform\":\"ios\",\"app_version\":\"7.4\"}",
     "event_time": "2026-10-07T14:11:30.556Z",
     "window": "2026-10-07T14:00:00.000Z",
     "closes": "2026-10-07T16:00:00.000Z"
@@ -9736,6 +9741,7 @@
     "processed": "2026-10-07T18:00:17.308Z",
     "wm": "2026-10-07T17:45:32.255Z",
     "decision": "too late: side output",
+    "raw": "{\"event_id\":\"pv0022291\",\"event_time\":\"2026-10-07T11:32:32.778Z\",\"session_id\":\"s900006\",\"user_hash\":\"u666b6ccb21\",\"location_id\":\"d186518\",\"page_type\":\"hotel\",\"platform\":\"ios\",\"app_version\":\"7.4\"}",
     "event_time": "2026-10-07T11:32:32.778Z",
     "window": "2026-10-07T11:00:00.000Z",
     "closes": "2026-10-07T13:00:00.000Z"
@@ -9748,6 +9754,7 @@
     "processed": "2026-10-10T03:00:00.842Z",
     "wm": "2026-10-10T02:45:00.000Z",
     "decision": "counted",
+    "raw": "{\"event_id\":\"pv0022896\",\"event_time\":\"2026-10-10T03:00:00.032Z\",\"session_id\":\"sb0028\",\"user_hash\":\"u3c36580fb2\",\"location_id\":\"d187739\",\"page_type\":\"hotel\",\"platform\":\"web\",\"app_version\":\"web\"}",
     "event_time": "2026-10-10T03:00:00.032Z",
     "window": "2026-10-10T03:00:00.000Z",
     "group": [
@@ -9767,6 +9774,7 @@
     "processed": "2026-10-07T09:08:24.431Z",
     "wm": "2026-10-07T08:58:00.000Z",
     "decision": "counted",
+    "raw": "{\"click_id\":\"ck0006168\",\"event_time\":\"2026-10-07T09:08:21.896Z\",\"session_id\":\"s001850\",\"location_id\":\"d186148\",\"partner\":\"partner_a\",\"platform\":\"ios\",\"cpc_gbp\":0.32}",
     "event_time": "2026-10-07T09:08:21.896Z",
     "window": "2026-10-07T09:00:00.000Z",
     "group": [
@@ -9784,6 +9792,7 @@
     "processed": "2026-10-07T09:58:11.416Z",
     "wm": "2026-10-07T09:49:56.141Z",
     "decision": "counted",
+    "raw": "{\"click_id\":\"ck0006311\",\"event_time\":\"2026-10-07T09:58:05.554Z\",\"session_id\":\"s001898\",\"location_id\":\"d186074\",\"partner\":\"partner_f\",\"platform\":\"android\",\"price\":{\"amount\":1.5,\"currency\":\"EUR\"}}",
     "event_time": "2026-10-07T09:58:05.554Z",
     "window": "2026-10-07T09:45:00.000Z",
     "group": [
@@ -9801,6 +9810,7 @@
     "processed": "2026-10-07T10:36:07.921Z",
     "wm": "2026-10-07T10:29:01.397Z",
     "decision": "counted",
+    "raw": "{\"click_id\":\"ck0006469\",\"event_time\":\"2026-10-07T10:35:58.202Z\",\"session_id\":\"s001939\",\"location_id\":\"d188331\",\"partner\":\"partner_a\",\"platform\":\"ios\",\"price\":{\"amount\":1.32,\"currency\":\"GBP\"}}",
     "event_time": "2026-10-07T10:35:58.202Z",
     "window": "2026-10-07T10:30:00.000Z",
     "group": [
@@ -9818,8 +9828,8 @@
     "processed": "2026-10-09T14:05:12.000Z",
     "wm": "2026-10-09T13:57:06.936Z",
     "decision": "job fails",
-    "reason": "not JSON: Unterminated string starting at (char 37)",
-    "raw": "{\"click_id\":\"ck0023948\",\"event_time\":\"2026-10-09T14:05:10"
+    "raw": "{\"click_id\":\"ck0023948\",\"event_time\":\"2026-10-09T14:05:10",
+    "reason": "not JSON: Unterminated string starting at (char 37)"
    },
    {
     "id": null,
@@ -9829,8 +9839,8 @@
     "processed": "2026-10-09T15:20:00.000Z",
     "wm": "2026-10-09T13:57:06.936Z",
     "decision": "dead letter",
-    "reason": "not JSON: Unterminated string starting at (char 37)",
-    "raw": "{\"click_id\":\"ck0023948\",\"event_time\":\"2026-10-09T14:05:10"
+    "raw": "{\"click_id\":\"ck0023948\",\"event_time\":\"2026-10-09T14:05:10",
+    "reason": "not JSON: Unterminated string starting at (char 37)"
    }
   ],
   "reviews": [
@@ -9842,6 +9852,7 @@
     "processed": "2026-10-05T00:07:59.579Z",
     "wm": null,
     "decision": "applied",
+    "raw": "{\"event_id\":\"rv0023949\",\"event_time\":\"2026-10-05T00:07:58.749Z\",\"version\":1,\"review_id\":\"r00001\",\"location_id\":\"d189404\",\"reviewer_hash\":\"u108fd20128\",\"reviewer_email\":\"108fd201@example.com\",\"lang\":\"en\",\"op\":\"submitted\",\"rating\":1,\"status\":\"pending\",\"text_chars\":1331}",
     "version": 1,
     "op": "submitted",
     "rating": 1,
@@ -9855,6 +9866,7 @@
     "processed": "2026-10-05T01:02:44.066Z",
     "wm": "2026-10-05T00:57:00.000Z",
     "decision": "applied",
+    "raw": "{\"event_id\":\"rv0023950\",\"event_time\":\"2026-10-05T01:02:41.954Z\",\"version\":2,\"review_id\":\"r00001\",\"location_id\":\"d189404\",\"reviewer_hash\":\"u108fd20128\",\"reviewer_email\":\"108fd201@example.com\",\"lang\":\"en\",\"op\":\"moderated\",\"rating\":1,\"status\":\"published\",\"text_chars\":1331}",
     "version": 2,
     "op": "moderated",
     "rating": 1,
@@ -9868,6 +9880,7 @@
     "processed": "2026-10-10T10:00:00.900Z",
     "wm": "2026-10-10T09:55:00.000Z",
     "decision": "applied",
+    "raw": "{\"event_id\":\"rv0026312\",\"event_time\":\"2026-10-10T10:00:00.000Z\",\"version\":3,\"review_id\":\"r00001\",\"location_id\":\"d189404\",\"reviewer_hash\":\"u108fd20128\",\"reviewer_email\":\"108fd201@example.com\",\"lang\":\"en\",\"op\":\"edited\",\"rating\":2,\"status\":\"published\",\"text_chars\":640}",
     "version": 3,
     "op": "edited",
     "rating": 2,
@@ -9881,6 +9894,7 @@
     "processed": "2026-10-10T11:00:00.700Z",
     "wm": "2026-10-10T10:58:46.051Z",
     "decision": "applied",
+    "raw": "{\"event_id\":\"rv0026313\",\"event_time\":\"2026-10-10T11:00:00.000Z\",\"version\":4,\"review_id\":\"r00001\",\"op\":\"erased\"}",
     "version": 4,
     "op": "erased",
     "rating": null,
@@ -9894,6 +9908,7 @@
     "processed": "2026-10-10T11:02:00.000Z",
     "wm": "2026-10-10T11:00:00.000Z",
     "decision": "stale: version 4 kept",
+    "raw": "{\"event_id\":\"rv0026314\",\"event_time\":\"2026-10-10T10:00:00.000Z\",\"version\":3,\"review_id\":\"r00001\",\"location_id\":\"d189404\",\"reviewer_hash\":\"u108fd20128\",\"reviewer_email\":\"108fd201@example.com\",\"lang\":\"en\",\"op\":\"edited\",\"rating\":2,\"status\":\"published\",\"text_chars\":640}",
     "version": 3,
     "op": "edited",
     "event_id": "rv0026314"
@@ -10004,7 +10019,7 @@
    "late_updates": 16
   },
   "emits": 8723,
-  "millis": 700,
+  "millis": 627,
   "java": "openjdk version \"21.0.12.1\" 2026-08-18"
  },
  "flink": {
@@ -10016,7 +10031,7 @@
    "dead_letters": 0,
    "windows": 8707,
    "events_in_windows": 22509,
-   "millis": 3743,
+   "millis": 3385,
    "dead_letter_records": [],
    "identical_to_python": true
   },
@@ -10028,7 +10043,7 @@
    "dead_letters": 1,
    "windows": 984,
    "events_in_windows": 1246,
-   "millis": 1307,
+   "millis": 1337,
    "dead_letter_records": [
     "partition 3 offset 171: not JSON: JsonEOFException"
    ],
@@ -10049,7 +10064,7 @@
    "bad_records": 1,
    "identical": true
   },
-  "seconds": 14.5,
+  "seconds": 13.2,
   "version": "3.5.4"
  }
 }

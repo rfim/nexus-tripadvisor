@@ -98,7 +98,7 @@ class Job:
         if rid in self.watch or (rec.partition, rec.offset) in self.watch:
             self.decisions.append({"id": rid, "partition": rec.partition, "offset": rec.offset, "arrived": iso(rec.ts),
                                    "processed": iso(now), "wm": iso(self.s.wm) if self.s.wm > NEG else None,
-                                   "decision": decision, **extra})
+                                   "decision": decision, "raw": rec.raw, **extra})
 
     # ---------- the operator ----------
     def _watermark(self, now: int) -> int:
