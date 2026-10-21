@@ -379,13 +379,13 @@
 .dq-rail{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
 .dq-rail button{display:flex;align-items:center;gap:7px;border:1px solid #34584b;border-radius:999px;padding:5px 12px 5px 6px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer;background:transparent;color:#cfe3db}
 .dq-rail button i{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1px solid #4c6e61;font:700 10.5px Inter,system-ui,sans-serif;font-style:normal}
-.dq-rail button.on{border-color:#ffd27a;color:#fff}.dq-rail button.on i{background:#ffd27a;color:#0a1b15;border-color:#ffd27a}
+.dq-rail button.on{border-color:#ffd27a;color:#d3e2dc}.dq-rail button.on i{background:#ffd27a;color:#0a1b15;border-color:#ffd27a}
 .dq-rail button.done i{background:#34e0a1;color:#0a1b15;border-color:#34e0a1}
 .dq-card{border:1px solid #486153;border-radius:20px;background:#081713;padding:clamp(1.2rem,3vw,2.2rem);box-shadow:0 28px 75px rgba(0,0,0,.19)}
 .dq-kicker{font:700 11px ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:#ffd27a}
-.dq-q{margin:.5rem 0 1.2rem;font:500 clamp(1.35rem,2.6vw,2rem)/1.3 Georgia,serif;color:#fff;max-width:34ch}
+.dq-q{margin:.5rem 0 1.2rem;font:500 clamp(1.35rem,2.6vw,2rem)/1.3 Georgia,serif;color:#d3e2dc;max-width:34ch}
 .dq-opts{display:flex;flex-wrap:wrap;gap:10px}
-.dq-opts button{border:1px solid #4c6e61;border-radius:12px;padding:12px 18px;font:600 15px Inter,system-ui,sans-serif;background:rgba(255,255,255,.03);color:#fff;cursor:pointer;transition:transform .15s,border-color .15s}
+.dq-opts button{border:1px solid #4c6e61;border-radius:12px;padding:12px 18px;font:600 15px Inter,system-ui,sans-serif;background:rgba(255,255,255,.03);color:#d3e2dc;cursor:pointer;transition:transform .15s,border-color .15s}
 .dq-opts button:hover:not(:disabled){transform:translateY(-2px);border-color:#ffd27a}
 .dq-opts button:disabled{cursor:default;opacity:.55}
 .dq-opts button.right{opacity:1;border-color:#34e0a1;background:rgba(52,224,161,.14)}
@@ -406,8 +406,8 @@
 .dq-story p{margin:0;color:#e9f2ee;font-size:.98rem;line-height:1.5}
 .dq-story .s1{border-color:#9cb3aa}.dq-story .s1 b{color:#9cb3aa}
 .dq-story .s2{border-color:#ff7a6b}.dq-story .s2 b{color:#ff7a6b}
-.dq-story .s3{border-color:#34e0a1}.dq-story .s3 b{color:#34e0a1}.dq-story .s3 p{font-weight:700;color:#fff}
-.dq-line{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#0e2620;border:1px solid #2f7a5c;font:12.5px/1.5 "JetBrains Mono",ui-monospace,Menlo,monospace;color:#fff;overflow-x:auto;white-space:pre}
+.dq-story .s3{border-color:#34e0a1}.dq-story .s3 b{color:#34e0a1}.dq-story .s3 p{font-weight:700;color:#d3e2dc}
+.dq-line{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#0e2620;border:1px solid #2f7a5c;font:12.5px/1.5 "JetBrains Mono",ui-monospace,Menlo,monospace;color:#d3e2dc;overflow-x:auto;white-space:pre}
 .dq-line small{display:block;color:#7f9c92;font-size:10.5px;margin-bottom:3px}
 .dq-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:1.3rem;padding-top:1rem;border-top:1px solid #1f3b33}
 .dq-foot button{border:1px solid #4c6e61;border-radius:10px;padding:8px 14px;font:600 13px Inter,system-ui,sans-serif;background:transparent;color:#cfe3db;cursor:pointer}
@@ -454,7 +454,7 @@
       g += T(10, y + 25, name, { c: C.gold, s: 12, w: 700 });
       opts.forEach((op, i) => { const x = x0 + i * cw, on = i === pick;
         g += `<rect x="${x}" y="${y + 4}" width="${cw - 10}" height="${rh - 12}" rx="8" fill="${on ? "#14382c" : "#0f211c"}" stroke="${on ? C.mint : C.line}"/>`;
-        g += T(x + (cw - 10) / 2, y + 27, op, { a: "middle", s: 11.5, c: on ? "#fff" : "#9cb3aa", w: on ? 700 : 500 });
+        g += T(x + (cw - 10) / 2, y + 27, op, { a: "middle", s: 11.5, c: on ? "#d3e2dc" : "#9cb3aa", w: on ? 700 : 500 });
         if (on) pts.push([x + (cw - 10) / 2, y + 4 + (rh - 12) / 2]); });
     });
     const path = pts.map((p, i) => (i ? "L" : "M") + p.join(" ")).join(" ");
@@ -469,7 +469,7 @@
     g += `<circle cx="110" cy="120" r="9" fill="${C.mint}"/><circle cx="640" cy="120" r="9" fill="${C.gold}"/>`;
     ks.forEach((k, i) => { const v = o[k], on = k === "10";
       g += `<line x1="${X(i)}" y1="138" x2="${X(i)}" y2="172" stroke="${on ? C.mint : C.line}" stroke-width="2"/>`;
-      g += T(X(i), 192, `${k} min`, { a: "middle", w: 800, s: 15, c: on ? "#fff" : C.ink });
+      g += T(X(i), 192, `${k} min`, { a: "middle", w: 800, s: 15, c: on ? "#d3e2dc" : C.ink });
       g += T(X(i), 214, `p95 ${v.freshness_p95} min`, { a: "middle", s: 12, c: "#9cc0b7" });
       g += T(X(i), 232, `${v.late_refires} re-fires`, { a: "middle", s: 12, c: "#9cc0b7" });
       if (on) g += `<rect x="${X(i) - 62}" y="176" width="124" height="66" rx="10" fill="none" stroke="${C.mint}"/>`; });
@@ -477,7 +477,7 @@
     g += T(20, 280, "Which clock pulls the band", { c: C.gold, s: 12, w: 700 });
     W.forEach(([k, n], i) => { const v = w[k], x = 20 + i * 240, bad = v.sla_breach_samples > 0;
       g += `<rect x="${x}" y="292" width="226" height="52" rx="9" fill="rgba(255,255,255,.03)" stroke="${k === "active_min" ? C.mint : bad ? C.red : C.line}"/>`;
-      g += T(x + 12, 313, n, { s: 12.5, w: 700, c: "#fff" }) + T(x + 12, 333, `${v.sla_breach_samples} SLA breaches · p95 ${v.freshness_p95} min`, { s: 11.5, c: bad ? C.red : "#9cc0b7" }); });
+      g += T(x + 12, 313, n, { s: 12.5, w: 700, c: "#d3e2dc" }) + T(x + 12, 333, `${v.sla_breach_samples} SLA breaches · p95 ${v.freshness_p95} min`, { s: 11.5, c: bad ? C.red : "#9cc0b7" }); });
     return `<svg viewBox="0 0 740 360" role="img" aria-label="Rubber band between freshness and completeness over out-of-orderness values">${g}</svg>`;
   };
 
@@ -487,17 +487,17 @@
     b.forEach((x, i) => { const bx = 60 + i * 160, h = 170 * x.records / max, y = 220 - h; cum += x.records;
       const stream = i < 2;
       g += `<rect x="${bx}" y="${y}" width="110" height="${h}" rx="6" fill="${stream ? "rgba(52,224,161,.55)" : "rgba(255,210,122,.45)"}"/>`;
-      g += T(bx + 55, y - 8, `${x.records} · ${pct(x.records, tot)}%`, { a: "middle", s: 12.5, w: 700, c: "#fff" });
+      g += T(bx + 55, y - 8, `${x.records} · ${pct(x.records, tot)}%`, { a: "middle", s: 12.5, w: 700, c: "#d3e2dc" });
       g += T(bx + 55, 240, x.bucket, { a: "middle", s: 12, c: C.ink });
       line.push([bx + 55, 220 - 170 * cum / tot]); });
-    g += `<path d="${line.map((p, i) => (i ? "L" : "M") + p.join(" ")).join(" ")}" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 3"/>`;
-    g += line.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff"/>`).join("");
+    g += `<path d="${line.map((p, i) => (i ? "L" : "M") + p.join(" ")).join(" ")}" fill="none" stroke="#d3e2dc" stroke-width="1.6" stroke-dasharray="3 3"/>`;
+    g += line.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5" fill="#d3e2dc"/>`).join("");
     g += `<line x1="60" y1="252" x2="370" y2="252" stroke="${C.mint}" stroke-width="3"/>` + T(215, 272, "the stream keeps (allowed lateness 60 min)", { a: "middle", s: 11.5, c: C.mint, w: 700 });
     g += `<line x1="380" y1="252" x2="690" y2="252" stroke="${C.gold}" stroke-width="3"/>` + T(535, 272, "the nightly batch counts", { a: "middle", s: 11.5, c: C.gold, w: 700 });
     g += T(20, 310, "Cost of keeping windows open", { c: C.gold, s: 12, w: 700 });
     ["0", "15", "60", "180"].forEach((k, i) => { const x = 20 + i * 178, on = k === "60";
       g += `<rect x="${x}" y="320" width="166" height="32" rx="8" fill="rgba(255,255,255,.03)" stroke="${on ? C.mint : C.line}"/>`;
-      g += T(x + 83, 341, `${k} min · ${lt[k].peak_open_windows} windows`, { a: "middle", s: 11.5, c: on ? "#fff" : "#9cb3aa", w: on ? 700 : 500 }); });
+      g += T(x + 83, 341, `${k} min · ${lt[k].peak_open_windows} windows`, { a: "middle", s: 11.5, c: on ? "#d3e2dc" : "#9cb3aa", w: on ? 700 : 500 }); });
     return `<svg viewBox="0 0 740 360" role="img" aria-label="Pareto chart of how late late page views are">${g}</svg>`;
   };
 
@@ -509,7 +509,7 @@
       g += `<path d="M${x} 40 L${x + 40} 60 L${x + 40} 250 L${x} 230 Z" fill="rgba(255,210,122,.82)" stroke="#c9a14a"/>`;
       [[x + 18, 90, 9], [x + 24, 190, 7], [x + 14, 215, 5]].forEach(([cx, cy, r]) => g += `<ellipse cx="${cx}" cy="${cy}" rx="${r * .6}" ry="${r}" fill="#0c1d19"/>`);
       g += `<ellipse cx="${x + 20}" cy="140" rx="9" ry="15" fill="#0c1d19" stroke="${C.red}" stroke-width="1.5"/>`;
-      g += T(x + 20, 275, n, { a: "middle", s: 12.5, w: 800, c: "#fff" }) + T(x + 20, 293, hole, { a: "middle", s: 11, c: C.red }) + T(x + 20, 309, what, { a: "middle", s: 11, c: "#9cc0b7" }); });
+      g += T(x + 20, 275, n, { a: "middle", s: 12.5, w: 800, c: "#d3e2dc" }) + T(x + 20, 293, hole, { a: "middle", s: 11, c: C.red }) + T(x + 20, 309, what, { a: "middle", s: 11, c: "#9cc0b7" }); });
     g += `<path d="M20 140 L720 140" stroke="${C.red}" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ah)"/>`;
     g += T(20, 26, "→ one truncated click goes in", { s: 12, c: C.red, w: 700 }) + T(720, 26, `${inc.minutes.total} min late on a tier-1 product →`, { s: 12, c: C.red, w: 800, a: "end" });
     g += T(20, 345, `Fix: close every hole · dead-letter by default · page on restarts > 3 in 10 min (${al.restarts_over_3_in_10_min} min not ${al.freshness_over_sla})`, { s: 12, c: C.mint, w: 700 });
@@ -518,12 +518,12 @@
 
   const loops = () => {
     const n = fm.last_non_empty_window, c = fm.published_completeness;
-    const box = (x, y, wd, t, s, col) => `<rect x="${x}" y="${y}" width="${wd}" height="52" rx="10" fill="rgba(255,255,255,.04)" stroke="${col}"/>` + T(x + wd / 2, y + 22, t, { a: "middle", s: 12.5, w: 700, c: "#fff" }) + T(x + wd / 2, y + 40, s, { a: "middle", s: 11, c: "#9cc0b7" });
+    const box = (x, y, wd, t, s, col) => `<rect x="${x}" y="${y}" width="${wd}" height="52" rx="10" fill="rgba(255,255,255,.04)" stroke="${col}"/>` + T(x + wd / 2, y + 22, t, { a: "middle", s: 12.5, w: 700, c: "#d3e2dc" }) + T(x + wd / 2, y + 40, s, { a: "middle", s: 11, c: "#9cc0b7" });
     let g = box(30, 150, 170, "Assumption", "fresh = newest data's age", C.gold) + box(285, 150, 170, "Action", "page when age > SLA", C.line) + box(540, 150, 170, "Result", `${n.pages} pages · no incident`, C.red);
     g += `<path d="M200 176 L283 176 M455 176 L538 176" stroke="${C.ink}" stroke-width="1.5" marker-end="url(#ar)"/>`;
     g += `<path d="M625 150 C 600 90, 400 90, 370 148" fill="none" stroke="${C.dim}" stroke-width="2" marker-end="url(#ar)"/>` + T(497, 92, "single loop: raise the threshold · mute nights", { a: "middle", s: 11.5, c: "#9cb3aa" });
     g += `<path d="M625 202 C 600 300, 140 300, 115 204" fill="none" stroke="${C.mint}" stroke-width="2.5" marker-end="url(#am)"/>` + T(370, 300, "double loop: question the assumption", { a: "middle", s: 12, c: C.mint, w: 700 });
-    g += T(370, 322, `fresh = age of published completeness (the watermark) · ${n.pages} → ${c.pages} pages`, { a: "middle", s: 12, c: "#fff", w: 700 });
+    g += T(370, 322, `fresh = age of published completeness (the watermark) · ${n.pages} → ${c.pages} pages`, { a: "middle", s: 12, c: "#d3e2dc", w: 700 });
     g += T(30, 40, "Same week · same job · no real incident", { s: 12, c: C.gold, w: 700 });
     g += T(30, 62, `Newest window: worst ${n.max} min · p95 ${n.p95} min. Completeness: worst ${c.max} min · p95 ${c.p95} min.`, { s: 11.5, c: "#9cc0b7" });
     return `<svg viewBox="0 0 740 360" role="img" aria-label="Single and double loop learning on the freshness metric"><defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${C.ink}"/></marker><marker id="am" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${C.mint}"/></marker></defs>${g}</svg>`;
@@ -537,7 +537,7 @@
     let g = T(255, 42, "URGENT", { a: "middle", s: 11, c: C.gold, w: 700 }) + T(565, 42, "NOT URGENT", { a: "middle", s: 11, c: C.gold, w: 700 });
     Q.forEach(([cx, cy, t, col, items]) => { const x = 100 + cx * 310, y = 52 + cy * 150;
       g += `<rect x="${x}" y="${y}" width="300" height="140" rx="12" fill="rgba(255,255,255,.035)" stroke="${col}"/>` + T(x + 14, y + 24, t, { s: 12, w: 800, c: col });
-      items.forEach((it, i) => g += T(x + 14, y + 50 + i * 22, "· " + it, { s: 12, c: "#fff" })); });
+      items.forEach((it, i) => g += T(x + 14, y + 50 + i * 22, "· " + it, { s: 12, c: "#d3e2dc" })); });
     g += T(84, 125, "IMPORTANT", { a: "end", s: 10.5, c: C.gold, w: 700 }) + T(84, 275, "LESS SO", { a: "end", s: 10.5, c: C.gold, w: 700 });
     return `<svg viewBox="0 0 740 360" role="img" aria-label="Eisenhower matrix of the actions after the incident">${g}</svg>`;
   };
@@ -550,7 +550,7 @@
     let g = "";
     Q.forEach(([t, col, sub, items], i) => { const x = 20 + (i % 2) * 360, y = 14 + Math.floor(i / 2) * 172;
       g += `<rect x="${x}" y="${y}" width="345" height="160" rx="12" fill="rgba(255,255,255,.035)" stroke="${col}"/>` + T(x + 14, y + 24, t, { s: 12.5, w: 800, c: col }) + T(x + 14, y + 42, sub, { s: 11, c: "#9cb3aa" });
-      items.forEach((it, k) => g += T(x + 14, y + 68 + k * 22, "· " + it, { s: 12.2, c: "#fff" })); });
+      items.forEach((it, k) => g += T(x + 14, y + 68 + k * 22, "· " + it, { s: 12.2, c: "#d3e2dc" })); });
     return `<svg viewBox="0 0 740 360" role="img" aria-label="Rumsfeld matrix of what I know and do not know">${g}</svg>`;
   };
 
