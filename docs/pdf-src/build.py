@@ -137,6 +137,18 @@ def deck():
              ("In the run", [f"A TaskManager lost at 09:17: restored from the 09:10 checkpoint, <b>{D['replay']['re_emitted']}</b> windows re-sent, sink <b>{'identical' if D['replay']['identical'] else 'different'}</b>.",
                              f"Ledger, page_views: read {n(S['page_views']['ledger']['read'])} = {n(S['page_views']['ledger']['accepted'])} counted + {S['page_views']['ledger']['duplicates']} duplicates + {S['page_views']['ledger']['late_dropped']} side output."])),
         formula="wm = max(wm, min<sub>active p</sub> max_event(p) − ooo) · fire ⟺ end ≤ wm · drop ⟺ end + lateness ≤ wm"))
+    s.append(code_slide("04 · The stream job · the rules", "Dedupe, lateness, side output: the code",
+        "One function decides every record: read it, drop a retry, count it, re-fire a late window, or set it aside for the batch.",
+        "src/nexus/stream.py", "Python · the reference", code("src/nexus/stream.py", "    def _process(", "    def _apply_version(", limit=29),
+        side(("What it decides", [f"<b>{S['page_views']['ledger']['duplicates']}</b> retries dropped by id; <b>{S['page_views']['ledger']['late_updates']}</b> late re-fires; <b>{S['page_views']['ledger']['late_dropped']}</b> sent to the side output.",
+                                  "A record that can't be read raises <b>Poison</b> unless the dead-letter topic is on: the incident in one line."]),
+             ("Checked three ways", ["The Flink job and the Java twin reach the same windows; the batch explains every difference."]))))
+    s.append(code_slide("05 · The nightly batch · PySpark", "The batch that checks the stream",
+        "Every record from the topic archive: parse both schema versions, keep the first arrival of each id, window by event time.",
+        "src/nexus/spark_batch.py", f"PySpark {SP['version'] if SP else '3.5'}", code("src/nexus/spark_batch.py", "def recompute(", limit=34),
+        side(("In the run", [f"page_views: <b>{n(SP['page_views']['windows'])}</b> windows · partner_clicks: <b>{n(SP['partner_clicks']['windows'])}</b> · identical to the plain-Python batch." if SP else "Runs in CI.",
+                             "The poison pill is a parse failure here too: counted, never guessed."]),
+             ("At Lifepal", ["Spark and SQL tuning took the nightly batch from 6 hours to 90 minutes and kept spend at $11k against a $19k forecast."]))))
     s.append(slide("05 · Stream first, batch checks", "Fast first. Right by morning.", "The nightly batch recomputes every window from the whole topic. Every difference must be explained by the stream's side output.",
         table([(t, n(r["windows"]), n(r["equal"]), r["explained_by_side_output"], f"<b>{r['unexplained']}</b>", n(r["stream_events"]), n(r["batch_events"]), r["late_events"],
                 ("identical" if SP and SP[t]["identical"] else "—")) for t, r in R.items()],
@@ -159,6 +171,11 @@ def deck():
           <div class="card"><h3>Personal data</h3><p>{", ".join(c for r in M["raw"] for c in (r["table"] + "." + x["name"] for x in r["columns"] if x["pii"]))}: a policy tag in BigQuery and a masking policy in Snowflake, from one line of the contract; a check per field.</p></div>
           <div class="card"><h3>Quality gates</h3><p>{passed}/{len(checks)} checks pass: rules per product from quality.yml, masking, and the erasure. A volume gate held the scraper hour before Gold.</p></div>
           <div class="card"><h3>Erasure and schema change</h3><p>A tombstone deletes the review in raw and Gold in both warehouses ({D["warehouse"]["erased_rows_removed"]} rows). Schema v2 is flattened into raw; Gold keeps its grain.</p></div></div>'''))
+    s.append(code_slide("06 · Modeling · SQL from the contract", "One MERGE, generated for both warehouses",
+        "The key from the contract becomes the MERGE condition; a late re-fire updates one row; a tombstone deletes.",
+        "src/nexus/warehouse.py", "renders BigQuery + Snowflake", code("src/nexus/warehouse.py", "def _merge(", "def _governance(", limit=24),
+        side(("Generated, not hand-written", [f"<b>{len(D['warehouse']['files'])}</b> SQL files from one contract; CI fails if they drift."]),
+             ("Governance in the same file", ["Personal fields get a policy tag in BigQuery and a masking policy in Snowflake; erasure SQL is generated for both."]))))
     s.append(slide("07 · SLAs and an incident", f"{I['product']} late for {I['minutes']['total']} minutes", "Freshness is measured from the completeness the job publishes, so a quiet night is not an incident. One thing was all week.",
         f'''<div class="grid two"><div>''' + table([(f"<b>{hm(t['at'])}</b>", t["who"], html.escape(t["what"])) for t in I["timeline"]], ["UTC", "Who", "What"]) + f'''</div>
         <div><div class="grid two" style="grid-template-columns:1fr 1fr">
@@ -166,6 +183,12 @@ def deck():
           <div class="card"><div class="big p">{I['minutes']['would_detect_with_restart_alert']} min</div><p>with a restart alert: {I['restarts']} restarts said it early</p></div></div>
           <div class="callout pink" style="margin-top:4mm"><b>Root cause:</b> a record the job couldn't parse was treated as a reason to stop; a restart reads the same offset again. <b>Fix:</b> dead-letter by default in the shared template (done), page on restarts, alert on DLQ depth, a producer contract test.</div>
           <p class="src" style="margin-top:3mm">Error budget for the week: {sla['partner_revenue_15m']['budget_samples']} late samples allowed at 99.9%; the incident used {sla['partner_revenue_15m']['late_samples']}. {I['windows_delayed']} windows late, none wrong; one record in the DLQ.</p></div></div>'''))
+    s.append(code_slide("07 · SLAs · the monitor", "Freshness, measured like a consumer feels it",
+        "Age is now minus the completeness the job publishes. Sampled every five minutes; the incident record is built from the same samples.",
+        "src/nexus/sla.py", "Python", code("src/nexus/sla.py", "def age_series(", "def lag_by_partition(", limit=30),
+        side(("In the run", [f"partner_revenue_15m: on time <b>{sla['partner_revenue_15m']['on_time']:.2%}</b>; one breach, {I['minutes']['total']} minutes.",
+                             f"Paged at {hm(I['detected'])}; a restart alert would have paged at {hm(I['timeline'][1]['at'])}."]),
+             ("Why completeness", ["Measuring from the newest non-empty window would page every quiet night."]))))
     fv, fp = (FL or {}).get("location_views_hourly", {}), (FL or {}).get("partner_revenue_15m", {})
     s.append(code_slide("08 · Apache Flink 1.20 · DataStream API", "The same job, on Flink",
         "Parse with a dead-letter output, dedupe in keyed state, per-partition watermarks, event-time windows with allowed lateness, a side output for what's too late.",

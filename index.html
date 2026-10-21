@@ -39,14 +39,14 @@
     </div>
     <p class="kicker" style="color:var(--violet2)">NEXUS best practices from Lifepal · applied to Tripadvisor · Senior Data Engineer</p>
     <h1>NEXUS</h1>
-    <p class="sub">Kafka in, Flink in the middle, BigQuery out. Every event counted once, on time, and checked.</p>
+    <p class="sub">Kafka in, Flink in the middle, BigQuery out. Every event counted once, on time, checked.</p>
     <div class="stack3" aria-label="The three technologies this site is built around">
       <a class="stack-tile flink" href="#java"><small>Stream processing</small><b>Apache Flink</b><span data-k="flink_line">Flink 1.20 job, checked in CI</span></a>
       <a class="stack-tile kafka" href="#problems"><small>Event streaming</small><b>Apache Kafka</b><span data-k="kafka_line">three topics, six planted problems</span></a>
       <a class="stack-tile bq" href="#warehouses"><small>Warehouse</small><b>BigQuery</b><span>partitioned, clustered, policy tags, MERGE</span></a>
     </div>
     <p class="also">Also here: Spark · Snowflake · Java · Python</p>
-    <p class="lede">I'm <b>Vim</b>, R. Firman Insan Muhammad, a data engineer in London. For four years I led the data platform at Lifepal: Kafka and Debezium streams next to batch sources, a framework other engineers built on, SLAs, 500+ quality checks and the incident reviews that kept them honest. This site is <b>NEXUS, the platform I built at Lifepal</b>, applied to data shaped like a travel site's: page views, partner clicks and reviews on <b>Kafka</b>, an event-time stream job on <b>Apache Flink</b> (with a Python reference and a Java twin, all three checked against each other), a nightly <b>Spark</b> batch that checks the stream, and one contract that writes the SQL for <b>BigQuery</b> and Snowflake. The data is synthetic, and everything runs from this repository.</p>
+    <p class="lede">I'm <b>Vim</b> (R. Firman Insan Muhammad), a data engineer in London. I led Lifepal's data platform for four years: Kafka and Debezium streams, a shared framework, SLAs, 500+ checks and incident reviews. This is <b>NEXUS, the platform I built there</b>, applied to travel data: <b>Kafka</b> topics, a stream job on <b>Apache Flink</b> (checked against a Python reference and a Java twin), a <b>Spark</b> batch that checks it, and one contract that writes the SQL for <b>BigQuery</b> and Snowflake. Synthetic data; everything runs from this repo.</p>
     <div class="cta">
       <a class="button b-pink" href="stream.html"><span class="live" aria-hidden="true"></span>Watch the stream, step by step →</a>
       <a class="button b-primary" href="governance.html">Modeling &amp; governance, step by step →</a>
@@ -75,15 +75,15 @@
   <div class="shell">
     <div class="index"><span>01 · The path</span><span>what runs in this repo</span></div>
     <div class="head"><h2>Kafka to the warehouse. <em>Proven, not assumed.</em></h2>
-      <p>Five steps from a tap in the app to a table an analyst, a model or an agent can trust. Every number on this page comes from the last run of the code in this repository.</p></div>
+      <p>Five steps from a tap in the app to a table people and agents can trust. Every number comes from the last run.</p></div>
     <div class="path">
-      <div class="step"><div class="n">01 · CAPTURE</div><div class="big">Kafka</div><p>Three topics, <b data-k="partitions">–</b> partitions, <b data-k="records">–</b> records in a week. Offsets follow arrival, not event time.</p></div>
-      <div class="step"><div class="n">02 · STREAM</div><div class="big">Flink</div><p>Watermarks, idle partitions, an hour of allowed lateness, dedupe on id, a dead-letter topic. Python, and the same job on Apache Flink.</p></div>
-      <div class="step"><div class="n">03 · CHECK</div><div class="big">Spark</div><p>The nightly batch recomputes every window. <b data-k="unexplained">–</b> differences are left unexplained.</p></div>
-      <div class="step"><div class="n">04 · PUBLISH</div><div class="big">BigQuery</div><p>Partitioned by day, clustered by what consumers filter on. One contract renders the DDL, MERGE, policy tags and erasure; Snowflake too.</p></div>
-      <div class="step"><div class="n">05 · WATCH</div><div class="big">SLAs</div><p>Freshness from published completeness, error budgets, and an incident record that writes itself.</p></div>
+      <div class="step"><div class="n">01 · CAPTURE</div><div class="big">Kafka</div><p>Three topics, <b data-k="partitions">–</b> partitions, <b data-k="records">–</b> records a week. Offsets follow arrival.</p></div>
+      <div class="step"><div class="n">02 · STREAM</div><div class="big">Flink</div><p>Watermarks, an hour of lateness, dedupe, dead letters. In Python and on Apache Flink.</p></div>
+      <div class="step"><div class="n">03 · CHECK</div><div class="big">Spark</div><p>The nightly batch recomputes every window: <b data-k="unexplained">–</b> unexplained differences.</p></div>
+      <div class="step"><div class="n">04 · PUBLISH</div><div class="big">BigQuery</div><p>Day partitions, clustered for consumers. One contract renders the DDL, MERGE, policy tags and erasure.</p></div>
+      <div class="step"><div class="n">05 · WATCH</div><div class="big">SLAs</div><p>Freshness from completeness, error budgets, a self-written incident record.</p></div>
     </div>
-    <div class="callout" style="margin-top:1.2rem"><b>The stack, as the role lists it:</b> <b>Kafka</b> → stream processing with <b>Flink</b> semantics (the job runs as Python and as a real <b>Flink 1.20</b> job in <b>Java</b>, checked against each other) → <b>Spark</b> for batch → <b>Snowflake</b> and <b>BigQuery</b> for the warehouse, with SLAs, monitoring and root-cause work around all of it.</div>
+    <div class="callout" style="margin-top:1.2rem"><b>The role's stack:</b> <b>Kafka</b> → <b>Flink</b> (a real <b>Flink 1.20</b> job in <b>Java</b>, checked against Python) → <b>Spark</b> → <b>BigQuery</b> and <b>Snowflake</b>, with SLAs and root-cause work throughout.</div>
   </div>
 </section>
 
@@ -91,14 +91,14 @@
   <div class="shell">
     <div class="index"><span>02 · Apache Flink</span><span>real Apache Flink 1.20, run in CI · stated plainly</span></div>
     <div class="head"><h2>The stream, <em>on Apache Flink.</em></h2>
-      <p>The stream job is also an Apache Flink job: the DataStream API in Java 17, with keyed state, per-partition watermarks, allowed lateness and side outputs. CI builds it with Maven, replays the week on Flink's local MiniCluster, and fails if a window differs from the Python job.</p></div>
+      <p>The stream job also runs on Apache Flink: DataStream API, Java 17, keyed state, per-partition watermarks, side outputs. CI replays the week on a MiniCluster and fails if one window differs from Python.</p></div>
     <div class="grid g3" id="flink-tiles"></div>
     <div class="card" style="margin-top:1rem"><div class="sqltabs" id="flink-tabs"></div><div class="mono" id="flink-why" style="font-size:.8rem;color:#9cc0b7;margin:.2rem 0 .6rem"></div><pre id="flink-code" style="max-height:520px;overflow:auto"></pre></div>
     <div class="grid g2" style="margin-top:1rem">
       <div class="card"><div class="kicker" style="color:var(--violet2)">Python job ↔ Flink API</div><h3 style="margin:.3rem 0 .6rem;color:#fff">Same rule, Flink's name for it</h3><div id="flink-map"></div></div>
       <div class="card"><div class="kicker" style="color:var(--violet2)">java/src/nexus/WindowJob.java</div><h3 style="margin:.3rem 0 .6rem;color:#fff">And a plain-Java twin</h3><div id="java-result"></div></div>
     </div>
-    <div class="callout pink" style="margin-top:1rem"><b>Depth, honestly:</b> Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. The Flink job here is real Flink 1.20 and runs in CI on a MiniCluster, not on a production cluster. Snowflake is production experience from Deloitte. BigQuery I haven't run in production: the SQL here is mapped from Snowflake and Databricks (partitioning and clustering for bytes scanned, MERGE, policy tags), and it's where I'd learn first. Java is the part of the stack I'd be ramping up on, and the Flink job and the twin are how I've started: same semantics, tested against a reference.</div>
+    <div class="callout pink" style="margin-top:1rem"><b>Depth, honestly:</b> Kafka, Spark and Python are production experience; my streaming was Kafka + Debezium with Spark, not Flink. This Flink job is real Flink 1.20, run on a MiniCluster, not a production cluster. Snowflake: production, at Deloitte. BigQuery: not yet in production; the SQL is mapped from Snowflake and Databricks. Java is the part of the stack I'd be ramping up on; this job and the twin are my start.</div>
   </div>
 </section>
 
@@ -106,10 +106,10 @@
   <div class="shell">
     <div class="index"><span>03 · Apache Kafka · six problems</span><span>planted in the topics, caught in the run</span></div>
     <div class="head"><h2>What Kafka really delivers. <em>And what it takes.</em></h2>
-      <p>The generator runs a travel site for a week and writes what the brokers would keep. It plants the six problems I've met running streams in production. Each one is tested, and each one is on the step-by-step page.</p></div>
+      <p>A simulated week of a travel site, with six problems I've met in production. Each is tested and on the step-by-step page.</p></div>
     <div class="grid g3" id="problem-cards"></div>
     <h3 style="margin:2rem 0 .8rem;color:#fff">One review, version by version</h3>
-    <p style="max-width:72ch">A reviewer edits a review, then asks for their data to be erased. An outbox replay then re-sends the earlier edit with a new event id, so de-duplication can't catch it. Only the version rule does: the tombstone is version 4, and nothing older can bring the review back.</p>
+    <p style="max-width:72ch">A reviewer edits, then asks to be erased. A replay re-sends the old edit with a new id, so dedupe misses it. The version rule doesn't: the tombstone is version 4, and nothing older brings the review back.</p>
     <div id="story" style="margin-top:.8rem"></div>
     <div class="cta"><a class="button b-pink" href="stream.html"><span class="live" aria-hidden="true"></span>Watch all six, step by step →</a></div>
   </div>
@@ -119,12 +119,12 @@
   <div class="shell">
     <div class="index"><span>04 · BigQuery + Snowflake</span><span>one contract, two dialects, governance included</span></div>
     <div class="head"><h2>BigQuery-ready. <em>Snowflake too.</em></h2>
-      <p>Gold lands in <b>BigQuery</b> partitioned by day and clustered by the column consumers filter on, because you pay for bytes scanned. The DDL, MERGE, policy tags and erasure are generated from <code>contracts/sources.yml</code>, with the same for Snowflake, and committed; CI fails if they drift. Stated plainly: written and checked here, not run on a BigQuery project.</p></div>
+      <p>Gold lands in <b>BigQuery</b> partitioned by day and clustered for consumers: you pay for bytes scanned. The SQL for both warehouses is generated from <code>contracts/sources.yml</code>; CI fails if it drifts. Checked here, not run on a BigQuery project.</p></div>
     <div class="grid g2">
       <div class="card"><h3>Same product: BigQuery, and Snowflake</h3><div id="dialects" style="margin-top:.6rem"></div></div>
       <div class="card" style="background:var(--navy);border-color:#1f4a3c"><div class="sqltabs" id="sql-tabs"></div><pre id="sql" style="max-height:440px;overflow:auto"></pre></div>
     </div>
-    <div class="callout" style="margin-top:1rem"><b>Checked, not only rendered.</b> The run loads Gold into SQLite with the same upsert semantics, runs the rules in <code>contracts/quality.yml</code>, applies the erasure, and checks that every personal field has a masking policy in Snowflake and a policy tag in BigQuery. <span id="wh-sum"></span></div>
+    <div class="callout" style="margin-top:1rem"><b>Checked, not just rendered.</b> The run loads Gold into SQLite with the same upsert, runs <code>contracts/quality.yml</code>, applies the erasure, and checks every personal field is masked in both warehouses. <span id="wh-sum"></span></div>
   </div>
 </section>
 
@@ -132,15 +132,15 @@
   <div class="shell">
     <div class="index"><span>05 · Built in Lifepal</span><span>a high-traffic consumer marketplace</span></div>
     <div class="head"><h2>Different product. <em>Same plumbing.</em></h2>
-      <p>Lifepal compared insurance; Tripadvisor compares places to stay, eat and see. Both are marketplaces where clicks to partners are revenue, and where people decide on what other people wrote.</p></div>
+      <p>Lifepal compared insurance; Tripadvisor compares places. Both earn on partner clicks, and people decide on what others wrote.</p></div>
     <div class="grid g2">
       <div class="card top-v"><div class="kicker">Lifepal · consumer insurance marketplace</div>
         <h3 style="margin:.4rem 0">One governed layer out of a fragmented estate</h3>
-        <p>Batch jobs and legacy ingestion paths, each with its own idea of a customer. I wrote the spec and led the move to one lakehouse, team by team.</p>
-        <ul><li>Kafka + Debezium CDC from PostgreSQL, next to batch from APIs and partner files</li><li>A config-driven Python framework: a new source was configuration, not code</li><li>SLAs, 500+ checks, anomaly holds, runbooks, a root-cause review after every incident</li><li>An MCP server for governed agent access; a RAG copilot with 1,000+ outcomes a day</li></ul></div>
+        <p>Scattered batch jobs, each with its own idea of a customer. I wrote the spec and led the move to one lakehouse.</p>
+        <ul><li>Kafka + Debezium CDC, plus batch from APIs and files</li><li>A config-driven framework: new sources as config</li><li>SLAs, 500+ checks, anomaly holds, root-cause reviews</li><li>An MCP server for agents; a RAG copilot (1,000+ outcomes a day)</li></ul></div>
       <div class="card top-p"><div class="kicker" style="color:var(--pink)">Tripadvisor · Data Platform</div>
         <h3 style="margin:.4rem 0">Frameworks, infrastructure and governance for every data user</h3>
-        <p>As the role describes it: ETL/ELT across Snowflake and BigQuery, owned pipelines with SLAs, streaming and batch on Flink, Spark and Kafka, production Java and Python.</p>
+        <p>Per the role: ETL/ELT on Snowflake and BigQuery, SLA-owned pipelines, Flink, Spark and Kafka, Java and Python.</p>
         <ul><li>Event streams where lateness, retries and bad records are normal</li><li>Batch that checks the stream instead of replacing it</li><li>Two warehouses fed from one definition</li><li>SLAs that page early, and postmortems that change the template</li></ul></div>
     </div>
     <div class="grid g5" style="margin-top:1.2rem">
@@ -148,7 +148,7 @@
       <div class="card"><div class="big p">75%</div><p>Nightly batch cut from 6 hours to 90 minutes by tuning Spark and SQL.</p></div>
       <div class="card"><div class="big">$11k</div><p>Monthly platform cost, against a $19k forecast.</p></div>
       <div class="card"><div class="big p">−60%</div><p>Data-trust escalations, with SLAs, 500+ checks and anomaly holds.</p></div>
-      <div class="card"><div class="big">3–5</div><p>Engineers led. Two promoted to Senior; onboarding halved from 4 weeks to 2.</p></div>
+      <div class="card"><div class="big">3–5</div><p>Engineers led; two promoted to Senior; onboarding halved.</p></div>
     </div>
   </div>
 </section>
@@ -157,10 +157,10 @@
   <div class="shell">
     <div class="index"><span>06 · The last run</span><span>plain Python, Java and PySpark, synthetic data</span></div>
     <div class="head"><h2>What the run <em>actually did.</em></h2>
-      <p>A week of a travel site, 5 to 11 October: three stream jobs, a lost TaskManager, a poison pill, the nightly batch, the checks, the warehouses and the SLA monitor. The figures are read from <code>assets/data/site.json</code>, which the run writes.</p></div>
+      <p>5–11 October: three stream jobs, a lost TaskManager, a poison pill, the batch, the checks and the SLA monitor. Figures from <code>assets/data/site.json</code>.</p></div>
     <div class="grid g4" id="run-tiles"></div>
     <div class="card" style="margin-top:1rem"><h3>Every record accounted for</h3>
-      <p style="font-size:.86rem">Per topic, what was read equals what was counted, de-duplicated, sent to the side output, dead-lettered or kept from overwriting a newer version. The job keeps this ledger in its checkpointed state, so a restore can't double-count.</p>
+      <p style="font-size:.86rem">Per topic: read = counted + duplicates + late + dead letters + stale. The ledger is checkpointed, so a restore can't double-count.</p>
       <div id="ledgers"></div></div>
     <div class="grid g2" style="margin-top:1rem">
       <div class="card"><h3>Checks in the warehouse</h3><div id="checks" style="margin-top:.5rem"></div></div>
@@ -174,11 +174,11 @@
   <div class="shell">
     <div class="index"><span>07 · Stream, then batch</span><span>the batch checks the stream; it doesn't replace it</span></div>
     <div class="head"><h2>Fast first. <em>Right by morning.</em></h2>
-      <p>The stream publishes within minutes and closes a window an hour after its watermark passes. The nightly batch recomputes every window from the whole topic, where nothing is late. Every window where they differ must be explained, record for record, by the stream's side output.</p></div>
+      <p>The stream publishes in minutes; the nightly batch recomputes every window from the whole topic. Every difference must be explained, record for record, by the side output.</p></div>
     <div id="recon"></div>
     <div class="grid g2" style="margin-top:1rem">
-      <div class="card"><h3>Windows that differ, and why</h3><p style="font-size:.86rem">The offline upload: an iOS app flushed a flight's worth of events hours after they happened. The stream had closed those windows; the batch counts them.</p><div id="win-examples" style="margin-top:.6rem"></div></div>
-      <div class="card"><h3>Page views per hour, and the hour held</h3><p style="font-size:.86rem">An hour is held from Gold when it is more than 2σ above the same hour on earlier days and at least double it. One hour was held; three users made 1,500 views in it.</p><div id="volume" style="margin-top:.6rem"></div><div id="bots"></div></div>
+      <div class="card"><h3>Windows that differ, and why</h3><p style="font-size:.86rem">An iOS app flushed a flight's worth of events hours late. The stream had closed those windows; the batch counts them.</p><div id="win-examples" style="margin-top:.6rem"></div></div>
+      <div class="card"><h3>Page views per hour, and the hour held</h3><p style="font-size:.86rem">An hour over 2σ and double its usual volume is held from Gold. One was: three users, 1,500 views.</p><div id="volume" style="margin-top:.6rem"></div><div id="bots"></div></div>
     </div>
   </div>
 </section>
@@ -187,9 +187,9 @@
   <div class="shell">
     <div class="index"><span>08 · SLAs</span><span>measured the way a consumer feels them</span></div>
     <div class="head"><h2>On time is a number. <em>So is late.</em></h2>
-      <p>A product's freshness is how far behind its published completeness is: the job publishes "complete up to" with the data, so an empty window at 3 a.m. still says the product is current. Samples every five minutes; the SLO turns them into an error budget.</p></div>
+      <p>Freshness is how far published completeness lags, so a quiet 3 a.m. still reads as current. Sampled every five minutes; the SLO sets the error budget.</p></div>
     <div id="sla-table"></div>
-    <div class="card" style="margin-top:1rem"><h3>partner_revenue_15m on Friday 9 October</h3><p style="font-size:.86rem">Minutes behind, against the 45-minute SLA. A truncated record stopped the job at 14:05; freshness only crossed the line at 14:35. The restart count would have paged at 14:08.</p><div id="fresh" style="margin-top:.5rem"></div></div>
+    <div class="card" style="margin-top:1rem"><h3>partner_revenue_15m on Friday 9 October</h3><p style="font-size:.86rem">Minutes behind vs the 45-minute SLA. A bad record stopped the job at 14:05; freshness crossed the line at 14:35. A restart alert would have paged at 14:08.</p><div id="fresh" style="margin-top:.5rem"></div></div>
     <div class="cta"><a class="button b-primary" href="oncall.html"><span class="live" aria-hidden="true"></span>Replay the incident, minute by minute →</a></div>
   </div>
 </section>
@@ -200,15 +200,15 @@
     <div class="head"><h2>Platform first. <em>Every data user next.</em></h2><p>Every row points to working code or a section of this page.</p></div>
     <div class="tablewrap"><table>
       <tr><th>The role asks for</th><th>What I've done (at Lifepal unless stated)</th><th>Here</th></tr>
-      <tr><td class="k">ETL/ELT across Snowflake and BigQuery</td><td>Snowflake and dbt warehouses at Deloitte; a Databricks + dbt lakehouse at Lifepal with Kimball models for five teams.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/tree/main/warehouse"><code>warehouse/</code></a></td></tr>
-      <tr><td class="k">Own critical pipelines: SLAs, monitoring, root cause</td><td>SLAs for business-critical pipelines, freshness and volume alerts, runbooks, a root-cause review after every incident; escalations −60%.</td><td><a href="oncall.html">The incident</a></td></tr>
-      <tr><td class="k">Streaming and batch on Flink, Spark, Kafka</td><td>Kafka + Debezium CDC streams with Spark; Spark tuning took the nightly batch from 6 hours to 90 minutes.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/src/nexus/stream.py"><code>stream.py</code></a></td></tr>
-      <tr><td class="k">Production Java and Python</td><td>Python in production for ten years. Java: the twin here, tested against the Python job.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/java/src/nexus/WindowJob.java"><code>WindowJob.java</code></a></td></tr>
-      <tr><td class="k">Shared data frameworks</td><td>A config-driven ingestion framework the whole team used; FastAPI services exposing data to product teams.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/contracts/sources.yml"><code>contracts/</code></a></td></tr>
-      <tr><td class="k">Governance tooling</td><td>PII masking, role-based access, lineage, certified models, an MCP server giving agents governed access.</td><td><a href="#warehouses">Snowflake + BigQuery</a></td></tr>
-      <tr><td class="k">GenAI, analytics and ML at scale</td><td>A production RAG copilot (1,000+ outcomes a day), a dbt semantic layer, feature pipelines for data science.</td><td><a href="story.html">Fireside story</a></td></tr>
-      <tr><td class="k">Senior: standards and people</td><td>Set standards for modelling, testing and observability; led 3–5 engineers, two promoted to Senior; taught 100+ learners.</td><td><a href="run.html#tests">The tests</a></td></tr>
-      <tr><td class="k">Flink, specifically</td><td>Stated plainly: not in production. Here it's real Flink 1.20 (DataStream API, keyed state, watermarks, side outputs) run in CI on a MiniCluster, with the same windows as the Python job.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/tree/main/flink/job"><code>flink/job/</code></a></td></tr>
+      <tr><td class="k">ETL/ELT across Snowflake and BigQuery</td><td>Snowflake + dbt at Deloitte; Databricks + dbt with Kimball models for five teams at Lifepal.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/tree/main/warehouse"><code>warehouse/</code></a></td></tr>
+      <tr><td class="k">Own critical pipelines: SLAs, monitoring, root cause</td><td>SLAs, freshness and volume alerts, runbooks, root-cause reviews; escalations −60%.</td><td><a href="oncall.html">The incident</a></td></tr>
+      <tr><td class="k">Streaming and batch on Flink, Spark, Kafka</td><td>Kafka + Debezium with Spark; nightly batch tuned from 6 hours to 90 minutes.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/src/nexus/stream.py"><code>stream.py</code></a></td></tr>
+      <tr><td class="k">Production Java and Python</td><td>Python for ten years. Java: the Flink job and twin here.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/java/src/nexus/WindowJob.java"><code>WindowJob.java</code></a></td></tr>
+      <tr><td class="k">Shared data frameworks</td><td>A config-driven ingestion framework; FastAPI data services.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/contracts/sources.yml"><code>contracts/</code></a></td></tr>
+      <tr><td class="k">Governance tooling</td><td>PII masking, RBAC, lineage, certified models, governed agent access.</td><td><a href="#warehouses">Snowflake + BigQuery</a></td></tr>
+      <tr><td class="k">GenAI, analytics and ML at scale</td><td>A RAG copilot (1,000+ outcomes a day), a semantic layer, feature pipelines.</td><td><a href="story.html">Fireside story</a></td></tr>
+      <tr><td class="k">Senior: standards and people</td><td>Set modelling and testing standards; led 3–5 engineers (two promoted); taught 100+ learners.</td><td><a href="run.html#tests">The tests</a></td></tr>
+      <tr><td class="k">Flink, specifically</td><td>Not in production. Here: real Flink 1.20 on a MiniCluster in CI, matching the Python job window for window.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/tree/main/flink/job"><code>flink/job/</code></a></td></tr>
     </table></div>
   </div>
 </section>
@@ -216,8 +216,8 @@
 </main>
 
 <footer><div class="shell">
-  <p><b style="color:#fff">From NEXUS, built in Lifepal.</b> The methods here are NEXUS best practices from my production work at Lifepal, applied to data shaped like a travel site's.</p>
-  <p style="margin-top:.6rem"><b style="color:#fff">Stated plainly.</b> The Lifepal outcomes come from my CV and production work. The Tripadvisor side is built from the outside, using only the job description and public information. Every page view, click, review and partner in the demo is synthetic, and no Tripadvisor systems or data were used. This is an independent application, not affiliated with or endorsed by Tripadvisor.</p>
+  <p><b style="color:#fff">From NEXUS, built in Lifepal.</b> NEXUS practices from my Lifepal work, applied to travel data.</p>
+  <p style="margin-top:.6rem"><b style="color:#fff">Stated plainly.</b> Lifepal outcomes are from my CV and work. The Tripadvisor side uses only the job description and public information; all demo data is synthetic. An independent application, not affiliated with or endorsed by Tripadvisor.</p>
   <p style="margin-top:.8rem">R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · Right to work in the UK, no sponsorship required · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a></p>
 </div></footer>
 <script src="assets/common.js"></script>

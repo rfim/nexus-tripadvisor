@@ -20,23 +20,23 @@
   const hold = d.volume.holds[0];
   const problems = [
     ["page_views", "SDK retries", `${day(P.retries.from)}, ${hm(P.retries.from)}–${hm(P.retries.to)}`,
-      `A slow edge made the web SDK time out and re-send. <b>${G.retried}</b> events arrived twice: same event_id, new offset.`,
-      `De-duplication on event_id, kept 24 hours in checkpointed state: <b>${S.page_views.ledger.duplicates}</b> dropped, none counted twice.`],
+      `The web SDK timed out and re-sent: <b>${G.retried}</b> events arrived twice.`,
+      `Dedupe on event_id, 24 h of checkpointed state: <b>${S.page_views.ledger.duplicates}</b> dropped.`],
     ["page_views", "An offline upload", `${day(P.offline_upload.delivered_at)}, ${hm(P.offline_upload.delivered_at)}`,
-      `${P.offline_upload.sessions} iOS sessions from a flight flushed at once: <b>${G.late_offline}</b> events, 2 to 8 hours after they happened.`,
-      `Past the hour of allowed lateness, so to the side output, not into closed windows. The batch counts them; <b>${R.page_views.explained_by_side_output}</b> windows differ, all explained.`],
+      `${P.offline_upload.sessions} iOS sessions from a flight flushed at once: <b>${G.late_offline}</b> events, 2–8 hours late.`,
+      `Past the lateness hour, so to the side output. The batch counts them: <b>${R.page_views.explained_by_side_output}</b> windows differ, all explained.`],
     ["partner_clicks", "A schema change", `${day(P.schema_v2.from)}, ${hm(P.schema_v2.from)}`,
       `App ${P.schema_v2.app_version} sends <code>price {amount, currency}</code> instead of <code>cpc_gbp</code>: <b>${G.v2_records}</b> records, in GBP, EUR and USD.`,
-      `A registry's backward check would reject it; one reader upcasts both versions to revenue in GBP. An unknown currency is a dead letter, not a guess.`],
+      `A registry would reject it; one reader upcasts both to GBP. Unknown currency → dead letter.`],
     ["partner_clicks", "A poison pill", `${day(P.poison.at)}, ${hm(P.poison.at)}`,
-      `One truncated record on partition ${I.partition}, offset ${I.offset}. The job, built without a dead-letter topic, crash-looped <b>${I.restarts}</b> times.`,
-      `The SLA monitor paged at ${hm(I.detected)}; the fix at ${hm(I.mitigated)} dead-letters it and restores from the checkpoint. Nothing else was lost.`],
+      `One truncated record (${I.partition}/${I.offset}). With no dead-letter topic the job crash-looped <b>${I.restarts}</b> times.`,
+      `Paged at ${hm(I.detected)}; the ${hm(I.mitigated)} fix dead-letters it. Nothing else lost.`],
     ["page_views", "A scraper", `${day(P.bots.from)}, ${hm(P.bots.from)}`,
       `Three users, <b>${NX.int(hold.views)}</b> views in the quietest hour, where ${hold.mean} is usual.`,
-      `The hour is held from Gold (threshold ${hold.threshold}); the investigation finds ${d.volume.bots.length} users over ${d.volume.investigation[0].max_per_hour} views an hour. Removed, re-checked, released.`],
+      `Held from Gold (threshold ${hold.threshold}); ${d.volume.bots.length} users over ${d.volume.investigation[0].max_per_hour} views an hour removed; released.`],
     ["reviews", "Erasure, then a stale version", `${day(P.erasure.at)}, ${hm(P.erasure.at)}`,
-      `A reviewer asks to be erased. Two minutes later an outbox replay re-sends their earlier edit with a new event id.`,
-      `The tombstone is version 4; version 3 can't overwrite it (<b>${S.reviews.ledger.stale_versions}</b> rejected). The erasure deletes it in both warehouses.`],
+      `A reviewer is erased; two minutes later a replay re-sends their old edit with a new id.`,
+      `Version 3 can't overwrite the version-4 tombstone (<b>${S.reviews.ledger.stale_versions}</b> rejected). Deleted in both warehouses.`],
   ];
   $("problem-cards").innerHTML = problems.map(([t, title, when, what, how], i) => `<div class="card ${i % 2 ? "top-p" : "top-v"}">
     <div class="kicker" style="color:${i % 2 ? "var(--pink)" : "var(--violet2)"}">${i + 1} · ${t} · ${when}</div>

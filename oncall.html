@@ -30,7 +30,7 @@
   <div class="shell">
     <div class="index"><span>The incident · replayed</span><span>Friday 9 October, from the job's log and the monitor's samples</span></div>
     <div class="head"><h2>A record stops the job. <em>Who notices, and when?</em></h2>
-      <p>partner_revenue_15m is tier 1: partner clicks are revenue, and the commercial team watches it through the day. Press Replay to run the afternoon at a minute a tick. Everything except the two human actions (the acknowledgement and the deploy time) is computed by the run.</p></div>
+      <p>partner_revenue_15m is tier 1: partner clicks are revenue. Replay the afternoon a minute a tick. All but the two human actions (acknowledge, deploy) is computed by the run.</p></div>
     <div class="grid g4" id="o-tiles"></div>
     <div class="card" style="margin-top:1rem">
       <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap"><h3 style="color:#fff;flex:1">Minutes behind, against the SLA</h3>
@@ -42,7 +42,7 @@
       <div class="card"><h3 style="color:#fff;margin-bottom:.8rem">Timeline</h3><div class="timeline" id="o-timeline"></div></div>
       <div>
         <div class="card"><h3 style="color:#fff">Root cause, from the job's own evidence</h3>
-          <p style="font-size:.86rem">At the page: records waiting per partition (what <code>kafka-consumer-groups --describe</code> would show), and the record the exception names.</p>
+          <p style="font-size:.86rem">At the page: records waiting per partition (<code>kafka-consumer-groups --describe</code>) and the record the exception names.</p>
           <div id="o-lag" style="margin-top:.6rem"></div>
           <pre id="o-raw" style="margin-top:.7rem"></pre></div>
         <div class="card" style="margin-top:1rem"><h3 style="color:#fff">The fix, and the alert that would have caught it</h3>
@@ -55,7 +55,7 @@
   <div class="shell">
     <div class="index"><span>The postmortem</span><span>written by the run: assets/data/incident.md</span></div>
     <div class="head"><h2>Blameless. <em>With actions.</em></h2>
-      <p>Every incident at Lifepal ended with a root-cause review and a change to the platform, not to a person. Here the first action is already in the code: the shared job template dead-letters by default.</p></div>
+      <p>At Lifepal every incident ended in a fix to the platform, not a person. Here the first action is already in code: dead letters by default.</p></div>
     <div class="card" id="o-pm"></div>
   </div>
 </section>

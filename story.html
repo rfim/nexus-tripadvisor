@@ -22,6 +22,7 @@
       <a href="#proof">Code & proof</a>
       <a href="#flink">Flink</a>
       <a href="#governance">Governance</a>
+      <a href="#codebase">All the code</a>
       <a href="#contact">Contact</a>
       <a href="index.html">NEXUS home →</a>
     </nav>
@@ -259,6 +260,85 @@
     $("gov-n3p").textContent = `Rules per product from quality.yml · masking · erasure · run on every build. A volume gate held the scraper hour (${d.volume.holds[0].views} views) before Gold.`;
     $("gov-n4p").textContent = `A review's tombstone deletes it from raw and Gold in both warehouses · ${W.erased_rows_removed} rows removed · 0 left. The SQL states how long time travel keeps deleted rows so the erasure has a completion date.`;
   } catch (e) {}
+})();
+</script>
+
+    <section id="codebase" class="proof-section" aria-labelledby="codebase-title">
+      <div class="page-width">
+        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> The whole platform · in code</p><h2 id="codebase-title">Read any part of it.</h2></div><p>Every file below is the repository's own, loaded live. Kafka topics · the stream job in Python · Flink and Java · the Spark batch · the warehouse SQL · the SLA monitor · the tests and CI. <span id="cb-total"></span></p></div>
+        <div id="cb-groups" style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px"></div>
+        <div class="proof-layout">
+          <div class="code-panel"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="cb-file"></span><span class="language-tag" id="cb-lang"></span></div>
+            <div id="cb-tabs" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 0"></div>
+            <pre id="cb-code" style="margin:0;padding:14px 16px;height:620px;overflow:auto;font:400 12px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:#e8efe9;white-space:pre"></pre></div>
+          <aside class="proof-notes" aria-label="What to look at">
+            <div class="proof-note primary"><span class="note-num" id="cb-group-name">Look here</span><h3 id="cb-title"></h3><p id="cb-why"></p><p id="cb-lines" style="margin-top:8px;opacity:.75"></p></div>
+            <div class="proof-note"><span class="note-num">Proven by</span><h3 id="cb-test-title">Tests that run in CI</h3><p id="cb-test"></p></div>
+            <p style="margin-top:12px"><a class="text-link light-link" href="run.html">Open them in an editor · run the Python <span aria-hidden="true">↗</span></a></p>
+          </aside>
+        </div>
+      </div>
+    </section>
+<script>
+(async () => {
+  const G = {
+    "Kafka & contract": [
+      ["generate.py", "src/nexus/generate.py", "PYTHON", "A week of three Kafka topics, one log per partition, with six planted problems.", "tests/test_generate.py · deterministic · every problem really in the log"],
+      ["contracts.py", "src/nexus/contracts.py", "PYTHON", "One reader for every schema version; a bad record raises, never guesses.", "tests/test_contracts.py · v1 and v2 read as one"],
+      ["sources.yml", "contracts/sources.yml", "YAML", "Topics, keys, personal fields, products and SLAs in one file.", "tests/test_warehouse.py · the SQL is what this renders"]],
+    "Stream · Python": [
+      ["stream.py", "src/nexus/stream.py", "PYTHON", "Watermarks over active partitions, lateness, dedupe, dead letters, checkpoints and restores.", "tests/test_stream.py · 11 tests from a retry to a lost TaskManager"],
+      ["examples/03", "examples/03_watermarks_by_hand.py", "PYTHON", "Six records by hand: edit a time and watch a decision change.", "runs in your browser on the code page"]],
+    "Flink & Java": [
+      ["NexusJobs.java", "flink/job/src/main/java/nexus/flink/NexusJobs.java", "JAVA · FLINK", "The topology: parse → dedupe → watermarks → windows → side outputs.", "tests/test_flink.py · identical windows on a MiniCluster"],
+      ["Parse.java", "flink/job/src/main/java/nexus/flink/Parse.java", "JAVA · FLINK", "Both schema versions; unreadable records to a dead-letter output.", "tests/test_flink.py · the poison pill dead-lettered"],
+      ["Dedupe.java", "flink/job/src/main/java/nexus/flink/Dedupe.java", "JAVA · FLINK", "Keyed ValueState with a 24-hour TTL.", "tests/test_flink.py · 112 duplicates · same as Python"],
+      ["PartitionWatermarks.java", "flink/job/src/main/java/nexus/flink/PartitionWatermarks.java", "JAVA · FLINK", "Min over active partitions less out-of-orderness; idle partitions skipped.", "tests/test_flink.py"],
+      ["Windows.java", "flink/job/src/main/java/nexus/flink/Windows.java", "JAVA · FLINK", "Incremental count and sum; a row on every firing.", "tests/test_flink.py"],
+      ["NexusKafka.java", "flink/job/src/main/java/nexus/flink/NexusKafka.java", "JAVA · FLINK", "Production: KafkaSource · exactly-once checkpoints · failure-rate restarts · transactional sinks.", "compiled in CI"],
+      ["NexusLocal.java", "flink/job/src/main/java/nexus/flink/NexusLocal.java", "JAVA · FLINK", "The week replayed on a MiniCluster; the upsert sink written to CSV.", "tests/test_flink.py"],
+      ["WindowJob.java", "java/src/nexus/WindowJob.java", "JAVA", "The page_views job in plain JDK 17, no framework.", "tests/test_java_twin.py · identical windows and ledger"],
+      ["pom.xml", "flink/job/pom.xml", "XML", "Flink 1.20.1 · Kafka connector 3.4 · Java 17.", "CI builds it with Maven"]],
+    "Batch · Spark": [
+      ["batch.py", "src/nexus/batch.py", "PYTHON", "Recompute every window; reconcile with the stream; hold anomalous hours.", "tests/test_batch.py · 0 unexplained differences"],
+      ["spark_batch.py", "src/nexus/spark_batch.py", "PYSPARK", "The same batch in PySpark: from_json, row_number dedupe, event-time windows.", "tests/test_spark_batch.py · identical to Python"]],
+    "Warehouse · BigQuery + Snowflake": [
+      ["warehouse.py", "src/nexus/warehouse.py", "PYTHON", "DDL, MERGE, policy tags, masking and erasure rendered for both warehouses.", "tests/test_warehouse.py · committed SQL is current"],
+      ["BigQuery · partner_revenue_15m", "warehouse/bigquery/partner_revenue_15m.sql", "SQL · BIGQUERY", "Day partitions, clustering, a MERGE on the key.", "generated · checked in CI"],
+      ["BigQuery · governance", "warehouse/bigquery/governance.sql", "SQL · BIGQUERY", "Policy tags on every personal column.", "tests/test_warehouse.py · masked in both"],
+      ["Snowflake · reviews_current", "warehouse/snowflake/reviews_current.sql", "SQL · SNOWFLAKE", "A MERGE that lets no older version win; tombstones delete.", "tests/test_warehouse.py"],
+      ["Snowflake · governance", "warehouse/snowflake/governance.sql", "SQL · SNOWFLAKE", "One masking policy on every personal column.", "tests/test_warehouse.py"],
+      ["quality.yml", "contracts/quality.yml", "YAML", "Rules per product; the volume gate; the bot threshold.", "11/11 checks pass in the run"]],
+    "SLAs & incident": [
+      ["sla.py", "src/nexus/sla.py", "PYTHON", "Freshness from completeness, error budgets, the incident record and postmortem.", "tests/test_sla.py · the incident is the only breach"],
+      ["incident.md", "assets/data/incident.md", "MARKDOWN", "The postmortem the run writes.", "tests/test_data.py"],
+      ["pipeline.py", "src/nexus/pipeline.py", "PYTHON", "The whole week end to end, and the Flink, Java and Spark checks.", "every test reads its output"]],
+    "Tests & CI": [
+      ["test_stream.py", "tests/test_stream.py", "PYTHON", "The stream rules on hand-written records.", "pytest"],
+      ["test_flink.py", "tests/test_flink.py", "PYTHON", "Flink on a MiniCluster against Python and the batch.", "pytest"],
+      ["ci.yml", ".github/workflows/ci.yml", "YAML", "Python 3.11 · Java 17 · Maven · the whole run on every push.", "GitHub Actions"],
+      ["build.sh", "scripts/build.sh", "SHELL", "One command: build the Flink job and run the week.", "its console is on the streaming page"]],
+  };
+  const $ = (id) => document.getElementById(id), groups = Object.keys(G);
+  const btn = (t) => `<button type="button" style="border:1px solid #34584b;border-radius:8px;padding:5px 11px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer;background:transparent;color:#cfe3db">${t}</button>`;
+  const on = (box, i, col) => [...box.children].forEach((b, k) => { b.style.background = k === i ? col : "transparent"; b.style.color = k === i ? "#0a1b15" : "#cfe3db"; });
+  let g = 0;
+  const showFile = async (i) => {
+    const [name, path, lang, why, test] = G[groups[g]][i];
+    on($("cb-tabs"), i, "#34e0a1");
+    $("cb-file").textContent = path; $("cb-lang").textContent = lang; $("cb-group-name").textContent = groups[g];
+    $("cb-title").textContent = name; $("cb-why").textContent = why; $("cb-test").textContent = test;
+    const txt = await fetch(path).then((r) => r.ok ? r.text() : "(not found)");
+    $("cb-code").textContent = txt; $("cb-lines").textContent = `${txt.split("\n").length} lines`;
+  };
+  const showGroup = (k) => { g = k; on($("cb-groups"), k, "#ffd27a");
+    $("cb-tabs").innerHTML = G[groups[k]].map(([n]) => btn(n)).join(""); showFile(0); };
+  $("cb-groups").innerHTML = groups.map((x) => btn(`${x} · ${G[x].length}`)).join("");
+  $("cb-groups").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showGroup([...$("cb-groups").children].indexOf(b)); });
+  $("cb-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showFile([...$("cb-tabs").children].indexOf(b)); });
+  showGroup(0);
+  try { const files = await fetch("assets/data/files.json").then((r) => r.json());
+    $("cb-total").textContent = `${files.length} files · ${files.reduce((a, f) => a + f.lines, 0).toLocaleString("en-GB")} lines in the repository.`; } catch (e) {}
 })();
 </script>
 

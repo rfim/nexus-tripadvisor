@@ -30,7 +30,7 @@
   <div class="shell">
     <div class="index"><span>Streaming · step by step</span><span>every decision below is the job's own, from the last run</span></div>
     <div class="head"><h2>Kafka to the warehouse. <em>One record at a time.</em></h2>
-      <p>A record lands on a partition. The job reads it, de-duplicates it, puts it in a window by event time, and fires the window when the watermark passes. What doesn't fit goes somewhere on purpose. Pick a problem and step through it.</p></div>
+      <p>A record lands on a partition. The job dedupes it, windows it by event time and fires when the watermark passes. What doesn't fit goes somewhere on purpose. Pick a problem.</p></div>
 
     <div class="tabs" id="views" role="tablist" aria-label="Which problem"></div>
     <div class="stage" id="stage" data-view="run">
@@ -87,19 +87,19 @@
         <span class="grow"></span><label>Speed <select id="speed"><option value="1600">calm</option><option value="900" selected>normal</option><option value="450">fast</option></select></label></div>
     </div>
     <div class="grid g3" style="margin-top:1.4rem">
-      <div class="card"><div class="kicker" style="color:var(--violet2)">The watermark</div><h3 style="color:#fff">min over active partitions − out-of-orderness</h3><p>A partition with nothing for five minutes stops holding it back. When every partition is quiet, processing time carries it, so a 3 a.m. window still closes.</p></div>
-      <div class="card"><div class="kicker" style="color:var(--violet2)">Lateness</div><h3 style="color:#fff">Re-fire within the hour, side output after</h3><p>A window keeps its state an hour past the watermark. A record inside that hour updates the window and fires it again; the sink upserts. After it, the batch is the place.</p></div>
-      <div class="card"><div class="kicker" style="color:var(--violet2)">Exactly once, from outside</div><h3 style="color:#fff">Checkpointed state, keyed sinks</h3><p>Offsets, windows, dedupe state and the ledger are restored together. The sink and side outputs are keyed, so what a restore re-sends changes nothing.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">The watermark</div><h3 style="color:#fff">min over active partitions − out-of-orderness</h3><p>A partition quiet for five minutes stops holding it back. When all are quiet, processing time carries it, so 3 a.m. windows still close.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">Lateness</div><h3 style="color:#fff">Re-fire within the hour, side output after</h3><p>State is kept an hour past the watermark. A late record in that hour re-fires the window; after it, the batch counts it.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">Exactly once, from outside</div><h3 style="color:#fff">Checkpointed state, keyed sinks</h3><p>Offsets, windows, dedupe state and ledger restore together. Keyed sinks make re-sends harmless.</p></div>
     </div>
     <div class="index" style="margin-top:3rem"><span>The server, as it ran</span><span>the build's own console, kept by scripts/build.sh</span></div>
     <div class="head" style="margin-top:.6rem"><h2 style="font-size:clamp(1.6rem,3vw,2.4rem)">What the machine <em>printed.</em></h2>
-      <p>The last build, word for word: the Flink job compiled with Maven, the week generated, three stream jobs, the batch, Flink on a MiniCluster, the Java twin, PySpark, the SLA monitor and the incident. Then the test suite.</p></div>
+      <p>The last build, word for word: Maven, the week, three stream jobs, the batch, Flink, the Java twin, PySpark, the SLAs and the incident. Then the tests.</p></div>
     <div class="grid g2"><div class="term-wrap"><div class="term-bar"><span class="window-dots"><i></i><i></i><i></i></span><b>vim@nexus: ~/nexus-tripadvisor</b></div><pre class="term tall" id="server-log"></pre></div>
       <div class="term-wrap"><div class="term-bar"><span class="window-dots"><i></i><i></i><i></i></span><b>pytest</b></div><pre class="term tall" id="server-tests"></pre></div></div>
 
     <div class="index" style="margin-top:3rem"><span>The same job on Apache Flink 1.20</span><span>DataStream API · Java 17 · run in CI on a MiniCluster</span></div>
     <div class="head" style="margin-top:.6rem"><h2 style="font-size:clamp(1.6rem,3vw,2.4rem)">Every step above, <em>in Flink.</em></h2>
-      <p>The caption under each step shows the Flink call that makes the same decision. Here is the whole job: CI replays the week through it on a local MiniCluster and checks it window for window against the Python job.</p></div>
+      <p>Each step's caption shows the Flink call behind it. Here is the whole job; CI checks it window for window against Python.</p></div>
     <div class="grid g3" id="flink-tiles"></div>
     <div class="card" style="margin-top:1rem"><div class="sqltabs" id="flink-tabs"></div><div class="mono" id="flink-why" style="font-size:.8rem;color:#9cc0b7;margin:.2rem 0 .6rem"></div><pre id="flink-code" style="max-height:560px;overflow:auto"></pre></div>
     <div class="card" style="margin-top:1rem"><h3 style="color:#fff;margin-bottom:.6rem">Python job ↔ Flink API</h3><div id="flink-map"></div></div>
