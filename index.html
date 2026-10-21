@@ -180,7 +180,7 @@
       <div class="card"><div class="kicker" style="color:var(--violet2)">java/src/nexus/WindowJob.java</div><h3 style="margin:.3rem 0 .6rem">Same week, same windows</h3><div id="java-result"></div></div>
       <div class="card"><div class="kicker" style="color:var(--violet2)">flink/page_views_hourly.sql</div><h3 style="margin:.3rem 0 .6rem">The same job on Flink SQL</h3><pre id="flink" style="max-height:340px;overflow:auto"></pre></div>
     </div>
-    <div class="callout pink" style="margin-top:1rem"><b>Depth, honestly:</b> Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is production experience from Deloitte; BigQuery is working level. Java is the part of the stack I'd be ramping up on, and this twin is how I'd start: same semantics, tested against a reference.</div>
+    <div class="callout pink" style="margin-top:1rem"><b>Depth, honestly:</b> Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is production experience from Deloitte. BigQuery I haven't run in production: the SQL here is mapped from Snowflake and Databricks (partitioning and clustering for bytes scanned, MERGE, policy tags), and it's where I'd learn first. Java is the part of the stack I'd be ramping up on, and this twin is how I'd start: same semantics, tested against a reference.</div>
   </div>
 </section>
 

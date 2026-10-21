@@ -63,6 +63,6 @@ On the site, `run.html` opens every file in an editor and runs the Python in you
 
 - **Real:** the Lifepal outcomes (from my CV and production work) and all the code here, which runs end to end in CI.
 - **Synthetic:** every page view, click, review, partner and location. The Tripadvisor side comes from the job description and public information; no Tripadvisor systems or data were used.
-- **Depth:** Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is production experience from Deloitte; BigQuery is working level. Java is the part of the stack I'd be ramping up on.
+- **Depth:** Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is production experience from Deloitte. BigQuery I haven't run in production: the SQL here is mapped from Snowflake and Databricks (partitioning and clustering for bytes scanned, MERGE, policy tags), and it's where I'd learn first. Java is the part of the stack I'd be ramping up on.
 
 This is an independent application. It is not affiliated with or endorsed by Tripadvisor.

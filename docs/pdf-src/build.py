@@ -158,7 +158,7 @@ def deck():
         "The page_views job, in plain JDK 17 with no framework. CI compiles it, runs it on the same week, and fails if a single window differs from the Python job.",
         "java/src/nexus/WindowJob.java", "JDK 17 · no dependencies", code("java/src/nexus/WindowJob.java", "    void process(", "    void tick("),
         side(("In the run", [f"<b>{n(J['windows'])}</b> windows, <b>{'identical' if J['identical'] else 'different'}</b> to the Python job, in {J['millis']} ms." if J else "Runs in CI."]),
-             ("Stated plainly", ["Kafka, Spark and Python are production experience. At Lifepal the streaming was Kafka + Debezium with Spark, not Flink; BigQuery is working level; Snowflake is from Deloitte.",
+             ("Stated plainly", ["Kafka, Spark and Python are production experience. At Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is from Deloitte; BigQuery I haven't run in production, so its SQL here is mapped from Snowflake and Databricks.",
                                  "Java is the part I'd ramp up on. This is how I'd start: the same semantics, tested against a reference I trust."]))))
     s.append(slide("09 · My first 90 days", "How I'd start in Data Platform", "Listen first, then own something small end to end, then make the template better for everyone.",
         '<div class="grid three">' + "".join(f'<div class="card"><div class="kicker">{a}</div><h3>{b}</h3><ul>{"".join(f"<li>{x}</li>" for x in c)}</ul></div>' for a, b, c in [
