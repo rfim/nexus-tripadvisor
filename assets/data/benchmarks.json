@@ -13,7 +13,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.1
+   "seconds": 2.19
   },
   "min_all": {
    "counted": 22509,
@@ -28,7 +28,7 @@
    "sla_breach_samples": 362,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.01
+   "seconds": 2.09
   },
   "global_max": {
    "counted": 22509,
@@ -43,7 +43,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.19
+   "seconds": 2.35
   }
  },
  "out_of_orderness": {
@@ -75,7 +75,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.31
+   "seconds": 2.05
   },
   "10": {
    "counted": 22509,
@@ -90,7 +90,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.37
+   "seconds": 2.04
   },
   "30": {
    "counted": 22509,
@@ -105,7 +105,7 @@
    "sla_breach_samples": 3,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.41
+   "seconds": 2.26
   }
  },
  "allowed_lateness": {
@@ -122,7 +122,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 87,
    "peak_dedupe_keys": 5099,
-   "seconds": 1.97
+   "seconds": 1.94
   },
   "15": {
    "counted": 22500,
@@ -137,7 +137,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 87,
    "peak_dedupe_keys": 5099,
-   "seconds": 1.96
+   "seconds": 1.92
   },
   "60": {
    "counted": 22509,
@@ -152,7 +152,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.06
+   "seconds": 2.11
   },
   "180": {
    "counted": 22561,
@@ -167,7 +167,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 325,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.51
+   "seconds": 2.6
   }
  },
  "dedupe_ttl": {
@@ -184,7 +184,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 26,
-   "seconds": 0.83
+   "seconds": 0.85
   },
   "0.25": {
    "counted": 22509,
@@ -199,7 +199,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 373,
-   "seconds": 0.86
+   "seconds": 0.88
   },
   "1": {
    "counted": 22509,
@@ -214,7 +214,7 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 1514,
-   "seconds": 0.9
+   "seconds": 0.91
   },
   "24": {
    "counted": 22509,
@@ -229,13 +229,35 @@
    "sla_breach_samples": 0,
    "peak_open_windows": 170,
    "peak_dedupe_keys": 5099,
-   "seconds": 2.11
+   "seconds": 2.13
   }
  },
  "retry_gap_seconds": {
   "count": 112,
   "max": 19.607,
   "p50": 10.668
+ },
+ "late_distribution": {
+  "records_missing_first_firing": 214,
+  "buckets": [
+   {
+    "bucket": "\u2264 15 min",
+    "records": 12
+   },
+   {
+    "bucket": "\u2264 60 min",
+    "records": 10
+   },
+   {
+    "bucket": "\u2264 180 min",
+    "records": 34
+   },
+   {
+    "bucket": "> 180 min",
+    "records": 158
+   }
+  ],
+  "share_within_60": 0.103
  },
  "bad_record": {
   "fail_and_restart": {
@@ -312,21 +334,21 @@
  },
  "engines": {
   "Python reference": {
-   "seconds": 2.33,
+   "seconds": 2.27,
    "identical": true
   },
   "Java twin (JDK)": {
-   "seconds": 0.73,
+   "seconds": 0.92,
    "identical": true
   },
   "Apache Flink 1.20 (MiniCluster)": {
-   "seconds": 3.54,
+   "seconds": 6.9,
    "identical": true
   },
   "PySpark batch (both topics)": {
-   "seconds": 12.2,
+   "seconds": 32.4,
    "identical": true
   }
  },
- "seconds": 30.5
+ "seconds": 29.8
 }

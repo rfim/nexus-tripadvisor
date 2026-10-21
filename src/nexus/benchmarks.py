@@ -81,6 +81,28 @@ def run() -> dict:
             first[eid] = r.ts
     out["retry_gap_seconds"] = {"count": len(retry_gaps), "max": max(retry_gaps), "p50": _pct(retry_gaps, .5)}
 
+    # 4b. how late are late records? (for the Pareto view of allowed lateness)
+    #     delay past the first firing = arrival − (window end + out-of-orderness), for records that missed it
+    size, ooo = 60 * MIN, topic("page_views")["product"]["out_of_orderness_minutes"] * MIN
+    delays, seen_ids = [], set()
+    for r in pv:
+        v = json.loads(r.raw)
+        if v["event_id"] in seen_ids:
+            continue
+        seen_ids.add(v["event_id"])
+        et = parse(v["event_time"])
+        d = r.ts - (et - et % size + size + ooo)
+        if d > 0:
+            delays.append(d / MIN)
+    buckets = [("≤ 15 min", 15), ("≤ 60 min", 60), ("≤ 180 min", 180), ("> 180 min", 10**9)]
+    prev, dist = 0, []
+    for label, hi in buckets:
+        n = sum(prev < x <= hi for x in delays)
+        dist.append({"bucket": label, "records": n})
+        prev = hi
+    out["late_distribution"] = {"records_missing_first_firing": len(delays), "buckets": dist,
+                                "share_within_60": round(sum(x <= 60 for x in delays) / len(delays), 3) if delays else None}
+
     # 5. a record that can't be read: stop, skip, or dead-letter
     pc = read_topic("partner_clicks")
     fix = parse("2026-10-09T15:20:00Z")

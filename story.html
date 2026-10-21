@@ -23,6 +23,7 @@
       <a href="#flink">Flink</a>
       <a href="#governance">Governance</a>
       <a href="#why">Why</a>
+      <a href="#decisions">Decisions</a>
       <a href="#codebase">All the code</a>
       <a href="#contact">Contact</a>
       <a href="index.html">NEXUS home →</a>
@@ -366,6 +367,256 @@
 })();
 </script>
 
+
+    <section id="decisions" class="proof-section" aria-labelledby="dec-title" style="background:#0c1d19">
+      <div class="page-width">
+        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Decisions · drawn with The Decision Book</p><h2 id="dec-title">Seven models · seven calls · the code that holds each one</h2></div><p>Each decision is drawn with a model from <i>The Decision Book</i> by Mikael Krogerus and Roman Tschäppeler. The numbers are measured on this repo's week. The code on the right is loaded live from the file that enforces the call.</p></div>
+        <div id="dec-tabs" style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px"></div>
+        <div class="dec-grid">
+          <div class="code-panel dec-figure"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="dec-model">model</span><span class="language-tag" id="dec-q">QUESTION</span></div>
+            <div id="dec-svg" style="padding:10px 14px 4px"></div>
+            <div class="dec-verdict"><span>Decision</span><b id="dec-call"></b></div>
+            <div class="dec-notes"><div><span>The model says</span><p id="dec-book"></p></div><div><span>Applied here</span><p id="dec-applied"></p></div><div><span>What would change it</span><p id="dec-flip"></p></div></div>
+          </div>
+          <div class="code-panel dec-code"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="dec-file">file</span><span class="language-tag" id="dec-lang">CODE</span></div>
+            <div id="dec-code-tabs" class="dec-code-tabs"></div>
+            <pre id="dec-code"><code></code></pre>
+            <p class="dec-code-why" id="dec-code-why"></p></div>
+        </div>
+      </div>
+    </section>
+<style>
+.dec-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:1.2rem;align-items:start}
+@media (max-width:980px){.dec-grid{grid-template-columns:1fr}}
+#dec-svg svg{width:100%;height:auto;display:block}
+#dec-svg text{font-family:Inter,system-ui,sans-serif}
+.dec-verdict{margin:6px 14px 0;padding:10px 14px;border-radius:12px;background:rgba(52,224,161,.12);border:1px solid #2f7a5c;display:flex;gap:12px;align-items:baseline}
+.dec-verdict span{font:700 10.5px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#34e0a1;white-space:nowrap}
+.dec-verdict b{color:#fff;font:700 15px/1.4 Inter,system-ui,sans-serif}
+.dec-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 14px 16px}
+@media (max-width:700px){.dec-notes{grid-template-columns:1fr}}
+.dec-notes div{border:1px solid rgba(226,239,222,.16);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.dec-notes span{font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#ffd27a}
+.dec-notes p{margin:.35rem 0 0;font-size:.86rem;line-height:1.5;color:#dfeae5}
+.dec-code-tabs{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 0}
+.dec-code-tabs button{border:1px solid #34584b;border-radius:7px;padding:4px 9px;font:600 11.5px ui-monospace,Menlo,monospace;cursor:pointer;background:transparent;color:#cfe3db}
+.dec-code-tabs button.on{background:#ffd27a;color:#0a1b15;border-color:#ffd27a}
+#dec-code{margin:0;padding:12px 14px;max-height:560px;overflow:auto;font:12.2px/1.55 "JetBrains Mono",ui-monospace,Menlo,monospace;color:#d8e6df}
+#dec-code .ln{display:inline-block;width:3.2em;color:#5d7a70;user-select:none}
+#dec-code .hl{background:rgba(255,210,122,.13);display:inline-block;width:100%}
+.dec-code-why{margin:0;padding:10px 14px 14px;border-top:1px solid #1f3b33;font-size:.85rem;color:#9cc0b7}
+</style>
+<script>
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  let B, S;
+  try { [B, S] = await Promise.all(["assets/data/benchmarks.json", "assets/data/site.json"].map((u) => fetch(u).then((r) => r.json()))); } catch (e) { return; }
+  const esc = (s) => String(s).replace(/[&<>]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" })[c]);
+  const T = (x, y, s, o = {}) => `<text x="${x}" y="${y}" fill="${o.c || "#dfeae5"}" font-size="${o.s || 13}" font-weight="${o.w || 500}" text-anchor="${o.a || "start"}">${esc(s)}</text>`;
+  const C = { mint: "#34e0a1", gold: "#ffd27a", red: "#ff7a6b", dim: "#5d7a70", line: "#34584b", ink: "#dfeae5" };
+  const w = B.watermark, o = B.out_of_orderness, lt = B.allowed_lateness, tt = B.dedupe_ttl, br = B.bad_record, al = B.alerting,
+        fm = B.freshness_metric, vr = B.volume_rule, ld = B.late_distribution, inc = S.incident;
+  const pct = (a, b) => Math.round(100 * a / b);
+
+  // ---- the drawings ----
+  const morph = () => {
+    const rows = [["Watermark", ["one global clock", "min · every partition", "min · active partitions"], 2],
+                  ["Out-of-orderness", ["0 min", "2 min", "10 min", "30 min"], 2],
+                  ["Allowed lateness", ["0", "15 min", "60 min", "180 min"], 2],
+                  ["Dedupe TTL", ["36 s", "15 min", "1 h", "24 h"], 3],
+                  ["Bad record", ["fail and restart", "skip silently", "dead-letter topic"], 2],
+                  ["Freshness from", ["newest window", "published completeness"], 1],
+                  ["Volume hold", ["2σ", "3σ", "2σ and ×2", "×2 only"], 2]];
+    const x0 = 150, cw = 146, rh = 48;
+    let g = "", pts = [];
+    rows.forEach(([name, opts, pick], r) => {
+      const y = 20 + r * rh;
+      g += T(10, y + 25, name, { c: C.gold, s: 12, w: 700 });
+      opts.forEach((op, i) => { const x = x0 + i * cw, on = i === pick;
+        g += `<rect x="${x}" y="${y + 4}" width="${cw - 10}" height="${rh - 12}" rx="8" fill="${on ? "#14382c" : "#0f211c"}" stroke="${on ? C.mint : C.line}"/>`;
+        g += T(x + (cw - 10) / 2, y + 27, op, { a: "middle", s: 11.5, c: on ? "#fff" : "#9cb3aa", w: on ? 700 : 500 });
+        if (on) pts.push([x + (cw - 10) / 2, y + 4 + (rh - 12) / 2]); });
+    });
+    const path = pts.map((p, i) => (i ? "L" : "M") + p.join(" ")).join(" ");
+    return `<svg viewBox="0 0 740 360" role="img" aria-label="Morphological box of the seven design choices with the chosen path"><path d="${path}" fill="none" stroke="${C.mint}" stroke-width="3" stroke-dasharray="6 4" opacity=".7"/>${g}</svg>`;
+  };
+
+  const rubber = () => {
+    const ks = ["0", "2", "10", "30"], X = (i) => 140 + i * 150;
+    let g = T(20, 70, "FRESH", { c: C.mint, s: 15, w: 800 }) + T(20, 90, "publish soon", { c: C.dim, s: 11 }) +
+            T(720, 70, "COMPLETE", { c: C.gold, s: 15, w: 800, a: "end" }) + T(720, 90, "fewer re-fires", { c: C.dim, s: 11, a: "end" });
+    g += `<path d="M110 120 Q 370 ${120 + 30} 640 120" fill="none" stroke="${C.gold}" stroke-width="5" stroke-linecap="round" opacity=".85"/>`;
+    g += `<circle cx="110" cy="120" r="9" fill="${C.mint}"/><circle cx="640" cy="120" r="9" fill="${C.gold}"/>`;
+    ks.forEach((k, i) => { const v = o[k], on = k === "10";
+      g += `<line x1="${X(i)}" y1="138" x2="${X(i)}" y2="172" stroke="${on ? C.mint : C.line}" stroke-width="2"/>`;
+      g += T(X(i), 192, `${k} min`, { a: "middle", w: 800, s: 15, c: on ? "#fff" : C.ink });
+      g += T(X(i), 214, `p95 ${v.freshness_p95} min`, { a: "middle", s: 12, c: "#9cc0b7" });
+      g += T(X(i), 232, `${v.late_refires} re-fires`, { a: "middle", s: 12, c: "#9cc0b7" });
+      if (on) g += `<rect x="${X(i) - 62}" y="176" width="124" height="66" rx="10" fill="none" stroke="${C.mint}"/>`; });
+    const W = [["active_min", "active partitions"], ["min_all", "every partition"], ["global_max", "one global clock"]];
+    g += T(20, 280, "Which clock pulls the band", { c: C.gold, s: 12, w: 700 });
+    W.forEach(([k, n], i) => { const v = w[k], x = 20 + i * 240, bad = v.sla_breach_samples > 0;
+      g += `<rect x="${x}" y="292" width="226" height="52" rx="9" fill="rgba(255,255,255,.03)" stroke="${k === "active_min" ? C.mint : bad ? C.red : C.line}"/>`;
+      g += T(x + 12, 313, n, { s: 12.5, w: 700, c: "#fff" }) + T(x + 12, 333, `${v.sla_breach_samples} SLA breaches · p95 ${v.freshness_p95} min`, { s: 11.5, c: bad ? C.red : "#9cc0b7" }); });
+    return `<svg viewBox="0 0 740 360" role="img" aria-label="Rubber band between freshness and completeness over out-of-orderness values">${g}</svg>`;
+  };
+
+  const pareto = () => {
+    const b = ld.buckets, tot = ld.records_missing_first_firing, max = Math.max(...b.map((x) => x.records));
+    let g = T(20, 24, `${tot} page views missed their first firing · how late were they?`, { c: C.gold, s: 12.5, w: 700 }), cum = 0, line = [];
+    b.forEach((x, i) => { const bx = 60 + i * 160, h = 170 * x.records / max, y = 220 - h; cum += x.records;
+      const stream = i < 2;
+      g += `<rect x="${bx}" y="${y}" width="110" height="${h}" rx="6" fill="${stream ? "rgba(52,224,161,.55)" : "rgba(255,210,122,.45)"}"/>`;
+      g += T(bx + 55, y - 8, `${x.records} · ${pct(x.records, tot)}%`, { a: "middle", s: 12.5, w: 700, c: "#fff" });
+      g += T(bx + 55, 240, x.bucket, { a: "middle", s: 12, c: C.ink });
+      line.push([bx + 55, 220 - 170 * cum / tot]); });
+    g += `<path d="${line.map((p, i) => (i ? "L" : "M") + p.join(" ")).join(" ")}" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="3 3"/>`;
+    g += line.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.5" fill="#fff"/>`).join("");
+    g += `<line x1="60" y1="252" x2="370" y2="252" stroke="${C.mint}" stroke-width="3"/>` + T(215, 272, "the stream keeps (allowed lateness 60 min)", { a: "middle", s: 11.5, c: C.mint, w: 700 });
+    g += `<line x1="380" y1="252" x2="690" y2="252" stroke="${C.gold}" stroke-width="3"/>` + T(535, 272, "the nightly batch counts", { a: "middle", s: 11.5, c: C.gold, w: 700 });
+    g += T(20, 310, "Cost of keeping windows open", { c: C.gold, s: 12, w: 700 });
+    ["0", "15", "60", "180"].forEach((k, i) => { const x = 20 + i * 178, on = k === "60";
+      g += `<rect x="${x}" y="320" width="166" height="32" rx="8" fill="rgba(255,255,255,.03)" stroke="${on ? C.mint : C.line}"/>`;
+      g += T(x + 83, 341, `${k} min · ${lt[k].peak_open_windows} windows`, { a: "middle", s: 11.5, c: on ? "#fff" : "#9cb3aa", w: on ? 700 : 500 }); });
+    return `<svg viewBox="0 0 740 360" role="img" aria-label="Pareto chart of how late late page views are">${g}</svg>`;
+  };
+
+  const swiss = () => {
+    const L = [["Producer", "no contract test", "partner SDK sends 57 bytes"], ["Parser", "raise · no dead letters", "record 3/171 throws"],
+               ["Restart policy", "restore · same offset", `${inc.restarts} restarts`], ["Alerting", "freshness only", `paged after ${inc.minutes.to_detect} min`]];
+    let g = "";
+    L.forEach(([n, hole, what], i) => { const x = 60 + i * 165;
+      g += `<path d="M${x} 40 L${x + 40} 60 L${x + 40} 250 L${x} 230 Z" fill="rgba(255,210,122,.82)" stroke="#c9a14a"/>`;
+      [[x + 18, 90, 9], [x + 24, 190, 7], [x + 14, 215, 5]].forEach(([cx, cy, r]) => g += `<ellipse cx="${cx}" cy="${cy}" rx="${r * .6}" ry="${r}" fill="#0c1d19"/>`);
+      g += `<ellipse cx="${x + 20}" cy="140" rx="9" ry="15" fill="#0c1d19" stroke="${C.red}" stroke-width="1.5"/>`;
+      g += T(x + 20, 275, n, { a: "middle", s: 12.5, w: 800, c: "#fff" }) + T(x + 20, 293, hole, { a: "middle", s: 11, c: C.red }) + T(x + 20, 309, what, { a: "middle", s: 11, c: "#9cc0b7" }); });
+    g += `<path d="M20 140 L720 140" stroke="${C.red}" stroke-width="2.5" stroke-dasharray="7 5" marker-end="url(#ah)"/>`;
+    g += T(20, 26, "→ one truncated click goes in", { s: 12, c: C.red, w: 700 }) + T(720, 26, `${inc.minutes.total} min late on a tier-1 product →`, { s: 12, c: C.red, w: 800, a: "end" });
+    g += T(20, 345, `Fix: close every hole · dead-letter by default · page on restarts > 3 in 10 min (${al.restarts_over_3_in_10_min} min not ${al.freshness_over_sla})`, { s: 12, c: C.mint, w: 700 });
+    return `<svg viewBox="0 0 740 360" role="img" aria-label="Swiss cheese model of the partner_revenue incident"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${C.red}"/></marker></defs>${g}</svg>`;
+  };
+
+  const loops = () => {
+    const n = fm.last_non_empty_window, c = fm.published_completeness;
+    const box = (x, y, wd, t, s, col) => `<rect x="${x}" y="${y}" width="${wd}" height="52" rx="10" fill="rgba(255,255,255,.04)" stroke="${col}"/>` + T(x + wd / 2, y + 22, t, { a: "middle", s: 12.5, w: 700, c: "#fff" }) + T(x + wd / 2, y + 40, s, { a: "middle", s: 11, c: "#9cc0b7" });
+    let g = box(30, 150, 170, "Assumption", "fresh = newest data's age", C.gold) + box(285, 150, 170, "Action", "page when age > SLA", C.line) + box(540, 150, 170, "Result", `${n.pages} pages · no incident`, C.red);
+    g += `<path d="M200 176 L283 176 M455 176 L538 176" stroke="${C.ink}" stroke-width="1.5" marker-end="url(#ar)"/>`;
+    g += `<path d="M625 150 C 600 90, 400 90, 370 148" fill="none" stroke="${C.dim}" stroke-width="2" marker-end="url(#ar)"/>` + T(497, 92, "single loop: raise the threshold · mute nights", { a: "middle", s: 11.5, c: "#9cb3aa" });
+    g += `<path d="M625 202 C 600 300, 140 300, 115 204" fill="none" stroke="${C.mint}" stroke-width="2.5" marker-end="url(#am)"/>` + T(370, 300, "double loop: question the assumption", { a: "middle", s: 12, c: C.mint, w: 700 });
+    g += T(370, 322, `fresh = age of published completeness (the watermark) · ${n.pages} → ${c.pages} pages`, { a: "middle", s: 12, c: "#fff", w: 700 });
+    g += T(30, 40, "Same week · same job · no real incident", { s: 12, c: C.gold, w: 700 });
+    g += T(30, 62, `Newest window: worst ${n.max} min · p95 ${n.p95} min. Completeness: worst ${c.max} min · p95 ${c.p95} min.`, { s: 11.5, c: "#9cc0b7" });
+    return `<svg viewBox="0 0 740 360" role="img" aria-label="Single and double loop learning on the freshness metric"><defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${C.ink}"/></marker><marker id="am" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="${C.mint}"/></marker></defs>${g}</svg>`;
+  };
+
+  const eisen = () => {
+    const Q = [[0, 0, "DO NOW", C.red, ["Dead-letter by default · done", `Page on restarts: ${al.restarts_over_3_in_10_min} min not ${al.freshness_over_sla}`]],
+               [1, 0, "PLAN", C.mint, ["Producer contract test in the SDK", "Alert on DLQ depth for tier 1", "Completeness as a column"]],
+               [0, 1, "AUTOMATE", C.gold, ["Re-publish delayed windows", "→ restore from checkpoint · no hands"]],
+               [1, 1, "DROP · FOR NOW", C.dim, [`Out-of-orderness 10 → 2 min (${o["10"].freshness_p95 - o["2"].freshness_p95} min p95)`, "Dedupe TTL 24 h → 15 min"]]];
+    let g = T(255, 42, "URGENT", { a: "middle", s: 11, c: C.gold, w: 700 }) + T(565, 42, "NOT URGENT", { a: "middle", s: 11, c: C.gold, w: 700 });
+    Q.forEach(([cx, cy, t, col, items]) => { const x = 100 + cx * 310, y = 52 + cy * 150;
+      g += `<rect x="${x}" y="${y}" width="300" height="140" rx="12" fill="rgba(255,255,255,.035)" stroke="${col}"/>` + T(x + 14, y + 24, t, { s: 12, w: 800, c: col });
+      items.forEach((it, i) => g += T(x + 14, y + 50 + i * 22, "· " + it, { s: 12, c: "#fff" })); });
+    g += T(84, 125, "IMPORTANT", { a: "end", s: 10.5, c: C.gold, w: 700 }) + T(84, 275, "LESS SO", { a: "end", s: 10.5, c: C.gold, w: 700 });
+    return `<svg viewBox="0 0 740 360" role="img" aria-label="Eisenhower matrix of the actions after the incident">${g}</svg>`;
+  };
+
+  const rums = () => {
+    const Q = [["KNOWN KNOWNS", C.mint, "I have run it in production", ["Kafka · Debezium CDC at Lifepal", "Spark · Databricks · Delta", "Airflow · dbt · Kimball", "Python · SQL · data contracts"]],
+               ["KNOWN UNKNOWNS", C.gold, "I know where my depth stops", ["Flink in production: MiniCluster only", "BigQuery: SQL generated · not billed", "Java at Tripadvisor's scale", "Snowflake cost at their volume"]],
+               ["UNKNOWN KNOWNS", "#9cc0b7", "habits I had not named", ["Idempotent upserts by key", "Publishing completeness · not age", "Proving parity before trusting"]],
+               ["UNKNOWN UNKNOWNS", C.red, "what I would ask first", ["Real traffic shape · late tail", "Which products are tier 1", "Who owns producer schemas", "What has paged them this year"]]];
+    let g = "";
+    Q.forEach(([t, col, sub, items], i) => { const x = 20 + (i % 2) * 360, y = 14 + Math.floor(i / 2) * 172;
+      g += `<rect x="${x}" y="${y}" width="345" height="160" rx="12" fill="rgba(255,255,255,.035)" stroke="${col}"/>` + T(x + 14, y + 24, t, { s: 12.5, w: 800, c: col }) + T(x + 14, y + 42, sub, { s: 11, c: "#9cb3aa" });
+      items.forEach((it, k) => g += T(x + 14, y + 68 + k * 22, "· " + it, { s: 12.2, c: "#fff" })); });
+    return `<svg viewBox="0 0 740 360" role="img" aria-label="Rumsfeld matrix of what I know and do not know">${g}</svg>`;
+  };
+
+  // ---- code excerpts: located by an anchor line so they follow the file ----
+  const D = [
+    { k: "Morphological box", q: "THE WHOLE DESIGN", draw: morph,
+      book: "List every dimension of a problem · list the options for each · then pick one path through the grid on purpose.",
+      applied: "Seven choices · 4 × 4 × 4 × 4 × 3 × 2 × 4 = 6,144 designs. Each column was benchmarked · not guessed.",
+      call: "Active-partition watermark · 10 min · 60 min · 24 h · dead letters · completeness · 2σ and ×2.",
+      flip: "A new product with a different SLA gets its own path: the contract is per product.",
+      code: [["sources.yml", "contracts/sources.yml", "- topic: page_views", 18, [10, 18], "One product's path · every engine reads these numbers."],
+             ["stream.py · Job", "src/nexus/stream.py", "def __init__(self, topic_name", 26, [0, 5], "Every dimension is a parameter · so every alternative can be re-run."],
+             ["benchmarks.py", "src/nexus/benchmarks.py", "# 1. the watermark", 22, [0, 2], "The sweep that filled the grid."]] },
+    { k: "Rubber band", q: "WHICH WATERMARK · HOW LONG TO WAIT", draw: rubber,
+      book: "Two forces pull in opposite directions. Name both · stretch the band · and see where it is tight.",
+      applied: `Fresh pulls one way · complete pulls the other. 0 min re-fires ${o["0"].late_refires} times. 30 min holds p95 at ${o["30"].freshness_p95}. Waiting on every partition snaps: ${w.min_all.sla_breach_samples} breaches.`,
+      call: "Min over active partitions · less 10 min of out-of-orderness · idle after 5 min.",
+      flip: `Trusted device clocks: 2 min is ${o["10"].freshness_p95 - o["2"].freshness_p95} min fresher at p95 for ${o["2"].late_refires - o["10"].late_refires} more re-fires a week.`,
+      code: [["stream.py · _watermark", "src/nexus/stream.py", "def _watermark(self, now", 13, [5, 13], "Three clocks in one function · the default skips idle partitions."],
+             ["PartitionWatermarks.java", "flink/job/src/main/java/nexus/flink/PartitionWatermarks.java", "public void onEvent", 18, [2, 9], "The same rule as a Flink WatermarkGenerator."],
+             ["NexusKafka.java", "flink/job/src/main/java/nexus/flink/NexusKafka.java", "withIdleness", 18, [8, 9], "On a real cluster: per-split watermarks plus withIdleness.", 8]] },
+    { k: "Pareto", q: "HOW LONG TO KEEP A WINDOW OPEN", draw: pareto,
+      book: "80% of the effect comes from 20% of the causes. Find the cheap 20% · stop there.",
+      applied: `Here it is upside down: ${pct(ld.buckets[3].records, ld.records_missing_first_firing)}% of late views are over 3 h late (offline uploads). Chasing them in the stream costs ${(lt["180"].peak_open_windows / lt["60"].peak_open_windows).toFixed(1)}× the state.`,
+      call: "60 min in the stream for the near-late · the long tail goes to the nightly batch · which already counts it.",
+      flip: "If the app flushes offline views sooner · the tail moves left and lateness can shrink.",
+      code: [["NexusJobs.java", "flink/job/src/main/java/nexus/flink/NexusJobs.java", "SingleOutputStreamOperator<WindowRow> windows", 12, [3, 5], "allowedLateness plus a side output: nothing is dropped silently."],
+             ["stream.py · _process", "src/nexus/stream.py", "if start + self.size + self.lateness <= st.wm", 20, [0, 7], "Past the lateness: side output. Within it: re-fire the window."],
+             ["benchmarks.py · 4b", "src/nexus/benchmarks.py", "# 4b. how late", 21, [8, 12], "How the distribution above was measured."]] },
+    { k: "Swiss cheese", q: "WHY ONE RECORD COST 79 MINUTES", draw: swiss,
+      book: "Accidents happen when the holes in every layer line up. Fix layers · not people.",
+      applied: `Four layers each had a hole. One 57-byte record went through all four: ${inc.restarts} restarts · ${inc.windows_delayed} windows late.`,
+      call: "Close two holes in the job now · two upstream next. Dead letters cost 0 restarts and keep the record.",
+      flip: "A product where a missing record is worse than a late one would fail closed · and page at once.",
+      code: [["stream.py · bad record", "src/nexus/stream.py", "def _process(self", 16, [5, 13], "The hole · then the patch: dlq=True by default."],
+             ["Parse.java", "flink/job/src/main/java/nexus/flink/Parse.java", "public void processElement", 22, [0, 1], "Flink: an OutputTag for dead letters."],
+             ["sla.py · restart rule", "src/nexus/sla.py", "RESTART_RULE =", 36, [0, 1], "The alerting layer: 3 min instead of 29."]] },
+    { k: "Double loop", q: "WHAT FRESHNESS MEANS", draw: loops,
+      book: "Single loop fixes the action. Double loop questions the assumption behind it.",
+      applied: `The first version paged ${fm.last_non_empty_window.pages} times in a quiet week. Raising the threshold would hide a real incident too. The assumption was wrong: 3 a.m. has no clicks · it is not stale.`,
+      call: "Freshness is measured from the completeness the job publishes · not from the newest row.",
+      flip: "A source that should never be quiet: then a no-data alert is the right extra check.",
+      code: [["stream.py · progress", "src/nexus/stream.py", "def _advance", 16, [5, 8], "The job publishes 'complete up to' as it advances."],
+             ["sla.py · age_series", "src/nexus/sla.py", "def age_series", 11, [0, 1], "Age is read from that progress · not from the data."],
+             ["benchmarks.py · 6", "src/nexus/benchmarks.py", "def _age_from_last_window", 12, [0, 2], "The first version · kept to measure against."]] },
+    { k: "Eisenhower", q: "WHAT TO DO FIRST AFTER THE INCIDENT", draw: eisen,
+      book: "Sort by urgent and important. Do · plan · delegate · drop. Most noise lives in urgent and unimportant.",
+      applied: "The postmortem had seven ideas. Two stop the next page · three stop the next incident · two are tuning the data says can wait.",
+      call: "Ship dead letters and the restart page this week · plan the producer contract with the partner team.",
+      flip: "If DLQ depth climbs after the fix · the producer test moves to do now.",
+      code: [["incident.md", "assets/data/incident.md", "## Root cause", 20, [12, 20], "Written by the build from the run · not by hand."],
+             ["sla.py · actions", "src/nexus/sla.py", "{\"what\": f\"Page on restarts", 10, [0, 2], "The rule behind 'do now'."],
+             ["test_sla.py", "tests/test_sla.py", "def test_", 30, [0, 1], "The incident's numbers are asserted · so the postmortem cannot drift."]] },
+    { k: "Rumsfeld matrix", q: "WHERE MY DEPTH STOPS", draw: rums,
+      book: "Sort what you know into four boxes. The dangerous box is the unknown unknowns: turn them into questions.",
+      applied: "Flink runs here on a MiniCluster and matches Python window for window. That proves semantics · not operations at Tripadvisor's scale.",
+      call: "Say it plainly · prove parity in tests · ask the four questions in the red box first.",
+      flip: "A month on their on-call rota moves most of the gold box into the green one.",
+      code: [["test_flink.py", "tests/test_flink.py", "def test_flink_matches", 18, [4, 7], "What is proven: identical windows · Flink vs Python."],
+             ["test_spark_batch.py", "tests/test_spark_batch.py", "def test_", 14, [0, 1], "And the batch on PySpark."],
+             ["warehouse.py", "src/nexus/warehouse.py", "def dialect_diff", 14, [0, 1], "BigQuery and Snowflake SQL: generated and diffed · run on SQLite · not billed."]] },
+  ];
+
+  const cache = {};
+  const load = (p) => cache[p] || (cache[p] = fetch(p).then((r) => r.ok ? r.text() : ""));
+  let cur = 0;
+  const showCode = async (j) => {
+    const [name, path, anchor, n, [h0, h1], why, before = 0] = D[cur].code[j];
+    [...$("dec-code-tabs").children].forEach((b, k) => b.classList.toggle("on", k === j));
+    $("dec-file").textContent = path; $("dec-code-why").textContent = why;
+    $("dec-lang").textContent = path.endsWith(".java") ? "JAVA · FLINK" : path.endsWith(".py") ? "PYTHON" : path.endsWith(".yml") ? "YAML" : "MARKDOWN";
+    const lines = (await load(path)).split("\n");
+    let i = lines.findIndex((l) => l.includes(anchor)); i = i < 0 ? 0 : Math.max(0, i - before);
+    $("dec-code").innerHTML = lines.slice(i, i + n).map((l, k) => `<span class="${k >= h0 && k < h1 ? "hl" : ""}"><span class="ln">${i + k + 1}</span>${esc(l)}</span>`).join("\n");
+  };
+  const show = (i) => { cur = i; const d = D[i];
+    [...$("dec-tabs").children].forEach((b, k) => { b.style.background = k === i ? "#ffd27a" : "transparent"; b.style.color = k === i ? "#0a1b15" : "#cfe3db"; });
+    $("dec-model").textContent = `${d.k} · The Decision Book`; $("dec-q").textContent = d.q; $("dec-svg").innerHTML = d.draw();
+    $("dec-call").textContent = d.call; $("dec-book").textContent = d.book; $("dec-applied").textContent = d.applied; $("dec-flip").textContent = d.flip;
+    $("dec-code-tabs").innerHTML = d.code.map((c) => `<button type="button">${c[0]}</button>`).join(""); showCode(0); };
+  $("dec-tabs").innerHTML = D.map((d, i) => `<button type="button" style="border:1px solid #34584b;border-radius:8px;padding:5px 11px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer">${i + 1} · ${d.k}</button>`).join("");
+  $("dec-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) show([...$("dec-tabs").children].indexOf(b)); });
+  $("dec-code-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showCode([...$("dec-code-tabs").children].indexOf(b)); });
+  show(0);
+})();
+</script>
 
     <section id="codebase" class="proof-section" aria-labelledby="codebase-title">
       <div class="page-width">
