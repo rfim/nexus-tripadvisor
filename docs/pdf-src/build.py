@@ -105,6 +105,7 @@ def deck():
             ("04", "The stream job", "Event time, watermarks, lateness, dead letters"),
             ("05", "Stream first, batch checks", "Reconciliation, record for record; Spark agrees"),
             ("06", "Snowflake and BigQuery from one contract", "Governance as generated code"),
+            ("06", "Modeling and governance", "Grain, keys, lineage, policy tags, quality gates, erasure"),
             ("07", "SLAs and an incident", "Detection, root cause, postmortem"),
             ("08", "Apache Flink", "The job on Flink 1.20: topology, state, watermarks, production on Kafka"),
             ("08", "Java", "A twin of the job, tested against the reference"),
@@ -148,6 +149,16 @@ def deck():
         side(("Same product, two dialects", [f"<b>{r['concern']}:</b> {html.escape(r['snowflake'])} · {html.escape(r['bigquery'])}" for r in D["warehouse"]["dialects"][3:6]]),
              ("Checked, not only rendered", [f"Gold loaded with the same upsert semantics; <b>{passed}/{len(checks)}</b> checks pass, including masking for every personal field and the erasure ({D['warehouse']['erased_rows_removed']} rows removed)."]),
              ("At Lifepal", ["PII masking, role-based access and lineage in one governed layer; certified models behind an MCP server for agents."]))))
+    M = D["warehouse"]["model"]
+    s.append(slide("06 · Modeling and governance", "Grain first. Rules travel with the data.",
+        "Kafka topics land in raw tables that keep every field and where it came from; Gold products state their grain and key; one contract names the personal fields, the rules and the SLAs.",
+        table([(f"<b>{g['table']}</b>", g["grain"], ", ".join(g["key"]), f"PARTITION BY DATE({g['partition']}) CLUSTER BY {', '.join(g['cluster'])}" if g["partition"] else f"CLUSTER BY {', '.join(g['cluster'])}",
+                n(D["warehouse"]["rows"][g["table"]]), f"tier {g['tier']} · {g['sla_minutes']} min") for g in M["gold"]],
+              ["Gold product", "Grain", "Key (the MERGE)", "BigQuery layout", "Rows", "SLA"])
+        + f'''<div class="grid three" style="margin-top:6mm">
+          <div class="card"><h3>Personal data</h3><p>{", ".join(c for r in M["raw"] for c in (r["table"] + "." + x["name"] for x in r["columns"] if x["pii"]))}: a policy tag in BigQuery and a masking policy in Snowflake, from one line of the contract; a check per field.</p></div>
+          <div class="card"><h3>Quality gates</h3><p>{passed}/{len(checks)} checks pass: rules per product from quality.yml, masking, and the erasure. A volume gate held the scraper hour before Gold.</p></div>
+          <div class="card"><h3>Erasure and schema change</h3><p>A tombstone deletes the review in raw and Gold in both warehouses ({D["warehouse"]["erased_rows_removed"]} rows). Schema v2 is flattened into raw; Gold keeps its grain.</p></div></div>'''))
     s.append(slide("07 · SLAs and an incident", f"{I['product']} late for {I['minutes']['total']} minutes", "Freshness is measured from the completeness the job publishes, so a quiet night is not an incident. One thing was all week.",
         f'''<div class="grid two"><div>''' + table([(f"<b>{hm(t['at'])}</b>", t["who"], html.escape(t["what"])) for t in I["timeline"]], ["UTC", "Who", "What"]) + f'''</div>
         <div><div class="grid two" style="grid-template-columns:1fr 1fr">

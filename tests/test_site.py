@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 HTML = (ROOT / "index.html").read_text()
-PAGES = {"index.html": "home.js", "stream.html": "stream.js", "oncall.html": "oncall.js", "run.html": "code.js"}
+PAGES = {"index.html": "home.js", "stream.html": "stream.js", "governance.html": "governance.js", "oncall.html": "oncall.js", "run.html": "code.js"}
 
 
 def test_every_id_each_script_fills_exists():

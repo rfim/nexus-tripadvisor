@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modeling &amp; governance · NEXUS for Tripadvisor</title>
+<meta name="description" content="Step through the model and its governance: Kafka topics to raw tables to Gold products, one contract rendered to BigQuery and Snowflake, personal data under policy tags and masking, quality gates, erasure and a schema change, with the run's own SQL results.">
+<link rel="icon" href="assets/favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/tripadvisor.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="shell">
+  <a class="brand" href="index.html"><img class="brand-owl" src="assets/tripadvisor-owl.png" alt="" width="26" height="26"><span>NEXUS <small>for Tripadvisor</small></span><span class="built-in"><small>built in</small><span class="logo-chip"><img src="assets/lifepal.png" alt="Lifepal" width="56" height="20"></span></span></a>
+  <nav aria-label="Primary">
+    <a href="index.html" class="keep">Home</a>
+    <a href="stream.html" class="keep">Streaming &amp; step by step</a>
+    <a href="governance.html" aria-current="page" class="keep"><span class="live" aria-hidden="true"></span>Modeling &amp; governance</a>
+    <a href="oncall.html" class="keep">The incident &amp; replayed</a>
+    <a href="run.html" class="keep">The code &amp; runnable</a>
+    <a href="https://github.com/rfim/nexus-tripadvisor" class="nav-code keep">Code ↗</a>
+  </nav>
+</div></header>
+<main id="main">
+<section class="section dark" style="padding-top:3rem">
+  <div class="shell">
+    <div class="index"><span>Modeling &amp; governance · step by step</span><span>every table, rule and result below is from the last run</span></div>
+    <div class="head"><h2>One contract. <em>Every table, every rule.</em></h2>
+      <p>Kafka topics land in raw tables, raw becomes Gold products with a stated grain, and Gold is published to BigQuery and Snowflake. The model, the personal-data rules, the quality gates and the erasure all come from one file, <code>contracts/sources.yml</code>. Pick a part and step through it.</p></div>
+
+    <div class="tabs" id="views" role="tablist" aria-label="Which part of the model"></div>
+    <div class="stage" id="stage">
+      <div class="svgwrap"><svg viewBox="0 0 1200 470" role="img" aria-labelledby="g-title">
+        <title id="g-title">The contract feeds the raw tables; Kafka topics land in raw tables; raw tables build Gold products with a location dimension; Gold passes quality gates, policy tags and erasure on its way to BigQuery and Snowflake.</title>
+        <g id="g-wires"></g>
+        <g id="g-nodes"></g>
+        <g id="packets"></g>
+      </svg></div>
+      <div class="caption" id="caption">Pick a part above, then press Play or step through.</div>
+      <div class="stage-ui">
+        <ol class="steps-list" id="steps"></ol>
+        <div class="wirelog" id="log" aria-live="polite"></div>
+      </div>
+      <div class="term-wrap"><div class="term-bar"><span class="window-dots"><i></i><i></i><i></i></span><div id="term-tabs">
+          <button data-p="term" class="on">Terminal</button><button data-p="py">Python · the code that decided</button></div>
+          <span class="term-note">sqlite3 runs in the build on target/warehouse.db, standing in for both warehouses</span></div>
+        <pre class="term" id="term-out"></pre></div>
+      <div class="controls"><button id="prev">← Back</button><button id="play" class="primary">▶ Play</button><button id="next">Next →</button>
+        <span class="grow"></span><label>Speed <select id="speed"><option value="1600">calm</option><option value="900" selected>normal</option><option value="450">fast</option></select></label></div>
+    </div>
+
+    <div class="index" style="margin-top:3rem"><span>The model</span><span>grain, keys, layout and freshness, per Gold product</span></div>
+    <div class="grid g3" id="gold-cards" style="margin-top:1rem"></div>
+    <div class="grid g3" id="raw-cards" style="margin-top:1rem"></div>
+    <div class="grid g3" style="margin-top:1.4rem">
+      <div class="card"><div class="kicker" style="color:var(--violet2)">Modeling</div><h3 style="color:#fff">Grain first, then keys</h3><p>Every Gold product states its grain and its key, and the MERGE is generated from the key. A late Flink re-fire upserts the same row, so the warehouse never double-counts.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">Governance</div><h3 style="color:#fff">Rules travel with the data</h3><p>Personal fields are named once in the contract. Snowflake gets a masking policy and BigQuery a policy tag from that one line; a check fails the build if either is missing.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">At Lifepal</div><h3 style="color:#fff">The same discipline, at scale</h3><p>Kimball models and a dbt semantic layer for Finance, Marketing, CRM, Product and data science, 500+ checks, PII masking and role-based access: data-trust escalations fell 60%.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="shell">
+  <p>R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a>. Synthetic data; an independent application, not affiliated with or endorsed by Tripadvisor. BigQuery and Snowflake SQL is generated and checked here, not run on a cloud project.</p>
+</div></footer>
+<script src="assets/common.js"></script>
+<script src="assets/governance.js"></script>
+</body></html>

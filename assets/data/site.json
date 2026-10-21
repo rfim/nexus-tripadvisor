@@ -1,108 +1,108 @@
 {
  "run": {
-  "seconds": 30.6,
+  "seconds": 29.4,
   "tasks": [
    {
     "key": "generate",
     "label": "Simulate a week of Kafka topics",
     "start_s": 0.0,
-    "duration_s": 0.73
+    "duration_s": 0.62
    },
    {
     "key": "stream_page_views",
     "label": "Stream job: page_views (TaskManager lost at 09:17)",
-    "start_s": 0.95,
-    "duration_s": 2.34
+    "start_s": 0.84,
+    "duration_s": 2.33
    },
    {
     "key": "replay_check",
     "label": "Same job, no crash: is the sink identical?",
-    "start_s": 3.29,
-    "duration_s": 2.33
+    "start_s": 3.16,
+    "duration_s": 2.19
    },
    {
     "key": "stream_partner_clicks",
     "label": "Stream job: partner_clicks (poison pill, crash loop, fix)",
-    "start_s": 5.63,
-    "duration_s": 0.17
+    "start_s": 5.36,
+    "duration_s": 0.18
    },
    {
     "key": "stream_reviews",
     "label": "Stream job: reviews (latest version wins, tombstones)",
-    "start_s": 5.81,
-    "duration_s": 2.28
+    "start_s": 5.55,
+    "duration_s": 2.3
    },
    {
     "key": "batch_page_views",
     "label": "Nightly batch: page_views",
-    "start_s": 8.09,
-    "duration_s": 0.14
+    "start_s": 7.85,
+    "duration_s": 0.12
    },
    {
     "key": "batch_partner_clicks",
     "label": "Nightly batch: partner_clicks",
-    "start_s": 8.23,
+    "start_s": 7.97,
     "duration_s": 0.01
    },
    {
     "key": "reconcile_page_views",
     "label": "Reconcile stream with batch: page_views",
-    "start_s": 8.24,
+    "start_s": 7.98,
     "duration_s": 0.02
    },
    {
     "key": "reconcile_partner_clicks",
     "label": "Reconcile stream with batch: partner_clicks",
-    "start_s": 8.26,
+    "start_s": 7.99,
     "duration_s": 0.0
    },
    {
     "key": "volume_check",
     "label": "Volume check: hold anomalous hours",
-    "start_s": 8.26,
+    "start_s": 8.0,
     "duration_s": 0.0
    },
    {
     "key": "gold_page_views",
     "label": "Gold: page views without the bots",
-    "start_s": 8.37,
-    "duration_s": 0.17
+    "start_s": 8.07,
+    "duration_s": 0.12
    },
    {
     "key": "render_sql",
     "label": "Render Snowflake and BigQuery SQL from the contract",
-    "start_s": 8.58,
-    "duration_s": 0.01
+    "start_s": 8.22,
+    "duration_s": 0.0
    },
    {
     "key": "load_check",
     "label": "Load, check quality, apply erasure",
-    "start_s": 8.6,
-    "duration_s": 0.05
+    "start_s": 8.25,
+    "duration_s": 0.06
    },
    {
     "key": "incident",
     "label": "Write the incident record and postmortem",
-    "start_s": 8.66,
+    "start_s": 8.32,
     "duration_s": 0.0
    },
    {
     "key": "java_twin",
     "label": "Java twin of the page_views job: same windows?",
-    "start_s": 8.74,
-    "duration_s": 1.77
+    "start_s": 8.4,
+    "duration_s": 1.78
    },
    {
     "key": "flink",
     "label": "Apache Flink 1.20 on a MiniCluster: same windows?",
-    "start_s": 10.51,
-    "duration_s": 6.83
+    "start_s": 10.18,
+    "duration_s": 6.95
    },
    {
     "key": "spark_batch",
     "label": "PySpark batch: same windows as the plain-Python batch?",
-    "start_s": 17.34,
-    "duration_s": 13.26
+    "start_s": 17.13,
+    "duration_s": 12.24
    }
   ],
   "week": [
@@ -1283,6 +1283,202 @@
    "reviews_current": 1120
   },
   "erased_rows_removed": 5,
+  "queries": [
+   {
+    "sql": "SELECT name AS column_name, type FROM pragma_table_info('raw_reviews') WHERE name LIKE 'reviewer%' OR name IN ('review_id','version','op')",
+    "cols": [
+     "column_name",
+     "type"
+    ],
+    "rows": [
+     [
+      "review_id",
+      "TEXT"
+     ],
+     [
+      "version",
+      "INTEGER"
+     ],
+     [
+      "op",
+      "TEXT"
+     ],
+     [
+      "reviewer_hash",
+      "TEXT"
+     ],
+     [
+      "reviewer_email",
+      "TEXT"
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT location_id, window_start, views FROM location_views_hourly ORDER BY views DESC, window_start LIMIT 3",
+    "cols": [
+     "location_id",
+     "window_start",
+     "views"
+    ],
+    "rows": [
+     [
+      "d186629",
+      "2026-10-10T11:00:00.000Z",
+      16
+     ],
+     [
+      "d187517",
+      "2026-10-11T12:00:00.000Z",
+      16
+     ],
+     [
+      "d187665",
+      "2026-10-08T13:00:00.000Z",
+      15
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT partner, count(*) AS windows, sum(clicks) AS clicks, round(sum(revenue_gbp), 2) AS revenue_gbp FROM partner_revenue_15m GROUP BY partner ORDER BY revenue_gbp DESC",
+    "cols": [
+     "partner",
+     "windows",
+     "clicks",
+     "revenue_gbp"
+    ],
+    "rows": [
+     [
+      "partner_a",
+      259,
+      360,
+      260.29
+     ],
+     [
+      "partner_b",
+      221,
+      295,
+      216.46
+     ],
+     [
+      "partner_c",
+      180,
+      226,
+      181.91
+     ],
+     [
+      "partner_d",
+      122,
+      138,
+      105.92
+     ],
+     [
+      "partner_e",
+      113,
+      128,
+      94.32
+     ],
+     [
+      "partner_f",
+      89,
+      99,
+      76.72
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT l.city, count(*) AS reviews, round(avg(r.rating), 2) AS avg_rating FROM reviews_current r JOIN dim_location l USING (location_id) WHERE r.status = 'published' GROUP BY l.city ORDER BY reviews DESC LIMIT 4",
+    "cols": [
+     "city",
+     "reviews",
+     "avg_rating"
+    ],
+    "rows": [
+     [
+      "London",
+      150,
+      4.01
+     ],
+     [
+      "New York",
+      140,
+      4.18
+     ],
+     [
+      "Paris",
+      137,
+      3.82
+     ],
+     [
+      "Lisbon",
+      130,
+      3.89
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT review_id, version, op, reviewer_hash FROM raw_reviews WHERE review_id IN ('r00001') ORDER BY version",
+    "cols": [
+     "review_id",
+     "version",
+     "op",
+     "reviewer_hash"
+    ],
+    "rows": [
+     [
+      "r00001",
+      1,
+      "submitted",
+      "u108fd20128"
+     ],
+     [
+      "r00001",
+      2,
+      "moderated",
+      "u108fd20128"
+     ],
+     [
+      "r00001",
+      3,
+      "edited",
+      "u108fd20128"
+     ],
+     [
+      "r00001",
+      3,
+      "edited",
+      "u108fd20128"
+     ],
+     [
+      "r00001",
+      4,
+      "erased",
+      null
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT count(*) AS rows_left FROM raw_reviews WHERE review_id IN ('r00001')",
+    "cols": [
+     "rows_left"
+    ],
+    "rows": [
+     [
+      0
+     ]
+    ]
+   },
+   {
+    "sql": "SELECT count(*) AS failing FROM partner_revenue_15m WHERE NOT (revenue_gbp / clicks BETWEEN 0.10 AND 2.00)",
+    "cols": [
+     "failing"
+    ],
+    "rows": [
+     [
+      0
+     ]
+    ]
+   }
+  ],
   "files": [
    "bigquery/erasure.sql",
    "bigquery/governance.sql",
@@ -1337,7 +1533,380 @@
     "snowflake": "Time Travel, 1 day on raw",
     "bigquery": "time travel, 48 hours on raw"
    }
-  ]
+  ],
+  "model": {
+   "raw": [
+    {
+     "table": "raw_page_views",
+     "topic": "page_views",
+     "owner": "data-platform",
+     "columns": [
+      {
+       "name": "event_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "event_time",
+       "type": "timestamp",
+       "pii": false
+      },
+      {
+       "name": "session_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "user_hash",
+       "type": "string",
+       "pii": true
+      },
+      {
+       "name": "location_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "page_type",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "platform",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "app_version",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "_schema_version",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_partition",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_offset",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_appended_at",
+       "type": "timestamp",
+       "pii": false
+      }
+     ]
+    },
+    {
+     "table": "raw_partner_clicks",
+     "topic": "partner_clicks",
+     "owner": "data-platform",
+     "columns": [
+      {
+       "name": "click_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "event_time",
+       "type": "timestamp",
+       "pii": false
+      },
+      {
+       "name": "session_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "location_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "partner",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "platform",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "cpc_gbp",
+       "type": "decimal",
+       "pii": false
+      },
+      {
+       "name": "price_amount",
+       "type": "decimal",
+       "pii": false
+      },
+      {
+       "name": "price_currency",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "revenue_gbp",
+       "type": "decimal",
+       "pii": false
+      },
+      {
+       "name": "_schema_version",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_partition",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_offset",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_appended_at",
+       "type": "timestamp",
+       "pii": false
+      }
+     ]
+    },
+    {
+     "table": "raw_reviews",
+     "topic": "reviews",
+     "owner": "data-platform",
+     "columns": [
+      {
+       "name": "event_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "event_time",
+       "type": "timestamp",
+       "pii": false
+      },
+      {
+       "name": "review_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "version",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "op",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "location_id",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "rating",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "status",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "reviewer_hash",
+       "type": "string",
+       "pii": true
+      },
+      {
+       "name": "reviewer_email",
+       "type": "string",
+       "pii": true
+      },
+      {
+       "name": "text_chars",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "lang",
+       "type": "string",
+       "pii": false
+      },
+      {
+       "name": "_schema_version",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_partition",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_offset",
+       "type": "int",
+       "pii": false
+      },
+      {
+       "name": "_appended_at",
+       "type": "timestamp",
+       "pii": false
+      }
+     ]
+    }
+   ],
+   "gold": [
+    {
+     "table": "location_views_hourly",
+     "grain": "one row per location per hour",
+     "key": [
+      "window_start",
+      "location_id"
+     ],
+     "cluster": [
+      "location_id"
+     ],
+     "partition": "window_start",
+     "columns": [
+      {
+       "name": "window_start",
+       "type": "timestamp"
+      },
+      {
+       "name": "location_id",
+       "type": "string"
+      },
+      {
+       "name": "views",
+       "type": "int"
+      }
+     ],
+     "from": "raw_page_views",
+     "sla_minutes": 90,
+     "tier": 2
+    },
+    {
+     "table": "partner_revenue_15m",
+     "grain": "one row per partner per 15 minutes",
+     "key": [
+      "window_start",
+      "partner"
+     ],
+     "cluster": [
+      "partner"
+     ],
+     "partition": "window_start",
+     "columns": [
+      {
+       "name": "window_start",
+       "type": "timestamp"
+      },
+      {
+       "name": "partner",
+       "type": "string"
+      },
+      {
+       "name": "clicks",
+       "type": "int"
+      },
+      {
+       "name": "revenue_gbp",
+       "type": "decimal"
+      }
+     ],
+     "from": "raw_partner_clicks",
+     "sla_minutes": 45,
+     "tier": 1
+    },
+    {
+     "table": "reviews_current",
+     "grain": "one row per live review (latest version)",
+     "key": [
+      "review_id"
+     ],
+     "cluster": [
+      "location_id"
+     ],
+     "partition": null,
+     "columns": [
+      {
+       "name": "review_id",
+       "type": "string"
+      },
+      {
+       "name": "location_id",
+       "type": "string"
+      },
+      {
+       "name": "rating",
+       "type": "int"
+      },
+      {
+       "name": "status",
+       "type": "string"
+      },
+      {
+       "name": "lang",
+       "type": "string"
+      },
+      {
+       "name": "version",
+       "type": "int"
+      }
+     ],
+     "from": "raw_reviews",
+     "sla_minutes": 60,
+     "tier": 2
+    }
+   ],
+   "edges": [
+    [
+     "topic:page_views",
+     "raw_page_views"
+    ],
+    [
+     "topic:partner_clicks",
+     "raw_partner_clicks"
+    ],
+    [
+     "topic:reviews",
+     "raw_reviews"
+    ],
+    [
+     "raw_page_views",
+     "location_views_hourly"
+    ],
+    [
+     "raw_partner_clicks",
+     "partner_revenue_15m"
+    ],
+    [
+     "raw_reviews",
+     "reviews_current"
+    ],
+    [
+     "dim_location",
+     "location_views_hourly"
+    ],
+    [
+     "dim_location",
+     "reviews_current"
+    ]
+   ]
+  }
  },
  "sla": [
   {
@@ -10019,7 +10588,7 @@
    "late_updates": 16
   },
   "emits": 8723,
-  "millis": 627,
+  "millis": 731,
   "java": "openjdk version \"21.0.12.1\" 2026-08-18"
  },
  "flink": {
@@ -10031,7 +10600,7 @@
    "dead_letters": 0,
    "windows": 8707,
    "events_in_windows": 22509,
-   "millis": 3385,
+   "millis": 3538,
    "dead_letter_records": [],
    "identical_to_python": true
   },
@@ -10043,7 +10612,7 @@
    "dead_letters": 1,
    "windows": 984,
    "events_in_windows": 1246,
-   "millis": 1337,
+   "millis": 1194,
    "dead_letter_records": [
     "partition 3 offset 171: not JSON: JsonEOFException"
    ],
@@ -10064,7 +10633,7 @@
    "bad_records": 1,
    "identical": true
   },
-  "seconds": 13.2,
+  "seconds": 12.2,
   "version": "3.5.4"
  }
 }

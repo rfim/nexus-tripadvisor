@@ -2,13 +2,13 @@
 
 An independent Senior Data Engineer (Data Platform) portfolio by R. Firman Insan Muhammad (Vim), for Tripadvisor.
 
-**Live site:** https://rfim.github.io/nexus-tripadvisor/ · **Streaming & step by step:** https://rfim.github.io/nexus-tripadvisor/stream.html · **The incident & replayed:** https://rfim.github.io/nexus-tripadvisor/oncall.html · **The code & runnable:** https://rfim.github.io/nexus-tripadvisor/run.html · **The fireside story:** https://rfim.github.io/nexus-tripadvisor/story.html
+**Live site:** https://rfim.github.io/nexus-tripadvisor/ · **Streaming & step by step:** https://rfim.github.io/nexus-tripadvisor/stream.html · **Modeling & governance:** https://rfim.github.io/nexus-tripadvisor/governance.html · **The incident & replayed:** https://rfim.github.io/nexus-tripadvisor/oncall.html · **The code & runnable:** https://rfim.github.io/nexus-tripadvisor/run.html · **The fireside story:** https://rfim.github.io/nexus-tripadvisor/story.html
 
 **Fireside deck:** [assets/Nexus_Tripadvisor_VIM.pdf](assets/Nexus_Tripadvisor_VIM.pdf) · **One page:** [assets/VIM_Tripadvisor_one_page.pdf](assets/VIM_Tripadvisor_one_page.pdf)
 
 The PDFs are built from `docs/pdf-src/` with the run's data: `python docs/pdf-src/build.py && node scripts/pdfs.js`.
 
-**GIFs:** [assets/gif/1_NEXUS_Tripadvisor_stream_step_by_step.gif](assets/gif/1_NEXUS_Tripadvisor_stream_step_by_step.gif) (late records, a poison pill, an erasure) · [assets/gif/2_NEXUS_Tripadvisor_incident_replayed.gif](assets/gif/2_NEXUS_Tripadvisor_incident_replayed.gif) (the SLA breach, minute by minute)
+**GIFs:** [assets/gif/1_NEXUS_Tripadvisor_stream_step_by_step.gif](assets/gif/1_NEXUS_Tripadvisor_stream_step_by_step.gif) (late records, a poison pill, an erasure) · [assets/gif/2_NEXUS_Tripadvisor_incident_replayed.gif](assets/gif/2_NEXUS_Tripadvisor_incident_replayed.gif) (the SLA breach, minute by minute) · [assets/gif/3_NEXUS_Tripadvisor_modeling_governance.gif](assets/gif/3_NEXUS_Tripadvisor_modeling_governance.gif) (the model, personal data, erasure)
 
 ![Streaming & step by step](assets/gif/1_NEXUS_Tripadvisor_stream_step_by_step.gif)
 

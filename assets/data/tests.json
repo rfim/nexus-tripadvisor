@@ -1,10 +1,10 @@
 {
- "generated_at": "2026-10-21T10:12:18+00:00",
+ "generated_at": "2026-10-21T10:25:26+00:00",
  "total": 50,
  "passed": 50,
  "failed": 0,
  "skipped": 0,
- "seconds": 59.1,
+ "seconds": 61.1,
  "suites": [
   {
    "file": "tests/test_generate.py",
@@ -15,22 +15,22 @@
     {
      "name": "test_deterministic",
      "outcome": "passed",
-     "seconds": 0.787
+     "seconds": 0.769
     },
     {
      "name": "test_offsets_follow_arrival_within_a_partition",
      "outcome": "passed",
-     "seconds": 0.17
+     "seconds": 0.147
     },
     {
      "name": "test_retries_resend_the_same_event_id",
      "outcome": "passed",
-     "seconds": 0.209
+     "seconds": 0.183
     },
     {
      "name": "test_the_offline_upload_arrives_hours_after_it_happened",
      "outcome": "passed",
-     "seconds": 0.194
+     "seconds": 0.201
     },
     {
      "name": "test_schema_v2_only_from_the_74_app",
@@ -40,12 +40,12 @@
     {
      "name": "test_exactly_one_poison_pill_where_planted",
      "outcome": "passed",
-     "seconds": 0.011
+     "seconds": 0.009
     },
     {
      "name": "test_the_erasure_is_followed_by_a_stale_version",
      "outcome": "passed",
-     "seconds": 0.015
+     "seconds": 0.013
     }
    ]
   },
@@ -154,12 +154,12 @@
     {
      "name": "test_flink_matches_the_python_job_window_for_window",
      "outcome": "passed",
-     "seconds": 11.604
+     "seconds": 12.823
     },
     {
      "name": "test_flink_dead_letters_the_poison_pill_and_agrees_with_the_batch",
      "outcome": "passed",
-     "seconds": 10.674
+     "seconds": 10.199
     }
    ]
   },
@@ -172,7 +172,7 @@
     {
      "name": "test_java_matches_python_window_for_window",
      "outcome": "passed",
-     "seconds": 1.687
+     "seconds": 1.555
     }
    ]
   },
@@ -185,12 +185,12 @@
     {
      "name": "test_spark_matches_python[page_views]",
      "outcome": "passed",
-     "seconds": 2.035
+     "seconds": 1.867
     },
     {
      "name": "test_spark_matches_python[partner_clicks]",
      "outcome": "passed",
-     "seconds": 0.923
+     "seconds": 0.787
     }
    ]
   },
@@ -203,7 +203,7 @@
     {
      "name": "test_every_difference_between_stream_and_batch_is_explained",
      "outcome": "passed",
-     "seconds": 30.649
+     "seconds": 32.436
     },
     {
      "name": "test_the_batch_counts_every_event_exactly_once",
@@ -249,7 +249,7 @@
     {
      "name": "test_the_committed_sql_is_what_the_contract_renders",
      "outcome": "passed",
-     "seconds": 0.009
+     "seconds": 0.006
     },
     {
      "name": "test_every_personal_field_is_masked_in_both_warehouses",
@@ -310,7 +310,7 @@
     {
      "name": "test_every_id_each_script_fills_exists",
      "outcome": "passed",
-     "seconds": 0.003
+     "seconds": 0.002
     },
     {
      "name": "test_pages_link_to_each_other",
@@ -325,12 +325,12 @@
     {
      "name": "test_local_assets_exist",
      "outcome": "passed",
-     "seconds": 0.002
+     "seconds": 0.001
     },
     {
      "name": "test_strip_has_one_pill_per_section",
      "outcome": "passed",
-     "seconds": 0.001
+     "seconds": 0.0
     },
     {
      "name": "test_stated_plainly",
@@ -340,7 +340,7 @@
     {
      "name": "test_the_editor_lists_every_runnable_file_and_they_exist",
      "outcome": "passed",
-     "seconds": 0.002
+     "seconds": 0.001
     }
    ]
   }

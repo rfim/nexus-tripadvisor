@@ -154,14 +154,34 @@ def load(db_path, gold: dict, raw_reviews: list[dict], locations: list[dict], er
         db.executemany(f"INSERT INTO {name} ({', '.join(cols)}) VALUES ({', '.join('?' * len(cols))}) "
                        f"ON CONFLICT ({', '.join(spec['key'])}) DO UPDATE SET {upd}",
                        [tuple(r[c] for c in cols) for r in gold[name]])
-    rcols = list(raw_columns(topic("reviews")))
+    rtypes = raw_columns(topic("reviews"))
+    rcols = list(rtypes)
     db.execute("DROP TABLE IF EXISTS raw_reviews")
-    db.execute(f"CREATE TABLE raw_reviews ({', '.join(rcols)})")
+    db.execute(f"CREATE TABLE raw_reviews ({', '.join(c + ' ' + TYPES['sqlite'][t] for c, t in rtypes.items())})")
     db.executemany(f"INSERT INTO raw_reviews VALUES ({', '.join('?' * len(rcols))})", [tuple(r.get(c) for c in rcols) for r in raw_reviews])
+    queries = []
+
+    def q(sql, args=()):
+        """Run a query and keep it with its result: the modeling page shows them as a sqlite3 session."""
+        cur = db.execute(sql, args)
+        rows = [list(r) for r in cur.fetchall()]
+        queries.append({"sql": sql if not args else sql.replace("?", "{}").format(*(repr(a) for a in args)),
+                        "cols": [c[0] for c in cur.description] if cur.description else [], "rows": rows})
+        return rows
+
+    q("SELECT name AS column_name, type FROM pragma_table_info('raw_reviews') WHERE name LIKE 'reviewer%' OR name IN ('review_id','version','op')")
+    q("SELECT location_id, window_start, views FROM location_views_hourly ORDER BY views DESC, window_start LIMIT 3")
+    q("SELECT partner, count(*) AS windows, sum(clicks) AS clicks, round(sum(revenue_gbp), 2) AS revenue_gbp "
+      "FROM partner_revenue_15m GROUP BY partner ORDER BY revenue_gbp DESC")
+    q("SELECT l.city, count(*) AS reviews, round(avg(r.rating), 2) AS avg_rating FROM reviews_current r "
+      "JOIN dim_location l USING (location_id) WHERE r.status = 'published' GROUP BY l.city ORDER BY reviews DESC LIMIT 4")
+    q(f"SELECT review_id, version, op, reviewer_hash FROM raw_reviews WHERE review_id IN ({', '.join('?' * len(erased))}) ORDER BY version", erased)
     before = db.execute(f"SELECT count(*) FROM raw_reviews WHERE review_id IN ({', '.join('?' * len(erased))})", erased).fetchone()[0]
     db.execute(f"DELETE FROM raw_reviews WHERE review_id IN ({', '.join('?' * len(erased))})", erased)
     db.execute(f"DELETE FROM reviews_current WHERE review_id IN ({', '.join('?' * len(erased))})", erased)
     db.commit()
+    q(f"SELECT count(*) AS rows_left FROM raw_reviews WHERE review_id IN ({', '.join('?' * len(erased))})", erased)
+    q("SELECT count(*) AS failing FROM partner_revenue_15m WHERE NOT (revenue_gbp / clicks BETWEEN 0.10 AND 2.00)")
     checks = []
     for table, rules in load_quality()["rules"].items():
         n = db.execute(f"SELECT count(*) FROM {table}").fetchone()[0]
@@ -182,7 +202,24 @@ def load(db_path, gold: dict, raw_reviews: list[dict], locations: list[dict], er
                            "rows": None, "failing": 0 if ok else 1, "status": "pass" if ok else "fail"})
     counts = {name: db.execute(f"SELECT count(*) FROM {name}").fetchone()[0] for name in PRODUCTS}
     db.close()
-    return {"checks": checks, "rows": counts, "erased_rows_removed": before}
+    return {"checks": checks, "rows": counts, "erased_rows_removed": before, "queries": queries}
+
+
+def model() -> dict:
+    """The model as data, for the modeling page: raw tables per topic (with personal fields), the Gold products with
+    their grain, keys and layout, and the lineage edges between them."""
+    raw = [{"table": f"raw_{t['topic']}", "topic": t["topic"], "owner": t["owner"],
+            "columns": [{"name": c, "type": ty, "pii": c in t["pii"]} for c, ty in raw_columns(t).items()]} for t in topics()]
+    src = {"location_views_hourly": "page_views", "partner_revenue_15m": "partner_clicks", "reviews_current": "reviews"}
+    grain = {"location_views_hourly": "one row per location per hour", "partner_revenue_15m": "one row per partner per 15 minutes",
+             "reviews_current": "one row per live review (latest version)"}
+    gold = [{"table": n, "grain": grain[n], "key": sp["key"], "cluster": sp["cluster"], "partition": sp.get("partition"),
+             "columns": [{"name": c, "type": ty} for c, ty in sp["cols"].items()], "from": f"raw_{src[n]}",
+             "sla_minutes": topic(src[n])["product"]["sla"]["freshness_minutes"], "tier": topic(src[n])["product"]["sla"]["tier"]}
+            for n, sp in PRODUCTS.items()]
+    edges = [[f"topic:{t['topic']}", f"raw_{t['topic']}"] for t in topics()] + [[g["from"], g["table"]] for g in gold] + \
+            [["dim_location", "location_views_hourly"], ["dim_location", "reviews_current"]]
+    return {"raw": raw, "gold": gold, "edges": edges}
 
 
 def dialect_diff() -> list[dict]:

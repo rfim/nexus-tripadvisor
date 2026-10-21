@@ -87,7 +87,7 @@
   "path": "src/nexus/warehouse.py",
   "folder": "src/nexus",
   "runs": "browser",
-  "lines": 203
+  "lines": 240
  },
  {
   "path": "java/src/nexus/Json.java",
@@ -375,7 +375,7 @@
   "path": "docs/pdf-src/build.py",
   "folder": "docs/pdf-src",
   "runs": "view",
-  "lines": 214
+  "lines": 225
  },
  {
   "path": ".github/workflows/ci.yml",

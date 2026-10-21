@@ -1,4 +1,4 @@
-$ ./scripts/build.sh            # 2026-10-21T10:10:44Z on Linux x86_64
+$ ./scripts/build.sh            # 2026-10-21T10:25:26Z on Linux x86_64
 $ python --version && java -version 2>&1 | head -1 && mvn -v | head -1
 Python 3.11.17
 openjdk version "21.0.12.1" 2026-08-18
@@ -6,30 +6,30 @@ Apache Maven 3.9.9 (8e8579a9e76f7d015ee5ec7bfcdc97d260186937)
 $ mvn -q -B -f flink/job/pom.xml compile dependency:build-classpath
 [INFO] flink/job compiled: 20 classes
 $ python -m nexus.pipeline
-[  0.83s] stream_page_views            2.13s  Stream job: page_views (TaskManager lost at 09:17)
-[  2.96s] replay_check                 2.32s  Same job, no crash: is the sink identical?
-[  5.29s] stream_partner_clicks        0.17s  Stream job: partner_clicks (poison pill, crash loop, fix)
-[  5.47s] stream_reviews               2.04s  Stream job: reviews (latest version wins, tombstones)
-[  7.51s] batch_page_views             0.12s  Nightly batch: page_views
-[  7.63s] batch_partner_clicks         0.01s  Nightly batch: partner_clicks
-[  7.64s] reconcile_page_views         0.02s  Reconcile stream with batch: page_views
-[  7.66s] reconcile_partner_clicks     0.00s  Reconcile stream with batch: partner_clicks
-[  7.66s] volume_check                 0.00s  Volume check: hold anomalous hours
-[  7.73s] gold_page_views              0.11s  Gold: page views without the bots
-[  7.88s] render_sql                   0.01s  Render Snowflake and BigQuery SQL from the contract
-[  7.91s] load_check                   0.04s  Load, check quality, apply erasure
-[  7.96s] incident                     0.00s  Write the incident record and postmortem
-[  8.03s] java_twin                    1.84s  Java twin of the page_views job: same windows?
-[  9.87s] flink                        7.38s  Apache Flink 1.20 on a MiniCluster: same windows?
-[ 17.26s] spark_batch                 13.58s  PySpark batch: same windows as the plain-Python batch?
+[  0.84s] stream_page_views            2.33s  Stream job: page_views (TaskManager lost at 09:17)
+[  3.16s] replay_check                 2.19s  Same job, no crash: is the sink identical?
+[  5.36s] stream_partner_clicks        0.18s  Stream job: partner_clicks (poison pill, crash loop, fix)
+[  5.55s] stream_reviews               2.30s  Stream job: reviews (latest version wins, tombstones)
+[  7.85s] batch_page_views             0.12s  Nightly batch: page_views
+[  7.97s] batch_partner_clicks         0.01s  Nightly batch: partner_clicks
+[  7.98s] reconcile_page_views         0.02s  Reconcile stream with batch: page_views
+[  7.99s] reconcile_partner_clicks     0.00s  Reconcile stream with batch: partner_clicks
+[  8.00s] volume_check                 0.00s  Volume check: hold anomalous hours
+[  8.07s] gold_page_views              0.12s  Gold: page views without the bots
+[  8.22s] render_sql                   0.00s  Render Snowflake and BigQuery SQL from the contract
+[  8.25s] load_check                   0.06s  Load, check quality, apply erasure
+[  8.32s] incident                     0.00s  Write the incident record and postmortem
+[  8.40s] java_twin                    1.78s  Java twin of the page_views job: same windows?
+[ 10.18s] flink                        6.95s  Apache Flink 1.20 on a MiniCluster: same windows?
+[ 17.13s] spark_batch                 12.24s  PySpark batch: same windows as the plain-Python batch?
 [ledger] page_views      read=22813 accepted=22509 duplicates=112 late_dropped=192 late_updates=16 dead_letters=0 stale_versions=0
 [ledger] partner_clicks  read=1247 accepted=1245 duplicates=0 late_dropped=1 late_updates=1 dead_letters=1 stale_versions=0
 [ledger] reviews         read=2366 accepted=2365 duplicates=0 late_dropped=0 late_updates=0 dead_letters=0 stale_versions=1
 [reconcile] page_views      windows=8764 equal=8605 explained=159 unexplained=0
 [reconcile] partner_clicks  windows=984 equal=983 explained=1 unexplained=0
 [flink 1.20.1] location_views_hourly windows=8707 firings=8723 identical_to_python=True · partner_revenue_15m dead_letters=1 identical_to_batch=True
-[java] WindowJob windows=8707 identical=True 740ms
+[java] WindowJob windows=8707 identical=True 731ms
 [spark 3.5.4] page_views: identical=True partner_clicks: identical=True
 [sla] location_views_hourly on_time=100.00% breaches=0 · partner_revenue_15m on_time=99.50% breaches=1 · reviews_current on_time=100.00% breaches=0
 [incident] partner_revenue_15m started=14:05 detected=14:35 restarts=74 recovered=15:25
-done in 30.8s → assets/data/site.json
+done in 29.4s → assets/data/site.json

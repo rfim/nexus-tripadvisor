@@ -153,7 +153,7 @@ def run() -> dict:
                    "bots": sorted(bots), "holds_after_filter": holds_after,
                    "bot_views_removed": b_pv["events"] - gold_pv["events"]},
         "gold": _gold_summary(gold, locs),
-        "warehouse": wh | {"files": sorted(files), "dialects": warehouse.dialect_diff()},
+        "warehouse": wh | {"files": sorted(files), "dialects": warehouse.dialect_diff(), "model": warehouse.model()},
         "sla": reports,
         "series": {t: [[iso(a), v] for a, v in s[::3]] for t, s in series.items()},
         "incident": inc,
