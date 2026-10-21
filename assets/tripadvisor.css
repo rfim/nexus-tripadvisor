@@ -68,3 +68,11 @@ svg .grid{stroke:var(--line)}svg .ax{font:500 11px var(--font);fill:var(--muted)
 .term i{font-style:normal;color:#4f6f67}
 .t-cmd{color:#34e0a1;font-weight:600}.t-dim{color:#6f8f87}.t-err{color:#ff8a7a}.t-ok{color:#9be7c4}
 .t-hit{color:#fff;background:rgba(230,82,111,.22);display:inline-block;width:100%}
+/* header: one tidy line */
+.site-header .brand>span{white-space:nowrap}
+.site-header nav{flex-wrap:nowrap;gap:1.25rem}
+.site-header nav a{white-space:nowrap}
+.site-header nav a[href^="#"]{color:#9cc0b7}
+@media (max-width:1180px){.site-header nav a:not(.keep){display:none}}
+@media (max-width:900px){.built-in{display:none}.site-header nav{gap:.9rem}}
+@media (max-width:640px){.site-header .shell{flex-wrap:wrap;padding:.4rem 0}.site-header nav{flex-wrap:wrap;justify-content:flex-start;gap:.3rem .9rem}}
