@@ -88,7 +88,7 @@ PROBLEMS = [
 def deck():
     s = [head("Nexus for Tripadvisor · Fireside chat", "deck.css")]
     s.append(f'''<section class="slide cover">
-  <div class="tag"><div class="t1">PRESENTED TO</div><div class="t2">Tripadvisor</div><div class="t3">DATA PLATFORM · SENIOR DATA ENGINEER</div></div>
+  <div class="tag"><div class="t1">PRESENTED TO</div><div class="t2"><img src="tripadvisor-owl.png" alt="" style="height:30px;vertical-align:-5px;margin-right:6px">Tripadvisor</div><div class="t3">DATA PLATFORM · SENIOR DATA ENGINEER</div></div>
   <div class="built"><div><div class="k2">PLATFORM BUILT IN</div><span class="lp"><img src="lifepal.png" alt="Lifepal"></span></div></div>
   <div class="kicker" style="margin-top:14mm">Data engineering · Fireside chat · Nexus best practices from Lifepal</div>
   <h1>Nexus</h1>
@@ -176,7 +176,7 @@ def one_page():
 <div class="top"><div><h1>Every event counted once, <b>on time, and checked.</b></h1>
   <div class="tl">NEXUS, the platform I built at Lifepal, applied to a travel site's events.</div>
   <p>Kafka topics → an event-time stream job (Python, with a Java twin) → a nightly Spark batch that checks it → one contract rendered to Snowflake and BigQuery → SLAs with an incident and its postmortem. Synthetic data; everything runs from <b>{SITE}</b>.</p></div>
-  <div><div class="built"><div><div class="k2">BUILT IN</div><img src="lifepal.png" alt="Lifepal" style="height:30px"></div><span class="arrow">→</span><div><div class="k2">PRESENTED TO</div><span class="codat" style="font-size:16pt">Tripadvisor</span></div></div></div></div>
+  <div><div class="built"><div><div class="k2">BUILT IN</div><img src="lifepal.png" alt="Lifepal" style="height:30px"></div><span class="arrow">→</span><div><div class="k2">PRESENTED TO</div><span class="codat" style="font-size:16pt"><img src="tripadvisor-owl.png" alt="" style="height:24px;display:inline;vertical-align:-5px;margin-right:5px">Tripadvisor</span></div></div></div></div>
 <div class="sec"><div class="sh"><b>Proven at Lifepal</b><i>from my CV</i></div><div class="proof"><span><b>24h → &lt;5m</b> reporting latency</span><span><b>6h → 90m</b> nightly batch</span><span><b>$11k</b> vs $19k forecast</span><span><b>500+</b> quality checks</span><span><b>−60%</b> data-trust escalations</span><span><b>3–5</b> engineers led, 2 promoted</span></div></div>
 <div class="sec"><div class="sh"><b>The last run</b><i>a week, 5–11 October</i></div><div class="grid four">
   <div class="card"><div class="big">{n(sum(G['records'].values()))}</div><p>Kafka records, {sum(G['partitions'].values())} partitions, three topics</p></div>

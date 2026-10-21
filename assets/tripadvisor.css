@@ -33,3 +33,5 @@ svg .grid{stroke:var(--line)}svg .ax{font:500 11px var(--font);fill:var(--muted)
 .kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.2rem .9rem;font-size:.86rem}.kv dt{color:var(--muted)}.kv dd{margin:0}
 .section.dark .kv dt{color:#9cc0b7}
 .tablewrap.wrap table td,.tablewrap.wrap table th{white-space:normal;overflow-wrap:anywhere}
+.brand-owl{width:26px;height:26px;flex:none;display:block}
+.ta-presented{display:inline-flex;align-items:center;gap:.6rem}.ta-presented img{width:40px;height:40px;display:block}
