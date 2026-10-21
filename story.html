@@ -370,41 +370,61 @@
 
     <section id="decisions" class="proof-section" aria-labelledby="dec-title" style="background:#0c1d19">
       <div class="page-width">
-        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Decisions · drawn with The Decision Book</p><h2 id="dec-title">Seven models · seven calls · the code that holds each one</h2></div><p>Each decision is drawn with a model from <i>The Decision Book</i> by Mikael Krogerus and Roman Tschäppeler. The numbers are measured on this repo's week. The code on the right is loaded live from the file that enforces the call.</p></div>
-        <div id="dec-tabs" style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px"></div>
-        <div class="dec-grid">
-          <div class="code-panel dec-figure"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="dec-model">model</span><span class="language-tag" id="dec-q">QUESTION</span></div>
-            <div id="dec-svg" style="padding:10px 14px 4px"></div>
-            <div class="dec-verdict"><span>Decision</span><b id="dec-call"></b></div>
-            <div class="dec-notes"><div><span>The model says</span><p id="dec-book"></p></div><div><span>Applied here</span><p id="dec-applied"></p></div><div><span>What would change it</span><p id="dec-flip"></p></div></div>
-          </div>
-          <div class="code-panel dec-code"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="dec-file">file</span><span class="language-tag" id="dec-lang">CODE</span></div>
-            <div id="dec-code-tabs" class="dec-code-tabs"></div>
-            <pre id="dec-code"><code></code></pre>
-            <p class="dec-code-why" id="dec-code-why"></p></div>
-        </div>
+        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Seven decisions · you guess first</p><h2 id="dec-title">What would you do?</h2></div><p>Each card asks the question I faced. Make your guess. Then see what I tried first · what broke · and the call I made. Every number comes from this repo's week. The pictures are models from <i>The Decision Book</i> by Krogerus and Tschäppeler.</p></div>
+        <div class="dq-rail" id="dq-rail"></div>
+        <article class="dq-card" id="dq-card" aria-live="polite"></article>
       </div>
     </section>
 <style>
-.dec-grid{display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:1.2rem;align-items:start}
-@media (max-width:980px){.dec-grid{grid-template-columns:1fr}}
-#dec-svg svg{width:100%;height:auto;display:block}
-#dec-svg text{font-family:Inter,system-ui,sans-serif}
-.dec-verdict{margin:6px 14px 0;padding:10px 14px;border-radius:12px;background:rgba(52,224,161,.12);border:1px solid #2f7a5c;display:flex;gap:12px;align-items:baseline}
-.dec-verdict span{font:700 10.5px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#34e0a1;white-space:nowrap}
-.dec-verdict b{color:#fff;font:700 15px/1.4 Inter,system-ui,sans-serif}
-.dec-notes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:12px 14px 16px}
-@media (max-width:700px){.dec-notes{grid-template-columns:1fr}}
-.dec-notes div{border:1px solid rgba(226,239,222,.16);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.03)}
-.dec-notes span{font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#ffd27a}
-.dec-notes p{margin:.35rem 0 0;font-size:.86rem;line-height:1.5;color:#dfeae5}
-.dec-code-tabs{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px 0}
-.dec-code-tabs button{border:1px solid #34584b;border-radius:7px;padding:4px 9px;font:600 11.5px ui-monospace,Menlo,monospace;cursor:pointer;background:transparent;color:#cfe3db}
-.dec-code-tabs button.on{background:#ffd27a;color:#0a1b15;border-color:#ffd27a}
-#dec-code{margin:0;padding:12px 14px;max-height:560px;overflow:auto;font:12.2px/1.55 "JetBrains Mono",ui-monospace,Menlo,monospace;color:#d8e6df}
-#dec-code .ln{display:inline-block;width:3.2em;color:#5d7a70;user-select:none}
-#dec-code .hl{background:rgba(255,210,122,.13);display:inline-block;width:100%}
-.dec-code-why{margin:0;padding:10px 14px 14px;border-top:1px solid #1f3b33;font-size:.85rem;color:#9cc0b7}
+.dq-rail{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.dq-rail button{display:flex;align-items:center;gap:7px;border:1px solid #34584b;border-radius:999px;padding:5px 12px 5px 6px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer;background:transparent;color:#cfe3db}
+.dq-rail button i{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;border:1px solid #4c6e61;font:700 10.5px Inter,system-ui,sans-serif;font-style:normal}
+.dq-rail button.on{border-color:#ffd27a;color:#fff}.dq-rail button.on i{background:#ffd27a;color:#0a1b15;border-color:#ffd27a}
+.dq-rail button.done i{background:#34e0a1;color:#0a1b15;border-color:#34e0a1}
+.dq-card{border:1px solid #486153;border-radius:20px;background:#081713;padding:clamp(1.2rem,3vw,2.2rem);box-shadow:0 28px 75px rgba(0,0,0,.19)}
+.dq-kicker{font:700 11px ui-monospace,Menlo,monospace;letter-spacing:.14em;text-transform:uppercase;color:#ffd27a}
+.dq-q{margin:.5rem 0 1.2rem;font:500 clamp(1.35rem,2.6vw,2rem)/1.3 Georgia,serif;color:#fff;max-width:34ch}
+.dq-opts{display:flex;flex-wrap:wrap;gap:10px}
+.dq-opts button{border:1px solid #4c6e61;border-radius:12px;padding:12px 18px;font:600 15px Inter,system-ui,sans-serif;background:rgba(255,255,255,.03);color:#fff;cursor:pointer;transition:transform .15s,border-color .15s}
+.dq-opts button:hover:not(:disabled){transform:translateY(-2px);border-color:#ffd27a}
+.dq-opts button:disabled{cursor:default;opacity:.55}
+.dq-opts button.right{opacity:1;border-color:#34e0a1;background:rgba(52,224,161,.14)}
+.dq-opts button.picked:not(.right){opacity:1;border-color:#ff7a6b;background:rgba(255,122,107,.1)}
+.dq-reveal{display:none;margin-top:1.4rem;animation:dqin .45s ease both}
+.dq-card.open .dq-reveal{display:block}
+@keyframes dqin{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.dq-react{font:600 15px Inter,system-ui,sans-serif;color:#cfe3db;margin:0 0 .3rem}
+.dq-head{font:700 clamp(1.5rem,3vw,2.3rem)/1.15 Georgia,serif;color:#ffd27a;margin:.2rem 0 1rem}
+.dq-body{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:1.4rem;align-items:start}
+@media (max-width:900px){.dq-body{grid-template-columns:1fr}}
+.dq-body>div{min-width:0}
+.dq-fig svg{width:100%;height:auto;display:block}.dq-fig text{font-family:Inter,system-ui,sans-serif}
+.dq-model{font:600 11px ui-monospace,Menlo,monospace;color:#7f9c92;margin-top:.4rem}
+.dq-story{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.dq-story li{border-left:3px solid #34584b;padding:.15rem 0 .15rem .9rem}
+.dq-story b{display:block;font:700 10.5px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.15rem}
+.dq-story p{margin:0;color:#e9f2ee;font-size:.98rem;line-height:1.5}
+.dq-story .s1{border-color:#9cb3aa}.dq-story .s1 b{color:#9cb3aa}
+.dq-story .s2{border-color:#ff7a6b}.dq-story .s2 b{color:#ff7a6b}
+.dq-story .s3{border-color:#34e0a1}.dq-story .s3 b{color:#34e0a1}.dq-story .s3 p{font-weight:700;color:#fff}
+.dq-line{margin:12px 0 0;padding:10px 12px;border-radius:10px;background:#0e2620;border:1px solid #2f7a5c;font:12.5px/1.5 "JetBrains Mono",ui-monospace,Menlo,monospace;color:#fff;overflow-x:auto;white-space:pre}
+.dq-line small{display:block;color:#7f9c92;font-size:10.5px;margin-bottom:3px}
+.dq-foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:1.3rem;padding-top:1rem;border-top:1px solid #1f3b33}
+.dq-foot button{border:1px solid #4c6e61;border-radius:10px;padding:8px 14px;font:600 13px Inter,system-ui,sans-serif;background:transparent;color:#cfe3db;cursor:pointer}
+.dq-foot .dq-next{background:#ffd27a;color:#0a1b15;border-color:#ffd27a;margin-left:auto}
+.dq-more{display:none;margin-top:1rem}.dq-card.more .dq-more{display:block}
+.dq-notes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:12px}
+@media (max-width:700px){.dq-notes{grid-template-columns:1fr}}
+.dq-notes div{border:1px solid rgba(226,239,222,.16);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.03)}
+.dq-notes span{font:700 10px ui-monospace,Menlo,monospace;letter-spacing:.12em;text-transform:uppercase;color:#ffd27a}
+.dq-notes p{margin:.3rem 0 0;font-size:.88rem;color:#dfeae5}
+.dq-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.dq-tabs button{border:1px solid #34584b;border-radius:7px;padding:4px 9px;font:600 11.5px ui-monospace,Menlo,monospace;cursor:pointer;background:transparent;color:#cfe3db}
+.dq-tabs button.on{background:#ffd27a;color:#0a1b15;border-color:#ffd27a}
+.dq-code{margin:0;padding:12px 14px;max-height:460px;overflow:auto;border-radius:12px;background:#051210;border:1px solid #1f3b33;font:12px/1.55 "JetBrains Mono",ui-monospace,Menlo,monospace;color:#d8e6df}
+.dq-code .ln{display:inline-block;width:3.2em;color:#5d7a70;user-select:none}
+.dq-code .hl{background:rgba(255,210,122,.13);display:inline-block;width:100%}
+.dq-path{font:11px ui-monospace,Menlo,monospace;color:#7f9c92;margin:6px 0 0}
 </style>
 <script>
 (async () => {
@@ -534,86 +554,142 @@
     return `<svg viewBox="0 0 740 360" role="img" aria-label="Rumsfeld matrix of what I know and do not know">${g}</svg>`;
   };
 
-  // ---- code excerpts: located by an anchor line so they follow the file ----
+  // ---- the seven cards: question · guess · first try · what broke · the call · the line ----
+  const lateWithin3h = ld.buckets.slice(0, 3).reduce((a, b) => a + b.records, 0);
   const D = [
-    { k: "Morphological box", q: "THE WHOLE DESIGN", draw: morph,
-      book: "List every dimension of a problem · list the options for each · then pick one path through the grid on purpose.",
-      applied: "Seven choices · 4 × 4 × 4 × 4 × 3 × 2 × 4 = 6,144 designs. Each column was benchmarked · not guessed.",
-      call: "Active-partition watermark · 10 min · 60 min · 24 h · dead letters · completeness · 2σ and ×2.",
-      flip: "A new product with a different SLA gets its own path: the contract is per product.",
-      code: [["sources.yml", "contracts/sources.yml", "- topic: page_views", 18, [10, 18], "One product's path · every engine reads these numbers."],
-             ["stream.py · Job", "src/nexus/stream.py", "def __init__(self, topic_name", 26, [0, 5], "Every dimension is a parameter · so every alternative can be re-run."],
-             ["benchmarks.py", "src/nexus/benchmarks.py", "# 1. the watermark", 22, [0, 2], "The sweep that filled the grid."]] },
-    { k: "Rubber band", q: "WHICH WATERMARK · HOW LONG TO WAIT", draw: rubber,
-      book: "Two forces pull in opposite directions. Name both · stretch the band · and see where it is tight.",
-      applied: `Fresh pulls one way · complete pulls the other. 0 min re-fires ${o["0"].late_refires} times. 30 min holds p95 at ${o["30"].freshness_p95}. Waiting on every partition snaps: ${w.min_all.sla_breach_samples} breaches.`,
-      call: "Min over active partitions · less 10 min of out-of-orderness · idle after 5 min.",
-      flip: `Trusted device clocks: 2 min is ${o["10"].freshness_p95 - o["2"].freshness_p95} min fresher at p95 for ${o["2"].late_refires - o["10"].late_refires} more re-fires a week.`,
-      code: [["stream.py · _watermark", "src/nexus/stream.py", "def _watermark(self, now", 13, [5, 13], "Three clocks in one function · the default skips idle partitions."],
-             ["PartitionWatermarks.java", "flink/job/src/main/java/nexus/flink/PartitionWatermarks.java", "public void onEvent", 18, [2, 9], "The same rule as a Flink WatermarkGenerator."],
-             ["NexusKafka.java", "flink/job/src/main/java/nexus/flink/NexusKafka.java", "withIdleness", 18, [8, 9], "On a real cluster: per-split watermarks plus withIdleness.", 8]] },
-    { k: "Pareto", q: "HOW LONG TO KEEP A WINDOW OPEN", draw: pareto,
-      book: "80% of the effect comes from 20% of the causes. Find the cheap 20% · stop there.",
-      applied: `Here it is upside down: ${pct(ld.buckets[3].records, ld.records_missing_first_firing)}% of late views are over 3 h late (offline uploads). Chasing them in the stream costs ${(lt["180"].peak_open_windows / lt["60"].peak_open_windows).toFixed(1)}× the state.`,
-      call: "60 min in the stream for the near-late · the long tail goes to the nightly batch · which already counts it.",
-      flip: "If the app flushes offline views sooner · the tail moves left and lateness can shrink.",
-      code: [["NexusJobs.java", "flink/job/src/main/java/nexus/flink/NexusJobs.java", "SingleOutputStreamOperator<WindowRow> windows", 12, [3, 5], "allowedLateness plus a side output: nothing is dropped silently."],
-             ["stream.py · _process", "src/nexus/stream.py", "if start + self.size + self.lateness <= st.wm", 20, [0, 7], "Past the lateness: side output. Within it: re-fire the window."],
-             ["benchmarks.py · 4b", "src/nexus/benchmarks.py", "# 4b. how late", 21, [8, 12], "How the distribution above was measured."]] },
-    { k: "Swiss cheese", q: "WHY ONE RECORD COST 79 MINUTES", draw: swiss,
-      book: "Accidents happen when the holes in every layer line up. Fix layers · not people.",
-      applied: `Four layers each had a hole. One 57-byte record went through all four: ${inc.restarts} restarts · ${inc.windows_delayed} windows late.`,
-      call: "Close two holes in the job now · two upstream next. Dead letters cost 0 restarts and keep the record.",
-      flip: "A product where a missing record is worse than a late one would fail closed · and page at once.",
-      code: [["stream.py · bad record", "src/nexus/stream.py", "def _process(self", 16, [5, 13], "The hole · then the patch: dlq=True by default."],
-             ["Parse.java", "flink/job/src/main/java/nexus/flink/Parse.java", "public void processElement", 22, [0, 1], "Flink: an OutputTag for dead letters."],
-             ["sla.py · restart rule", "src/nexus/sla.py", "RESTART_RULE =", 36, [0, 1], "The alerting layer: 3 min instead of 29."]] },
-    { k: "Double loop", q: "WHAT FRESHNESS MEANS", draw: loops,
-      book: "Single loop fixes the action. Double loop questions the assumption behind it.",
-      applied: `The first version paged ${fm.last_non_empty_window.pages} times in a quiet week. Raising the threshold would hide a real incident too. The assumption was wrong: 3 a.m. has no clicks · it is not stale.`,
-      call: "Freshness is measured from the completeness the job publishes · not from the newest row.",
-      flip: "A source that should never be quiet: then a no-data alert is the right extra check.",
-      code: [["stream.py · progress", "src/nexus/stream.py", "def _advance", 16, [5, 8], "The job publishes 'complete up to' as it advances."],
-             ["sla.py · age_series", "src/nexus/sla.py", "def age_series", 11, [0, 1], "Age is read from that progress · not from the data."],
-             ["benchmarks.py · 6", "src/nexus/benchmarks.py", "def _age_from_last_window", 12, [0, 2], "The first version · kept to measure against."]] },
-    { k: "Eisenhower", q: "WHAT TO DO FIRST AFTER THE INCIDENT", draw: eisen,
-      book: "Sort by urgent and important. Do · plan · delegate · drop. Most noise lives in urgent and unimportant.",
-      applied: "The postmortem had seven ideas. Two stop the next page · three stop the next incident · two are tuning the data says can wait.",
-      call: "Ship dead letters and the restart page this week · plan the producer contract with the partner team.",
-      flip: "If DLQ depth climbs after the fix · the producer test moves to do now.",
-      code: [["incident.md", "assets/data/incident.md", "## Root cause", 20, [12, 20], "Written by the build from the run · not by hand."],
-             ["sla.py · actions", "src/nexus/sla.py", "{\"what\": f\"Page on restarts", 10, [0, 2], "The rule behind 'do now'."],
-             ["test_sla.py", "tests/test_sla.py", "def test_", 30, [0, 1], "The incident's numbers are asserted · so the postmortem cannot drift."]] },
-    { k: "Rumsfeld matrix", q: "WHERE MY DEPTH STOPS", draw: rums,
-      book: "Sort what you know into four boxes. The dangerous box is the unknown unknowns: turn them into questions.",
-      applied: "Flink runs here on a MiniCluster and matches Python window for window. That proves semantics · not operations at Tripadvisor's scale.",
-      call: "Say it plainly · prove parity in tests · ask the four questions in the red box first.",
-      flip: "A month on their on-call rota moves most of the gold box into the green one.",
-      code: [["test_flink.py", "tests/test_flink.py", "def test_flink_matches", 18, [4, 7], "What is proven: identical windows · Flink vs Python."],
-             ["test_spark_batch.py", "tests/test_spark_batch.py", "def test_", 14, [0, 1], "And the batch on PySpark."],
-             ["warehouse.py", "src/nexus/warehouse.py", "def dialect_diff", 14, [0, 1], "BigQuery and Snowflake SQL: generated and diffed · run on SQLite · not billed."]] },
+    { k: "Lateness", model: "Pareto", draw: pareto,
+      q: "A page view shows up late. How long should the stream wait for it?",
+      opts: ["15 minutes", "60 minutes", "3 hours"], right: 1, mine: 2,
+      head: "Most late data is very late.",
+      first: "Wait 3 hours and catch everything.",
+      broke: `It caught only ${pct(lateWithin3h, ld.records_missing_first_firing)}% · for ${(lt["180"].peak_open_windows / lt["60"].peak_open_windows).toFixed(1)}× the memory. ${pct(ld.buckets[3].records, ld.records_missing_first_firing)}% arrive later than that: offline uploads.`,
+      call: "Wait 60 minutes. The nightly batch counts the long tail.",
+      line: ["contracts/sources.yml", "allowed_lateness_minutes: 60"],
+      book: "80% of the effect comes from 20% of the causes. Here it ran the other way: the effort was in the tail.",
+      flip: "If the app sends offline views sooner · the tail moves left and the wait can shrink.",
+      code: [["NexusJobs.java", "flink/job/src/main/java/nexus/flink/NexusJobs.java", "SingleOutputStreamOperator<WindowRow> windows", 12, [3, 5]],
+             ["stream.py", "src/nexus/stream.py", "if start + self.size + self.lateness <= st.wm", 20, [0, 7]],
+             ["benchmarks.py", "src/nexus/benchmarks.py", "# 4b. how late", 21, [8, 12]]] },
+    { k: "Watermark", model: "Rubber band", draw: rubber,
+      q: "One Kafka partition goes quiet at night. The hourly count waits for every partition. What happens?",
+      opts: ["Nothing", "It runs a little late", "It freezes until that partition wakes up"], right: 2,
+      head: "One quiet partition can freeze the clock.",
+      first: "Wait for every partition. It sounded safe.",
+      broke: `${w.min_all.sla_breach_samples} SLA breaches in one week. p95 freshness ${w.min_all.freshness_p95} min.`,
+      call: "Skip partitions quiet for 5 minutes. Wait 10 minutes for stragglers.",
+      line: ["src/nexus/stream.py", "active = [self.s.part_max"],
+      book: "Two forces pull against each other: fresh and complete. Find where the band is tight.",
+      flip: `Trusted device clocks: a 2-minute wait would be ${o["10"].freshness_p95 - o["2"].freshness_p95} min fresher at p95.`,
+      code: [["stream.py", "src/nexus/stream.py", "def _watermark(self, now", 13, [5, 13]],
+             ["PartitionWatermarks.java", "flink/job/src/main/java/nexus/flink/PartitionWatermarks.java", "public void onEvent", 18, [2, 9]],
+             ["NexusKafka.java", "flink/job/src/main/java/nexus/flink/NexusKafka.java", "withIdleness", 18, [8, 9], 8]] },
+    { k: "Bad record", model: "Swiss cheese", draw: swiss,
+      q: "One click arrives as 57 bytes of broken JSON. How late does the revenue product get?",
+      opts: ["Not at all", "About 5 minutes", "About 80 minutes"], right: 2,
+      head: "One bad record. Four holes lined up.",
+      first: "Let the job fail. A restart will sort it out.",
+      broke: `After every restart it read the same record again. ${inc.restarts} restarts · ${inc.minutes.total} minutes late · paged after ${inc.minutes.to_detect}.`,
+      call: `Park bad records in a dead-letter topic. Page on restarts: ${al.restarts_over_3_in_10_min} minutes · not ${al.freshness_over_sla}.`,
+      line: ["src/nexus/stream.py", "self.dlq[(rec.partition, rec.offset)]"],
+      book: "Accidents happen when the holes in every layer line up. Fix the layers · not the people.",
+      flip: "If a missing record were worse than a late one · the job would stop and page at once.",
+      code: [["stream.py", "src/nexus/stream.py", "def _process(self", 16, [5, 13]],
+             ["Parse.java", "flink/job/src/main/java/nexus/flink/Parse.java", "public void processElement", 22, [0, 1]],
+             ["sla.py", "src/nexus/sla.py", "RESTART_RULE =", 36, [0, 1]]] },
+    { k: "Freshness", model: "Double loop", draw: loops,
+      q: "It's 3 a.m. No new clicks for 40 minutes. Is the data stale?",
+      opts: ["Yes · page someone", "No · nobody is clicking"], right: 1, mine: 0,
+      head: "Quiet isn't stale.",
+      first: "Freshness = the age of the newest row.",
+      broke: `${fm.last_non_empty_window.pages} pages in a week with no incident. Every quiet night woke someone.`,
+      call: `Measure from what the job says is complete. ${fm.published_completeness.pages} false pages.`,
+      line: ["src/nexus/stream.py", "self.progress.append((now, done))"],
+      book: "A single loop tunes the action (raise the threshold). A double loop questions the assumption behind it.",
+      flip: "A source that should never be quiet also gets a no-data alert.",
+      code: [["stream.py", "src/nexus/stream.py", "def _advance", 16, [5, 8]],
+             ["sla.py", "src/nexus/sla.py", "def age_series", 11, [0, 1]],
+             ["benchmarks.py", "src/nexus/benchmarks.py", "def _age_from_last_window", 12, [0, 2]]] },
+    { k: "After the incident", model: "Eisenhower matrix", draw: eisen,
+      q: "The postmortem lists seven fixes. Which one ships first?",
+      opts: ["Contract test at the producer", "Alert on the restart count", "Tune the watermark"], right: 1, mine: 0,
+      head: "Stop the next page before the next incident.",
+      first: "Start with the root cause: the producer.",
+      broke: "That needs another team and weeks. The next bad record would page us the same way.",
+      call: "This week: dead letters and the restart alert. Plan the producer test with the partner team.",
+      line: ["src/nexus/sla.py", "RESTART_RULE ="],
+      book: "Sort by urgent and important. Do · plan · automate · drop.",
+      flip: "If the dead-letter topic keeps filling up · the producer test moves to 'do now'.",
+      code: [["incident.md", "assets/data/incident.md", "## Root cause", 20, [12, 20]],
+             ["sla.py", "src/nexus/sla.py", "{\"what\": f\"Page on restarts", 10, [0, 2]],
+             ["test_sla.py", "tests/test_sla.py", "def test_", 30, [0, 1]]] },
+    { k: "The whole design", model: "Morphological box", draw: morph,
+      q: "Seven settings · 2 to 4 options each. How many possible designs?",
+      opts: ["About 50", "About 600", "Over 6,000"], right: 2,
+      head: "6,144 designs. Test the columns · not the grid.",
+      first: "Pick each setting on its own.",
+      broke: "They lean on each other. Wait longer and fewer events count as late. Remember longer and memory grows.",
+      call: "Benchmark one column at a time on the same week. Keep the winner of each.",
+      line: ["contracts/sources.yml", "out_of_orderness_minutes: 10"],
+      book: "List every dimension · list the options · then choose one path through the grid on purpose.",
+      flip: "A product with a different SLA gets its own path: the contract is per product.",
+      code: [["sources.yml", "contracts/sources.yml", "- topic: page_views", 18, [10, 18]],
+             ["stream.py", "src/nexus/stream.py", "def __init__(self, topic_name", 26, [0, 5]],
+             ["benchmarks.py", "src/nexus/benchmarks.py", "# 1. the watermark", 22, [0, 2]]] },
+    { k: "Honesty", model: "Rumsfeld matrix", draw: rums,
+      q: "Flink matches Python here window for window. So have I run Flink in production?",
+      opts: ["Yes", "No"], right: 1,
+      head: "Proven semantics. Not proven operations.",
+      first: "Lead with a list of tools.",
+      broke: "A list hides where the depth stops · and the interview finds it anyway.",
+      call: "Say it plainly. Prove parity in tests. Ask the four red-box questions first.",
+      line: ["tests/test_flink.py", "assert {(w[0][:19], w[1])"],
+      book: "Sort what you know into four boxes. Turn the unknown unknowns into questions.",
+      flip: "A month on your on-call rota moves most of the gold box into the green one.",
+      code: [["test_flink.py", "tests/test_flink.py", "def test_flink_matches", 18, [4, 7]],
+             ["test_spark_batch.py", "tests/test_spark_batch.py", "def test_", 14, [0, 1]],
+             ["warehouse.py", "src/nexus/warehouse.py", "def dialect_diff", 14, [0, 1]]] },
   ];
+  const react = (d, k) => k === d.right ? "Right. It took me a benchmark to be sure." : k === d.mine ? "That was my first guess too." : "Fair guess. Here's what the week showed.";
 
   const cache = {};
   const load = (p) => cache[p] || (cache[p] = fetch(p).then((r) => r.ok ? r.text() : ""));
+  const done = new Set();
   let cur = 0;
+  const rail = () => { $("dq-rail").innerHTML = D.map((d, i) => `<button type="button" class="${i === cur ? "on" : ""} ${done.has(i) ? "done" : ""}"><i>${done.has(i) ? "✓" : i + 1}</i>${d.k}</button>`).join(""); };
   const showCode = async (j) => {
-    const [name, path, anchor, n, [h0, h1], why, before = 0] = D[cur].code[j];
-    [...$("dec-code-tabs").children].forEach((b, k) => b.classList.toggle("on", k === j));
-    $("dec-file").textContent = path; $("dec-code-why").textContent = why;
-    $("dec-lang").textContent = path.endsWith(".java") ? "JAVA · FLINK" : path.endsWith(".py") ? "PYTHON" : path.endsWith(".yml") ? "YAML" : "MARKDOWN";
+    const [, path, anchor, n, [h0, h1], before = 0] = D[cur].code[j];
+    [...document.querySelectorAll("#dq-card .dq-tabs button")].forEach((b, k) => b.classList.toggle("on", k === j));
     const lines = (await load(path)).split("\n");
     let i = lines.findIndex((l) => l.includes(anchor)); i = i < 0 ? 0 : Math.max(0, i - before);
-    $("dec-code").innerHTML = lines.slice(i, i + n).map((l, k) => `<span class="${k >= h0 && k < h1 ? "hl" : ""}"><span class="ln">${i + k + 1}</span>${esc(l)}</span>`).join("\n");
+    document.querySelector("#dq-card .dq-code").innerHTML = lines.slice(i, i + n).map((l, k) => `<span class="${k >= h0 && k < h1 ? "hl" : ""}"><span class="ln">${i + k + 1}</span>${esc(l)}</span>`).join("\n");
+    document.querySelector("#dq-card .dq-path").textContent = path;
   };
-  const show = (i) => { cur = i; const d = D[i];
-    [...$("dec-tabs").children].forEach((b, k) => { b.style.background = k === i ? "#ffd27a" : "transparent"; b.style.color = k === i ? "#0a1b15" : "#cfe3db"; });
-    $("dec-model").textContent = `${d.k} · The Decision Book`; $("dec-q").textContent = d.q; $("dec-svg").innerHTML = d.draw();
-    $("dec-call").textContent = d.call; $("dec-book").textContent = d.book; $("dec-applied").textContent = d.applied; $("dec-flip").textContent = d.flip;
-    $("dec-code-tabs").innerHTML = d.code.map((c) => `<button type="button">${c[0]}</button>`).join(""); showCode(0); };
-  $("dec-tabs").innerHTML = D.map((d, i) => `<button type="button" style="border:1px solid #34584b;border-radius:8px;padding:5px 11px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer">${i + 1} · ${d.k}</button>`).join("");
-  $("dec-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) show([...$("dec-tabs").children].indexOf(b)); });
-  $("dec-code-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showCode([...$("dec-code-tabs").children].indexOf(b)); });
+  const show = (i) => { cur = i; const d = D[i], card = $("dq-card"); card.className = "dq-card"; rail();
+    card.innerHTML = `<div class="dq-kicker">Decision ${i + 1} of ${D.length} · ${esc(d.k)}</div>
+      <h3 class="dq-q">${esc(d.q)}</h3>
+      <div class="dq-opts">${d.opts.map((x) => `<button type="button">${esc(x)}</button>`).join("")}</div>
+      <div class="dq-reveal">
+        <p class="dq-react"></p><div class="dq-head">${esc(d.head)}</div>
+        <div class="dq-body"><div class="dq-fig">${d.draw()}<div class="dq-model">${esc(d.model)} · The Decision Book</div></div>
+          <div><ol class="dq-story"><li class="s1"><b>My first try</b><p>${esc(d.first)}</p></li><li class="s2"><b>What broke</b><p>${esc(d.broke)}</p></li><li class="s3"><b>The call</b><p>${esc(d.call)}</p></li></ol>
+            <div class="dq-line"><small>${esc(d.line[0])}</small><span class="dq-line-code">…</span></div></div></div>
+        <div class="dq-foot"><button type="button" class="dq-toggle">Show the code and the model ↓</button><button type="button" class="dq-next">${i + 1 < D.length ? "Next decision →" : "Start again ↺"}</button></div>
+        <div class="dq-more"><div class="dq-notes"><div><span>The model says</span><p>${esc(d.book)}</p></div><div><span>What would change my mind</span><p>${esc(d.flip)}</p></div></div>
+          <div class="dq-tabs">${d.code.map((c) => `<button type="button">${esc(c[0])}</button>`).join("")}</div><pre class="dq-code"></pre><p class="dq-path"></p></div>
+      </div>`;
+    load(d.line[0]).then((t) => { const l = t.split("\n").find((x) => x.includes(d.line[1])); card.querySelector(".dq-line-code").textContent = (l || d.line[1]).trim(); });
+    card.querySelectorAll(".dq-opts button").forEach((b, k) => b.addEventListener("click", () => {
+      card.querySelectorAll(".dq-opts button").forEach((x, m) => { x.disabled = true; if (m === d.right) x.classList.add("right"); });
+      b.classList.add("picked");
+      card.querySelector(".dq-react").textContent = react(d, k);
+      card.classList.add("open"); done.add(i); rail(); showCode(0);
+    }));
+    card.querySelector(".dq-toggle").addEventListener("click", (e) => { card.classList.toggle("more");
+      e.target.textContent = card.classList.contains("more") ? "Hide the code ↑" : "Show the code and the model ↓"; });
+    card.querySelector(".dq-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) showCode([...card.querySelectorAll(".dq-tabs button")].indexOf(b)); });
+    card.querySelector(".dq-next").addEventListener("click", () => { show((i + 1) % D.length); $("decisions").scrollIntoView({ behavior: "smooth", block: "start" }); });
+  };
+  $("dq-rail").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) show([...$("dq-rail").children].indexOf(b)); });
   show(0);
 })();
 </script>
