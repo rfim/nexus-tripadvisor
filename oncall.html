@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The incident &amp; replayed · NEXUS for Tripadvisor</title>
+<meta name="description" content="A poison pill on partner_clicks, minute by minute: the crash loop, the SLA page, the root cause from the job's own log, the fix, and the postmortem, all from the run.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/tripadvisor.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="shell">
+  <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span>NEXUS <small>for Tripadvisor</small></span><span class="built-in"><small>built in</small><span class="logo-chip"><img src="assets/lifepal.png" alt="Lifepal" width="56" height="20"></span></span></a>
+  <nav aria-label="Primary">
+    <a href="index.html" class="keep">Home</a>
+    <a href="stream.html" class="keep">Streaming &amp; step by step</a>
+    <a href="oncall.html" aria-current="page" class="keep"><span class="live" aria-hidden="true"></span>The incident &amp; replayed</a>
+    <a href="run.html" class="keep">The code &amp; runnable</a>
+    <a href="https://github.com/rfim/nexus-tripadvisor" class="nav-code keep">Code ↗</a>
+  </nav>
+</div></header>
+<main id="main">
+<section class="section dark" style="padding-top:3rem">
+  <div class="shell">
+    <div class="index"><span>The incident · replayed</span><span>Friday 9 October, from the job's log and the monitor's samples</span></div>
+    <div class="head"><h2>A record stops the job. <em>Who notices, and when?</em></h2>
+      <p>partner_revenue_15m is tier 1: partner clicks are revenue, and the commercial team watches it through the day. Press Replay to run the afternoon at a minute a tick. Everything except the two human actions (the acknowledgement and the deploy time) is computed by the run.</p></div>
+    <div class="grid g4" id="o-tiles"></div>
+    <div class="card" style="margin-top:1rem">
+      <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap"><h3 style="color:#fff;flex:1">Minutes behind, against the SLA</h3>
+        <span class="mono" id="clock" style="font-size:1.3rem;color:var(--violet2)">13:05</span>
+        <button class="button b-primary" id="replay" style="min-height:36px;padding:.3rem .9rem">▶ Replay</button></div>
+      <div id="o-chart" style="margin-top:.6rem"></div>
+    </div>
+    <div class="grid oncall-grid" style="margin-top:1rem;display:grid">
+      <div class="card"><h3 style="color:#fff;margin-bottom:.8rem">Timeline</h3><div class="timeline" id="o-timeline"></div></div>
+      <div>
+        <div class="card"><h3 style="color:#fff">Root cause, from the job's own evidence</h3>
+          <p style="font-size:.86rem">At the page: records waiting per partition (what <code>kafka-consumer-groups --describe</code> would show), and the record the exception names.</p>
+          <div id="o-lag" style="margin-top:.6rem"></div>
+          <pre id="o-raw" style="margin-top:.7rem"></pre></div>
+        <div class="card" style="margin-top:1rem"><h3 style="color:#fff">The fix, and the alert that would have caught it</h3>
+          <div class="diff" id="o-diff" style="margin-top:.6rem"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="section alt" id="postmortem">
+  <div class="shell">
+    <div class="index"><span>The postmortem</span><span>written by the run: assets/data/incident.md</span></div>
+    <div class="head"><h2>Blameless. <em>With actions.</em></h2>
+      <p>Every incident at Lifepal ended with a root-cause review and a change to the platform, not to a person. Here the first action is already in the code: the shared job template dead-letters by default.</p></div>
+    <div class="card" id="o-pm"></div>
+  </div>
+</section>
+</main>
+<footer><div class="shell">
+  <p>R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a>. Synthetic data; an independent application, not affiliated with or endorsed by Tripadvisor.</p>
+</div></footer>
+<script src="assets/common.js"></script>
+<script src="assets/oncall.js"></script>
+</body></html>

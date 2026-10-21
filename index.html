@@ -1,184 +1,215 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-GB">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#10231f">
-  <meta name="description" content="NEXUS: a data platform built at Lifepal, presented by VIM for Tripadvisor's Data Platform team, with architecture, outcomes, and working code.">
-  <meta name="robots" content="noindex, nofollow">
-  <title>NEXUS for Tripadvisor | VIM</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2310231f'/%3E%3Cpath d='M15 45V19h7l20 19V19h7v26h-7L22 26v19z' fill='%23f0d692'/%3E%3C/svg%3E">
-  <link rel="stylesheet" href="assets/site.css">
-  <script src="assets/site.js" defer></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NEXUS for Tripadvisor · Vim</title>
+<meta name="description" content="An independent Senior Data Engineer portfolio by R. Firman Insan Muhammad (Vim): Kafka topics into an event-time stream job with a Java twin, a nightly Spark batch that checks it, one contract rendered to Snowflake and BigQuery, and SLAs with a real incident and its postmortem.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/tripadvisor.css">
 </head>
 <body>
-  <a class="skip-link" href="#system">Skip to architecture</a>
-  <header class="site-header">
-    <a class="brand" href="#top" aria-label="Nexus presentation, back to top"><span class="brand-mark" aria-hidden="true">N</span><span><strong>NEXUS</strong><small>VIM · Data engineering</small></span></a>
-    <nav aria-label="Primary navigation">
-      <a href="#system">System</a>
-      <a href="#math">Equations</a>
-      <a href="#conversation">Conversation</a>
-      <a href="#proof">Code & proof</a>
-      <a href="#contact">Contact</a>
-    </nav>
-  </header>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="shell">
+  <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true"></span><span>NEXUS <small>for Tripadvisor</small></span><span class="built-in"><small>built in</small><span class="logo-chip"><img src="assets/lifepal.png" alt="Lifepal" width="56" height="20"></span></span></a>
+  <nav aria-label="Primary">
+    <a href="stream.html" class="keep"><span class="live" aria-hidden="true"></span>Streaming &amp; step by step</a>
+    <a href="oncall.html" class="keep">The incident &amp; replayed</a>
+    <a href="#problems">Six problems</a>
+    <a href="run.html" class="keep">The code &amp; runnable</a>
+    <a href="story.html">Fireside story</a>
+    <a href="https://github.com/rfim/nexus-tripadvisor" class="nav-code keep">Code ↗</a>
+  </nav>
+</div></header>
 
-  <main id="top">
-    <section class="opening" aria-labelledby="opening-title">
-      <div class="opening-inner page-width">
-        <div class="presentation-line">
-          <div><span class="presentation-kicker">A data platform story by VIM</span><span class="presentation-for">Presented for Tripadvisor’s Data Platform team</span></div>
-          <div class="tripadvisor-lockup" aria-label="Tripadvisor logo"><img src="assets/tripadvisor-logo.jpg" alt="Tripadvisor"></div>
-        </div>
-        <div class="nexus-banner"><p class="banner-label">Platform case study <span aria-hidden="true">/</span> architecture <span aria-hidden="true">/</span> working code</p><h1 id="opening-title">NEXUS<span class="title-period">.</span></h1></div>
-        <div class="opening-grid">
-          <div class="opening-copy">
-          <p class="opening-statement">From raw signals to answers teams can trust.</p>
-          <p class="opening-lede">I’m Firman Insan Muhammad. You can call me VIM. This is a fireside walk through the data platform I built at Lifepal, the decisions behind it, and a separate, testable operator reference implementation.</p>
-          <div class="opening-actions">
-            <a class="button button-light" href="#conversation">Start the conversation</a>
-            <a class="text-link light-link" href="#proof">Inspect the code <span aria-hidden="true">↗</span></a>
-          </div>
-          <p class="opening-note">The production outcomes are from my Lifepal work. The Go/Iceberg code below is an independently testable Nexus portfolio implementation.</p>
-          </div>
-          <div class="opening-card" aria-label="Built at Lifepal highlight">
-            <div class="card-topline"><span class="card-label">Built at Lifepal</span><span class="card-symbol" aria-hidden="true">✳</span></div>
-            <div class="lifepal-logo"><img src="assets/roojai-lifepal-transparent.png" alt="Roojai and Lifepal"></div>
-            <p class="opening-card-question">A governed lakehouse built for speed <em>and</em> trust.</p>
-            <p class="opening-card-answer">Streaming and batch sources, shared quality rules, curated models, and a clearer route to trusted decisions.</p>
-            <div class="hero-outcomes" aria-label="Reported Lifepal outcomes"><span><strong>24h → &lt;5m</strong><small>reporting delay</small></span><span><strong>500+</strong><small>quality checks</small></span></div>
-            <p class="card-foot">Lifepal platform experience · presented to Tripadvisor</p>
-          </div>
-        </div>
-      </div>
-      <div class="opening-meta page-width"><span>London, United Kingdom</span><span>Python · Spark · Kafka · AWS · dbt · Snowflake</span><span>Scroll to explore ↓</span></div>
-    </section>
+<main id="main">
+<section class="hero" id="top">
+  <canvas id="hero-net" aria-hidden="true"></canvas>
+  <div class="shell">
+    <div class="built" aria-label="Built in Lifepal, presented to Tripadvisor">
+      <div><small>Built in</small><span class="logo-tile"><img src="assets/lifepal.png" alt="Lifepal" width="120" height="43"></span></div>
+      <i aria-hidden="true">→</i>
+      <div><small>Presented to</small><b>Tripadvisor · Data Platform</b></div>
+    </div>
+    <p class="kicker" style="color:var(--violet2)">NEXUS best practices from Lifepal · applied to Tripadvisor · Senior Data Engineer</p>
+    <h1>NEXUS</h1>
+    <p class="sub">Every event counted once, on time, and checked. With an SLA you can see, and a postmortem when it slips.</p>
+    <p class="lede">I'm <b>Vim</b>, R. Firman Insan Muhammad, a data engineer in London. For four years I led the data platform at Lifepal: Kafka and Debezium streams next to batch sources, a framework other engineers built on, SLAs, 500+ quality checks and the incident reviews that kept them honest. This site is <b>NEXUS, the platform I built at Lifepal</b>, applied to data shaped like a travel site's: page views, partner clicks and reviews on Kafka, an event-time stream job with a <b>Java twin</b>, a nightly <b>Spark</b> batch that checks it, and one contract that writes the SQL for <b>Snowflake and BigQuery</b>. The data is synthetic, and everything runs from this repository.</p>
+    <div class="cta">
+      <a class="button b-pink" href="stream.html"><span class="live" aria-hidden="true"></span>Watch the stream, step by step →</a>
+      <a class="button b-primary" href="oncall.html">Replay the incident →</a>
+      <a class="button b-primary" href="run.html"><span class="live" aria-hidden="true"></span>Run the code in your browser →</a>
+      <a class="button b-primary" href="#problems">Six problems, planted and caught →</a>
+      <a class="button b-ghost" href="assets/Nexus_Tripadvisor_VIM.pdf">Fireside deck (PDF) ↓</a>
+      <a class="button b-ghost" href="assets/VIM_Tripadvisor_one_page.pdf">One page (PDF) ↓</a>
+      <a class="button b-ghost" href="story.html">The fireside story →</a>
+    </div>
+    <div class="proof"><b>PROVEN AT LIFEPAL</b>
+      <span class="chip dark">24h → &lt;5m reporting latency</span><span class="chip dark">6h → 90m nightly batch</span>
+      <span class="chip dark">$11k vs $19k projection</span><span class="chip dark">500+ quality checks</span>
+      <span class="chip dark">−60% data-trust escalations</span><span class="chip dark">−40% duplicate records</span></div>
+  </div>
+</section>
 
-    <section id="system" class="system-section" aria-labelledby="system-title">
-      <div class="page-width">
-        <div class="system-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Inside the system</p><h2 id="system-title">One dependable path from event to answer.</h2></div><p>Nexus joins streaming and batch work around a governed layer. The operator example below explores a stricter control-plane contract for that idea.</p></div>
-        <div class="system-flow" role="list" aria-label="Nexus data flow">
-          <div class="flow-node" role="listitem"><span class="flow-num">01 / Acquire</span><h3>Sources arrive</h3><p>PostgreSQL change events, APIs and partner files.</p><span class="flow-tech">Kafka · Debezium · AWS</span></div>
-          <div class="flow-node" role="listitem"><span class="flow-num">02 / Govern</span><h3>Rules travel with data</h3><p>Reusable ingestion, quality gates, freshness and ownership.</p><span class="flow-tech">Python · checks · SLAs</span></div>
-          <div class="flow-node" role="listitem"><span class="flow-num">03 / Model</span><h3>Meanings settle</h3><p>Curated Bronze, Silver and Gold models with agreed metrics.</p><span class="flow-tech">Spark · dbt · SQL</span></div>
-          <div class="flow-node" role="listitem"><span class="flow-num">04 / Serve</span><h3>Teams can trust it</h3><p>Analytics, CRM, data science and governed agent tools.</p><span class="flow-tech">BI · MCP · RAG</span></div>
-        </div>
-        <figure class="architecture-map" aria-labelledby="architecture-title" aria-describedby="architecture-caption">
-          <figcaption class="architecture-header">
-            <div><span class="map-overline">System map / production platform</span><h3 id="architecture-title">How Nexus moves from source to decision</h3><p>The streaming and scheduled paths meet in one governed lakehouse.</p></div>
-            <div class="map-legend" aria-label="Path legend"><span><i class="legend-dot hot"></i> Streaming path</span><span><i class="legend-dot batch"></i> Batch path</span></div>
-          </figcaption>
-          <div class="architecture-flow" role="list" aria-label="Nexus platform architecture">
-            <section class="architecture-stage" role="listitem" aria-labelledby="map-sources-title"><div class="stage-heading"><span>01 / Input</span><h4 id="map-sources-title">Sources</h4></div><div class="architecture-card hot"><span class="card-kind">Change events</span><strong>PostgreSQL</strong><small>Operational records</small></div><div class="architecture-card batch"><span class="card-kind">Scheduled data</span><strong>APIs & partner files</strong><small>External and batch sources</small></div></section>
-            <section class="architecture-stage" role="listitem" aria-labelledby="map-ingest-title"><div class="stage-heading"><span>02 / Move</span><h4 id="map-ingest-title">Ingestion</h4></div><div class="architecture-card hot"><span class="card-kind">Streaming path</span><strong>Kafka + Debezium</strong><small>Change data capture</small></div><div class="architecture-card batch"><span class="card-kind">Batch path</span><strong>Airflow + Python</strong><small>Config-driven source adapters</small></div></section>
-            <section class="architecture-stage lake-stage" role="listitem" aria-labelledby="map-lake-title"><div class="stage-heading"><span>03 / Shape</span><h4 id="map-lake-title">Governed lakehouse</h4></div><div class="architecture-layer"><b>Bronze</b><span>Delta · source history</span></div><div class="architecture-layer"><b>Silver</b><span>Typed, deduplicated data</span></div><div class="architecture-layer"><b>Gold</b><span>dbt · curated Kimball models</span></div><p class="lake-foot">Databricks · Spark · SQL</p></section>
-            <section class="architecture-stage" role="listitem" aria-labelledby="map-serve-title"><div class="stage-heading"><span>04 / Use</span><h4 id="map-serve-title">Trusted use</h4></div><div class="architecture-card serve"><strong>Analytics & BI</strong><small>Shared, agreed metrics</small></div><div class="architecture-card serve"><strong>CRM & data science</strong><small>Curated data products</small></div><div class="architecture-card serve"><strong>MCP agents & RAG</strong><small>Governed access to models</small></div></section>
-          </div>
-          <div class="architecture-rails"><div class="architecture-rail"><strong>Trust across the flow</strong><span>500+ quality checks</span><span>Freshness & volume alerts</span><span>SLAs & incident runbooks</span><span>Certified models</span></div><div class="architecture-rail foundation"><strong>Platform foundation</strong><span>AWS services</span><span>Databricks & Delta Lake</span><span>Reusable Python framework</span><span>Observability</span></div></div>
-          <p class="architecture-caption" id="architecture-caption">This maps the Lifepal platform work described in my CV. The separate Go/Iceberg operator is explored in the <a href="#proof">code section</a>.</p>
-        </figure>
-        <div class="system-principle"><span class="principle-mark" aria-hidden="true">↳</span><p><strong>Operating principle:</strong> If a pipeline cannot explain what it last published, how fresh it is, and who owns the failure, it is not finished.</p></div>
-      </div>
-    </section>
+<div class="strip-nav" id="strip-nav"><div class="shell" role="tablist" aria-label="NEXUS for Tripadvisor, section by section">
+  <button class="arrow" data-step="prev" aria-label="Previous">←</button>
+  <button data-go="0"><b>1</b>The path</button><button data-go="1"><b>2</b>Six problems</button><button data-go="2"><b>3</b>Built in Lifepal</button>
+  <button data-go="3"><b>4</b>The last run</button><button data-go="4"><b>5</b>Stream, then batch</button><button data-go="5"><b>6</b>Snowflake + BigQuery</button>
+  <button data-go="6"><b>7</b>SLAs</button><button data-go="7"><b>8</b>Java and Flink</button><button data-go="8"><b>9</b>The role</button>
+  <span class="grow"></span><button class="arrow" data-step="next" aria-label="Next">→</button>
+</div></div>
+<div class="hstrip" id="strip">
+<section class="section" id="path">
+  <div class="shell">
+    <div class="index"><span>01 · The path</span><span>what runs in this repo</span></div>
+    <div class="head"><h2>Kafka to the warehouse. <em>Proven, not assumed.</em></h2>
+      <p>Five steps from a tap in the app to a table an analyst, a model or an agent can trust. Every number on this page comes from the last run of the code in this repository.</p></div>
+    <div class="path">
+      <div class="step"><div class="n">01 · CAPTURE</div><div class="big">Kafka</div><p>Three topics, <b data-k="partitions">–</b> partitions, <b data-k="records">–</b> records in a week. Offsets follow arrival, not event time.</p></div>
+      <div class="step"><div class="n">02 · STREAM</div><div class="big">Event time</div><p>Watermarks, idle partitions, an hour of allowed lateness, dedupe on id, a dead-letter topic. Python, with a Java twin.</p></div>
+      <div class="step"><div class="n">03 · CHECK</div><div class="big">Spark</div><p>The nightly batch recomputes every window. <b data-k="unexplained">–</b> differences are left unexplained.</p></div>
+      <div class="step"><div class="n">04 · PUBLISH</div><div class="big">2 warehouses</div><p>One contract renders the DDL, MERGE, masking and erasure for Snowflake and BigQuery.</p></div>
+      <div class="step"><div class="n">05 · WATCH</div><div class="big">SLAs</div><p>Freshness from published completeness, error budgets, and an incident record that writes itself.</p></div>
+    </div>
+    <div class="callout" style="margin-top:1.2rem"><b>The stack, as the role lists it:</b> <b>Kafka</b> → stream processing with <b>Flink</b> semantics (the job here is Python, its twin is <b>Java</b>, and <code>flink/</code> has the Flink SQL) → <b>Spark</b> for batch → <b>Snowflake</b> and <b>BigQuery</b> for the warehouse, with SLAs, monitoring and root-cause work around all of it.</div>
+  </div>
+</section>
 
-    <section id="math" class="math-section" aria-labelledby="math-title">
-      <div class="page-width">
-        <div class="math-heading">
-          <div><p class="eyebrow"><span class="eyebrow-line"></span> The numbers behind the design</p><h2 id="math-title">The math behind trust.</h2></div>
-          <p>Open a topic to see how I would measure the platform, diagnose a failure, and make a trade-off explicit. These are engineering definitions, not claimed Tripadvisor production metrics.</p>
-        </div>
-        <div class="math-feature" aria-label="Reported Lifepal reporting delay improvement">
-          <span class="math-feature-label">Reported Lifepal outcome · derived ratio</span>
-          <strong>24 h ÷ (&lt;5 min) &gt; 288×</strong>
-          <p>The reporting delay changed from 24 hours to under five minutes, as stated in my CV. The ratio expresses how much smaller the delay became.</p>
-        </div>
-        <div class="math-accordion" aria-label="Data platform equations">
-          <details class="math-panel" name="nexus-math" open>
-            <summary><span class="math-index">01</span><span class="math-topic">Freshness &amp; flow<small>Kafka · Spark · source-to-answer latency</small></span><span class="math-count">3 equations</span><span class="math-toggle" aria-hidden="true">+</span></summary>
-            <div class="math-panel-body">
-              <article class="math-card"><span class="math-card-label">End-to-end latency</span><p class="math-formula">L<sub>e2e</sub> = L<sub>capture</sub> + L<sub>queue</sub> + L<sub>transform</sub> + L<sub>publish</sub></p><p>Budget each stage separately; a fast Spark job cannot rescue a stalled capture or publish step.</p></article>
-              <article class="math-card"><span class="math-card-label">Age of visible data</span><p class="math-formula">F = t<sub>now</sub> − max(t<sub>event, visible</sub>)</p><p>Measure freshness from the newest source event a consumer can actually query. Source clocks must be trustworthy.</p></article>
-              <article class="math-card"><span class="math-card-label">Streaming backlog</span><p class="math-formula">B<sub>t+1</sub> = max(0, B<sub>t</sub> + λ<sub>t</sub> − μ<sub>t</sub>)</p><p>Arrivals λ and processing μ use the same time interval. If μ stays below λ during a travel-event spike, Kafka lag grows.</p></article>
-            </div>
-          </details>
-          <details class="math-panel" name="nexus-math">
-            <summary><span class="math-index">02</span><span class="math-topic">Quality &amp; reconciliation<small>dbt · curated models · release gates</small></span><span class="math-count">3 equations</span><span class="math-toggle" aria-hidden="true">+</span></summary>
-            <div class="math-panel-body">
-              <article class="math-card"><span class="math-card-label">Eligible-record completeness</span><p class="math-formula">C = N<sub>loaded eligible</sub> / N<sub>source eligible</sub></p><p>Compare the same filtered population at source and target; define eligibility before calling a load complete.</p></article>
-              <article class="math-card"><span class="math-card-label">Duplicate event rate</span><p class="math-formula">D = (N<sub>rows</sub> − N<sub>distinct event IDs</sub>) / N<sub>rows</sub></p><p>Catch replay or join amplification before a duplicate reaches a certified model.</p></article>
-              <article class="math-card"><span class="math-card-label">Critical quality gate</span><p class="math-formula">G = ∧<sub>i ∈ critical checks</sub> pass<sub>i</sub></p><p>A release needs every critical check to pass. An average score must not hide a broken business rule.</p></article>
-            </div>
-          </details>
-          <details class="math-panel" name="nexus-math">
-            <summary><span class="math-index">03</span><span class="math-topic">Safe publish &amp; recovery<small>Nexus Go operator · Iceberg snapshots</small></span><span class="math-count">3 equations</span><span class="math-toggle" aria-hidden="true">+</span></summary>
-            <div class="math-panel-body">
-              <article class="math-card"><span class="math-card-label">Stable run identity</span><p class="math-formula">r = hash(uid ∥ generation ∥ trigger)</p><p>A restarted controller derives the same logical run ID rather than inventing a second publication attempt.</p></article>
-              <article class="math-card"><span class="math-card-label">Idempotent retry</span><p class="math-formula">apply(apply(S, r), r) = apply(S, r)</p><p>Applying the same run twice should leave the published state S exactly where one application leaves it.</p></article>
-              <article class="math-card"><span class="math-card-label">Proof after timeout</span><p class="math-formula">published(r) ⇔ ∃s ∈ ancestry(main): run_id(s) = r</p><p>Inspect main’s snapshot history for the run ID before deciding whether an ambiguous commit took effect.</p></article>
-            </div>
-          </details>
-          <details class="math-panel" name="nexus-math">
-            <summary><span class="math-index">04</span><span class="math-topic">Service levels &amp; cost<small>Operations · warehouse economics · ownership</small></span><span class="math-count">3 equations</span><span class="math-toggle" aria-hidden="true">+</span></summary>
-            <div class="math-panel-body">
-              <article class="math-card"><span class="math-card-label">On-time run rate</span><p class="math-formula">A = N<sub>on-time</sub> / N<sub>eligible runs</sub></p><p>Count runs that delivered usable data by the agreed deadline, not jobs that merely ended successfully.</p></article>
-              <article class="math-card"><span class="math-card-label">Error budget</span><p class="math-formula">E = (1 − SLO) × N<sub>eligible runs</sub></p><p>An illustrative SLO turns a reliability target into a finite number of late runs that incident reviews can track.</p></article>
-              <article class="math-card"><span class="math-card-label">Cost per trusted record</span><p class="math-formula">C<sub>unit</sub> = (C<sub>compute</sub> + C<sub>storage</sub> + C<sub>transfer</sub>) / N<sub>trusted</sub></p><p>Compare like-for-like workloads while tuning Spark jobs or warehouse models; include only records that clear quality gates.</p></article>
-            </div>
-          </details>
-        </div>
-        <p class="math-footnote">The formulas are design and monitoring tools. Only the 24 h to under 5 min result above is a reported Lifepal outcome; the other symbols do not imply measured Tripadvisor or Lifepal SLO values.</p>
-      </div>
-    </section>
+<section class="section dark" id="problems">
+  <div class="shell">
+    <div class="index"><span>02 · Six problems</span><span>planted in the topics, caught in the run</span></div>
+    <div class="head"><h2>What Kafka really delivers. <em>And what it takes.</em></h2>
+      <p>The generator runs a travel site for a week and writes what the brokers would keep. It plants the six problems I've met running streams in production. Each one is tested, and each one is on the step-by-step page.</p></div>
+    <div class="grid g3" id="problem-cards"></div>
+    <h3 style="margin:2rem 0 .8rem;color:#fff">One review, version by version</h3>
+    <p style="max-width:72ch">A reviewer edits a review, then asks for their data to be erased. An outbox replay then re-sends the earlier edit with a new event id, so de-duplication can't catch it. Only the version rule does: the tombstone is version 4, and nothing older can bring the review back.</p>
+    <div id="story" style="margin-top:.8rem"></div>
+    <div class="cta"><a class="button b-pink" href="stream.html"><span class="live" aria-hidden="true"></span>Watch all six, step by step →</a></div>
+  </div>
+</section>
 
-    <section id="conversation" class="conversation page-width" aria-labelledby="conversation-title">
-      <div class="section-intro"><p class="eyebrow"><span class="eyebrow-line"></span> The conversation</p><h2 id="conversation-title">Pull up a chair.</h2><p>Four questions I would expect from a data platform team. Each answer points to a design choice, an outcome, or code you can inspect.</p></div>
-      <div class="conversation-list">
-        <article class="conversation-turn">
-          <div class="turn-index">01 <span>Freshness</span></div>
-          <div class="turn-body"><p class="prompt">What would you change first in a fragmented data estate?</p><div class="response"><span class="speaker">Firman</span><p>I would make the path from source to trusted model explicit. At Lifepal, I led a move from scattered batch jobs toward one governed lakehouse. Kafka and Debezium carried change events; APIs and partner files took the batch path. Both landed behind common quality and ownership rules.</p><p>Reporting delay went from 24 hours to under five minutes. The point was not speed alone: teams could find the same certified definitions when they came to the data later.</p></div></div>
-          <div class="turn-aside"><strong>24 h <span aria-hidden="true">→</span> &lt;5 min</strong><span>Reported change in reporting delay at Lifepal</span></div>
-        </article>
-        <article class="conversation-turn">
-          <div class="turn-index">02 <span>Reliability</span></div>
-          <div class="turn-body"><p class="prompt">What happens when the publish call times out?</p><div class="response"><span class="speaker">Firman</span><p>A timeout is an unknown outcome, not proof of failure. In the Nexus operator reference implementation, a run writes to an isolated Iceberg branch, audits it, then tries to fast-forward main. If the commit response is ambiguous, the controller re-observes the catalog and checks the run ID in snapshot history before it decides what happened.</p><p>That is a small code path with a big operational consequence: no blind second publish during a network partition.</p></div></div>
-          <a class="aside-link" href="#failure-drill">Try the failure drill <span aria-hidden="true">↗</span></a>
-        </article>
-        <article class="conversation-turn">
-          <div class="turn-index">03 <span>Standards</span></div>
-          <div class="turn-body"><p class="prompt">How do you make quality the default for other engineers?</p><div class="response"><span class="speaker">Firman</span><p>Put repeatable decisions in the platform. I built a config-driven ingestion framework, curated models for Finance, Marketing, CRM and Product, and checks that hold anomalous loads before consumers see them. The team had SLAs, freshness and volume alerts, runbooks, and incident reviews.</p><p>That work included more than 500 data-quality checks and cut data-trust escalations by 60%, as reported in my CV.</p></div></div>
-          <div class="turn-aside"><strong>500+</strong><span>Quality checks in the Lifepal platform</span></div>
-        </article>
-        <article class="conversation-turn">
-          <div class="turn-index">04 <span>Scale & access</span></div>
-          <div class="turn-body"><p class="prompt">How does the platform help teams use data without losing control?</p><div class="response"><span class="speaker">Firman</span><p>I prefer certified models, clear lineage, and read-only agent access over a new ungoverned route to the warehouse. My work has included an MCP server for governed natural-language queries, a RAG copilot, and Spark and SQL tuning that reduced a nightly batch from six hours to 90 minutes.</p><p>For Tripadvisor, I would bring those engineering patterns to a larger estate, measure their behavior there, and be candid about where I need to learn its Java services and specific warehouse choices.</p></div></div>
-          <div class="turn-aside"><strong>6 h <span aria-hidden="true">→</span> 90 min</strong><span>Reported nightly batch improvement at Lifepal</span></div>
-        </article>
-      </div>
-      <p class="claim-note">Career outcomes in this section come from my attached CV and cover letter. The Go operator below is a separate portfolio reference implementation; its tests do not measure Lifepal production outcomes.</p>
-    </section>
+<section class="section alt" id="lifepal">
+  <div class="shell">
+    <div class="index"><span>03 · Built in Lifepal</span><span>a high-traffic consumer marketplace</span></div>
+    <div class="head"><h2>Different product. <em>Same plumbing.</em></h2>
+      <p>Lifepal compared insurance; Tripadvisor compares places to stay, eat and see. Both are marketplaces where clicks to partners are revenue, and where people decide on what other people wrote.</p></div>
+    <div class="grid g2">
+      <div class="card top-v"><div class="kicker">Lifepal · consumer insurance marketplace</div>
+        <h3 style="margin:.4rem 0">One governed layer out of a fragmented estate</h3>
+        <p>Batch jobs and legacy ingestion paths, each with its own idea of a customer. I wrote the spec and led the move to one lakehouse, team by team.</p>
+        <ul><li>Kafka + Debezium CDC from PostgreSQL, next to batch from APIs and partner files</li><li>A config-driven Python framework: a new source was configuration, not code</li><li>SLAs, 500+ checks, anomaly holds, runbooks, a root-cause review after every incident</li><li>An MCP server for governed agent access; a RAG copilot with 1,000+ outcomes a day</li></ul></div>
+      <div class="card top-p"><div class="kicker" style="color:var(--pink)">Tripadvisor · Data Platform</div>
+        <h3 style="margin:.4rem 0">Frameworks, infrastructure and governance for every data user</h3>
+        <p>As the role describes it: ETL/ELT across Snowflake and BigQuery, owned pipelines with SLAs, streaming and batch on Flink, Spark and Kafka, production Java and Python.</p>
+        <ul><li>Event streams where lateness, retries and bad records are normal</li><li>Batch that checks the stream instead of replacing it</li><li>Two warehouses fed from one definition</li><li>SLAs that page early, and postmortems that change the template</li></ul></div>
+    </div>
+    <div class="grid g5" style="margin-top:1.2rem">
+      <div class="card"><div class="big">99.7%</div><p>Reporting latency cut from 24 hours to under 5 minutes.</p></div>
+      <div class="card"><div class="big p">75%</div><p>Nightly batch cut from 6 hours to 90 minutes by tuning Spark and SQL.</p></div>
+      <div class="card"><div class="big">$11k</div><p>Monthly platform cost, against a $19k forecast.</p></div>
+      <div class="card"><div class="big p">−60%</div><p>Data-trust escalations, with SLAs, 500+ checks and anomaly holds.</p></div>
+      <div class="card"><div class="big">3–5</div><p>Engineers led. Two promoted to Senior; onboarding halved from 4 weeks to 2.</p></div>
+    </div>
+  </div>
+</section>
 
-    <section id="failure-drill" class="drill-section page-width" aria-labelledby="drill-title">
-      <div class="drill-heading"><div><p class="eyebrow"><span class="eyebrow-line"></span> An interactive walkthrough</p><h2 id="drill-title">A commit returns no clear answer. Now what?</h2></div><p>Choose a situation to see how the Nexus write–audit–publish design handles it. This browser model explains the decision path; the Go code and tests appear next.</p></div>
-      <div class="drill-grid">
-        <div class="scenario-panel"><span class="panel-caption">Choose a situation</span><div class="scenario-options" role="group" aria-label="Failure drill scenarios"><button class="scenario is-active" type="button" data-scenario="pass" aria-pressed="true"><strong>Audit passes</strong><span>Commit succeeds</span></button><button class="scenario" type="button" data-scenario="fail" aria-pressed="false"><strong>Audit fails</strong><span>Main stays untouched</span></button><button class="scenario" type="button" data-scenario="unknown" aria-pressed="false"><strong>Publish times out</strong><span>Observe before retry</span></button></div><p class="scenario-hint">The final path changes; the data contract does not.</p></div>
-        <div class="drill-output"><div class="output-header"><span class="panel-caption">Nexus operator · decision trace</span><span class="output-indicator" id="outcome-tag">Published</span></div><div class="trace-steps" aria-label="Pipeline stages"><div class="trace-step" data-step="write"><span>01</span><strong>Write</strong><small>isolated branch</small></div><div class="trace-step" data-step="audit"><span>02</span><strong>Audit</strong><small>quality rules</small></div><div class="trace-step" data-step="publish"><span>03</span><strong>Publish</strong><small>main snapshot</small></div></div><div class="trace-terminal" role="status" aria-live="polite"><span class="terminal-command">$ reconcile iceberg-wap-pipeline</span><pre id="trace-log"></pre></div><p class="trace-explainer" id="trace-explainer"></p></div>
-      </div>
-    </section>
+<section class="section" id="run">
+  <div class="shell">
+    <div class="index"><span>04 · The last run</span><span>plain Python, Java and PySpark, synthetic data</span></div>
+    <div class="head"><h2>What the run <em>actually did.</em></h2>
+      <p>A week of a travel site, 5 to 11 October: three stream jobs, a lost TaskManager, a poison pill, the nightly batch, the checks, the warehouses and the SLA monitor. The figures are read from <code>assets/data/site.json</code>, which the run writes.</p></div>
+    <div class="grid g4" id="run-tiles"></div>
+    <div class="card" style="margin-top:1rem"><h3>Every record accounted for</h3>
+      <p style="font-size:.86rem">Per topic, what was read equals what was counted, de-duplicated, sent to the side output, dead-lettered or kept from overwriting a newer version. The job keeps this ledger in its checkpointed state, so a restore can't double-count.</p>
+      <div id="ledgers"></div></div>
+    <div class="grid g2" style="margin-top:1rem">
+      <div class="card"><h3>Checks in the warehouse</h3><div id="checks" style="margin-top:.5rem"></div></div>
+      <div class="card incident" id="incident"></div>
+    </div>
+    <div class="card" style="margin-top:1rem"><h3>Task timeline</h3><div id="tasks" style="margin-top:.6rem"></div></div>
+  </div>
+</section>
 
-    <section id="proof" class="proof-section" aria-labelledby="proof-title">
-      <div class="page-width">
-        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> The code, not just the story</p><h2 id="proof-title">Look inside the decisions.</h2></div><p>Real excerpts from the Nexus operator reference implementation. Its Go test suite passed locally on 3 October 2026.</p></div>
-        <div class="proof-layout">
-          <div class="code-panel"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="code-filename">icebergwappipeline_controller.go</span><span class="language-tag" id="code-language">GO</span></div><div class="code-tabs" role="tablist" aria-label="Code examples"><button type="button" class="code-tab is-active" role="tab" id="tab-nexus" aria-selected="true" aria-controls="code-display" data-code="nexus">Nexus recovery</button><button type="button" class="code-tab" role="tab" id="tab-test" aria-selected="false" aria-controls="code-display" data-code="test" tabindex="-1">Nexus test</button><button type="button" class="code-tab" role="tab" id="tab-runid" aria-selected="false" aria-controls="code-display" data-code="runid" tabindex="-1">Run identity</button></div><pre id="code-display" class="code-display" role="tabpanel" aria-labelledby="tab-nexus"><code>Loading source excerpt…</code></pre><div class="code-footer"><span id="code-source">Local Nexus portfolio source</span><a id="code-link" href="mailto:firman.insan.m@gmail.com?subject=Nexus%20operator%20source" target="_blank" rel="noopener noreferrer">Request full Nexus source <span aria-hidden="true">↗</span></a></div></div>
-          <aside class="proof-notes" aria-label="Evidence notes"><div class="proof-note primary"><span class="note-num">01 / Tested control plane</span><h3>Recovery is a code path.</h3><p>The Go test covers publish applied, publish not applied, lost status, and a different run ID. The controller tests passed locally.</p><span class="proof-pill">go test: passed</span></div><div class="proof-note"><span class="note-num">02 / Deterministic runs</span><h3>A retry finds its own work.</h3><p>The run ID derives from the resource UID, generation and trigger. A restarted controller can recover the same logical execution instead of inventing another one.</p></div><div class="proof-note subtle"><span class="note-num">Scope of proof</span><p>The interactive drill explains the decision path; it is not a live Kubernetes cluster. The code tabs show exact excerpts from the local Nexus operator reference implementation.</p></div></aside>
-        </div>
-      </div>
-    </section>
+<section class="section dark" id="reconcile">
+  <div class="shell">
+    <div class="index"><span>05 · Stream, then batch</span><span>the batch checks the stream; it doesn't replace it</span></div>
+    <div class="head"><h2>Fast first. <em>Right by morning.</em></h2>
+      <p>The stream publishes within minutes and closes a window an hour after its watermark passes. The nightly batch recomputes every window from the whole topic, where nothing is late. Every window where they differ must be explained, record for record, by the stream's side output.</p></div>
+    <div id="recon"></div>
+    <div class="grid g2" style="margin-top:1rem">
+      <div class="card"><h3>Windows that differ, and why</h3><p style="font-size:.86rem">The offline upload: an iOS app flushed a flight's worth of events hours after they happened. The stream had closed those windows; the batch counts them.</p><div id="win-examples" style="margin-top:.6rem"></div></div>
+      <div class="card"><h3>Page views per hour, and the hour held</h3><p style="font-size:.86rem">An hour is held from Gold when it is more than 2σ above the same hour on earlier days and at least double it. One hour was held; three users made 1,500 views in it.</p><div id="volume" style="margin-top:.6rem"></div><div id="bots"></div></div>
+    </div>
+  </div>
+</section>
 
+<section class="section alt" id="warehouses">
+  <div class="shell">
+    <div class="index"><span>06 · Snowflake + BigQuery</span><span>one contract, two dialects, governance included</span></div>
+    <div class="head"><h2>Write it once. <em>Mask it everywhere.</em></h2>
+      <p><code>contracts/sources.yml</code> says what each topic is, which fields are personal, and what each product is. The SQL for both warehouses is generated from it and committed; CI fails if the two drift. Personal data is masked in both because the contract says so, not because someone remembered.</p></div>
+    <div class="grid g2">
+      <div class="card"><h3>Same product, two warehouses</h3><div id="dialects" style="margin-top:.6rem"></div></div>
+      <div class="card" style="background:var(--navy);border-color:#1f4a3c"><div class="sqltabs" id="sql-tabs"></div><pre id="sql" style="max-height:440px;overflow:auto"></pre></div>
+    </div>
+    <div class="callout" style="margin-top:1rem"><b>Checked, not only rendered.</b> The run loads Gold into SQLite with the same upsert semantics, runs the rules in <code>contracts/quality.yml</code>, applies the erasure, and checks that every personal field has a masking policy in Snowflake and a policy tag in BigQuery. <span id="wh-sum"></span></div>
+  </div>
+</section>
 
-    <section id="contact" class="contact-section" aria-labelledby="contact-title"><div class="page-width contact-inner"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Continue the conversation</p><h2 id="contact-title">Ask me where a platform would bend first.</h2><p>We can talk through a data model, an ambiguous commit, an incident, or the trade-offs behind this platform.</p></div><div class="contact-actions"><a class="button button-light" href="mailto:firman.insan.m@gmail.com?subject=Data%20platform%20conversation">Email Firman</a><a class="text-link light-link" href="https://www.linkedin.com/in/firmaninsan" target="_blank" rel="noopener noreferrer">Connect on LinkedIn <span aria-hidden="true">↗</span></a></div></div></section>
-  </main>
-  <footer class="site-footer page-width"><span>© 2026 Firman Insan Muhammad · London</span><span>An independent portfolio conversation for Tripadvisor's Data Platform role.</span><a class="footer-github" href="https://github.com/rfim" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="#top">Back to top ↑</a></footer>
-</body>
-</html>
+<section class="section" id="sla">
+  <div class="shell">
+    <div class="index"><span>07 · SLAs</span><span>measured the way a consumer feels them</span></div>
+    <div class="head"><h2>On time is a number. <em>So is late.</em></h2>
+      <p>A product's freshness is how far behind its published completeness is: the job publishes "complete up to" with the data, so an empty window at 3 a.m. still says the product is current. Samples every five minutes; the SLO turns them into an error budget.</p></div>
+    <div id="sla-table"></div>
+    <div class="card" style="margin-top:1rem"><h3>partner_revenue_15m on Friday 9 October</h3><p style="font-size:.86rem">Minutes behind, against the 45-minute SLA. A truncated record stopped the job at 14:05; freshness only crossed the line at 14:35. The restart count would have paged at 14:08.</p><div id="fresh" style="margin-top:.5rem"></div></div>
+    <div class="cta"><a class="button b-primary" href="oncall.html"><span class="live" aria-hidden="true"></span>Replay the incident, minute by minute →</a></div>
+  </div>
+</section>
+
+<section class="section dark" id="java">
+  <div class="shell">
+    <div class="index"><span>08 · Java and Flink</span><span>stated plainly</span></div>
+    <div class="head"><h2>Python first. <em>Java, checked.</em></h2>
+      <p>I'm a Python engineer first, and the role writes production code in Java too. So the page_views job has a Java twin: plain JDK 17, no framework, the same rules. CI compiles it, runs it on the same week and fails if a single window differs.</p></div>
+    <div class="grid g2">
+      <div class="card"><div class="kicker" style="color:var(--violet2)">java/src/nexus/WindowJob.java</div><h3 style="margin:.3rem 0 .6rem">Same week, same windows</h3><div id="java-result"></div></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">flink/page_views_hourly.sql</div><h3 style="margin:.3rem 0 .6rem">The same job on Flink SQL</h3><pre id="flink" style="max-height:340px;overflow:auto"></pre></div>
+    </div>
+    <div class="callout pink" style="margin-top:1rem"><b>Depth, honestly:</b> Kafka, Spark and Python are production experience; at Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is production experience from Deloitte; BigQuery is working level. Java is the part of the stack I'd be ramping up on, and this twin is how I'd start: same semantics, tested against a reference.</div>
+  </div>
+</section>
+
+<section class="section alt" id="role">
+  <div class="shell">
+    <div class="index"><span>09 · The role, line by line</span><span>where I've done it before</span></div>
+    <div class="head"><h2>Platform first. <em>Every data user next.</em></h2><p>Every row points to working code or a section of this page.</p></div>
+    <div class="tablewrap"><table>
+      <tr><th>The role asks for</th><th>What I've done (at Lifepal unless stated)</th><th>Here</th></tr>
+      <tr><td class="k">ETL/ELT across Snowflake and BigQuery</td><td>Snowflake and dbt warehouses at Deloitte; a Databricks + dbt lakehouse at Lifepal with Kimball models for five teams.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/tree/main/warehouse"><code>warehouse/</code></a></td></tr>
+      <tr><td class="k">Own critical pipelines: SLAs, monitoring, root cause</td><td>SLAs for business-critical pipelines, freshness and volume alerts, runbooks, a root-cause review after every incident; escalations −60%.</td><td><a href="oncall.html">The incident</a></td></tr>
+      <tr><td class="k">Streaming and batch on Flink, Spark, Kafka</td><td>Kafka + Debezium CDC streams with Spark; Spark tuning took the nightly batch from 6 hours to 90 minutes.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/src/nexus/stream.py"><code>stream.py</code></a></td></tr>
+      <tr><td class="k">Production Java and Python</td><td>Python in production for ten years. Java: the twin here, tested against the Python job.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/java/src/nexus/WindowJob.java"><code>WindowJob.java</code></a></td></tr>
+      <tr><td class="k">Shared data frameworks</td><td>A config-driven ingestion framework the whole team used; FastAPI services exposing data to product teams.</td><td><a href="https://github.com/rfim/nexus-tripadvisor/blob/main/contracts/sources.yml"><code>contracts/</code></a></td></tr>
+      <tr><td class="k">Governance tooling</td><td>PII masking, role-based access, lineage, certified models, an MCP server giving agents governed access.</td><td><a href="#warehouses">Snowflake + BigQuery</a></td></tr>
+      <tr><td class="k">GenAI, analytics and ML at scale</td><td>A production RAG copilot (1,000+ outcomes a day), a dbt semantic layer, feature pipelines for data science.</td><td><a href="story.html">Fireside story</a></td></tr>
+      <tr><td class="k">Senior: standards and people</td><td>Set standards for modelling, testing and observability; led 3–5 engineers, two promoted to Senior; taught 100+ learners.</td><td><a href="run.html#tests">The tests</a></td></tr>
+      <tr><td class="k">Flink, specifically</td><td>Stated plainly: not in production. The semantics are here in Python and Java, and the Flink SQL is in <code>flink/</code>.</td><td><a href="#java">Java and Flink</a></td></tr>
+    </table></div>
+  </div>
+</section>
+</div>
+</main>
+
+<footer><div class="shell">
+  <p><b style="color:#fff">From NEXUS, built in Lifepal.</b> The methods here are NEXUS best practices from my production work at Lifepal, applied to data shaped like a travel site's.</p>
+  <p style="margin-top:.6rem"><b style="color:#fff">Stated plainly.</b> The Lifepal outcomes come from my CV and production work. The Tripadvisor side is built from the outside, using only the job description and public information. Every page view, click, review and partner in the demo is synthetic, and no Tripadvisor systems or data were used. This is an independent application, not affiliated with or endorsed by Tripadvisor.</p>
+  <p style="margin-top:.8rem">R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · Right to work in the UK, no sponsorship required · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a></p>
+</div></footer>
+<script src="assets/common.js"></script>
+<script src="assets/home.js"></script>
+<script src="assets/strip.js"></script>
+</body></html>

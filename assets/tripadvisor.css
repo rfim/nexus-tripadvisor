@@ -1,0 +1,35 @@
+/* NEXUS for Tripadvisor, on top of site.css: a Tripadvisor-toned palette (approximate), near-black ink and travel green. */
+:root{--violet:#00a86b;--violet2:#34e0a1;--pink:#ff6b4a;--mint:#2fcf8f;--navy:#0a1b15;--navy2:#10271f}
+.g1{grid-template-columns:minmax(0,1fr)}
+.section.dark .tablewrap{background:#0f2a21;border-color:#1f4a3c}
+.section.dark .tablewrap td{border-color:#1f4a3c;color:#dcefe9}.section.dark .tablewrap th{color:#9cc0b7;border-color:#9cc0b7}
+.incident{border-left:4px solid var(--pink)}
+.task{display:grid;grid-template-columns:minmax(0,24rem) minmax(0,1fr) 3.5rem;gap:.8rem;align-items:center;font-size:.82rem;padding:.18rem 0}
+.task .bar{position:relative;height:10px;background:var(--wash);border-radius:99px}
+.task .bar i{position:absolute;top:0;bottom:0;background:var(--violet);border-radius:99px}
+.task .bar i.java{background:#f0a23a}.task .bar i.spark{background:#ff9a6a}
+@media (max-width:760px){.task{grid-template-columns:1fr 3rem}.task .bar{grid-column:1/-1;order:3}}
+.ledger{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.4rem;margin-top:.5rem}
+.ledger div{background:var(--wash);border-radius:10px;padding:.5rem .6rem}
+.ledger b{display:block;font:800 1.15rem var(--font);color:var(--ink)}.ledger small{font-size:.7rem;color:var(--muted)}
+.ledger div.eq{background:none;display:grid;place-items:center;font:800 1.2rem var(--font);color:var(--violet)}
+.section.dark .ledger div{background:#12382f}.section.dark .ledger b{color:#fff}.section.dark .ledger small{color:#9cc0b7}
+.sqltabs{display:flex;gap:.35rem;flex-wrap:wrap;margin:.6rem 0}
+.sqltabs button{border:1px solid #2e5f55;background:#0f3530;color:#cde3dd;border-radius:9px;padding:.35rem .75rem;font:600 .8rem var(--font)}
+.sqltabs button.on{background:var(--violet);border-color:var(--violet);color:#fff}
+.sqltabs .sep{width:1px;background:#2e5f55;margin:0 .3rem}
+svg .grid{stroke:var(--line)}svg .ax{font:500 11px var(--font);fill:var(--muted)}
+.section.dark svg .ax{fill:#9cc0b7}.section.dark svg .grid{stroke:#1f4a3c}
+.chart{width:100%;height:auto;display:block}
+.dot-java{display:inline-block;width:8px;height:8px;border-radius:50%;flex:none;background:#f0a23a}
+.b-java{background:#3d2a0c;color:#f6c27a}
+.ta-chip{display:inline-flex;align-items:center;gap:.4rem;background:#fff;border-radius:10px;padding:.35rem .7rem;color:#000;font-weight:800;letter-spacing:-.01em}
+.ta-chip img{height:28px;width:auto;display:block;border-radius:6px}
+.verdict{font:700 .72rem var(--mono);padding:.15rem .5rem;border-radius:99px}
+.verdict.ok{background:#0d3b30;color:#7ce0bf}.verdict.bad{background:#4a1f1a;color:#ff9a7a}.verdict.warn{background:#3d2a0c;color:#f6c27a}
+.section:not(.dark) .verdict.ok{background:#dff7ee;color:#007a4e}.section:not(.dark) .verdict.bad{background:#ffe6e0;color:#c0392b}
+.section:not(.dark) .verdict.warn{background:#fff3d6;color:#8a5a00}
+.mono{font-family:var(--mono)}
+.kv{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:.2rem .9rem;font-size:.86rem}.kv dt{color:var(--muted)}.kv dd{margin:0}
+.section.dark .kv dt{color:#9cc0b7}
+.tablewrap.wrap table td,.tablewrap.wrap table th{white-space:normal;overflow-wrap:anywhere}

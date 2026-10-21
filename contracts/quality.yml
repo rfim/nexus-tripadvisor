@@ -1,0 +1,22 @@
+# Rules on what lands in the warehouse. A failing rule holds the product from consumers; the rows are kept as evidence.
+rules:
+  location_views_hourly:
+    views_positive: "views > 0"
+    location_known: "location_id IN (SELECT location_id FROM dim_location)"
+  partner_revenue_15m:
+    revenue_not_negative: "revenue_gbp >= 0"
+    revenue_per_click_plausible: "revenue_gbp / clicks BETWEEN 0.10 AND 2.00"
+    partner_known: "partner IN ('partner_a','partner_b','partner_c','partner_d','partner_e','partner_f')"
+  reviews_current:
+    rating_in_range: "rating BETWEEN 1 AND 5"
+    status_known: "status IN ('pending','published','rejected')"
+volume:
+  # An hour whose volume is far above what the same hour usually brings is held from Gold until someone looks.
+  # hold(t) <=> V(t) - mean > 2 sigma over the same hour on earlier days (at least three of them),
+  # and V(t) at least double the mean: one week of history makes sigma small, and a busy Saturday is not an incident.
+  sigmas: 2
+  min_history: 3
+  min_ratio: 2.0
+bots:
+  # a user with more page views than this in one hour is not a person planning a trip
+  max_views_per_user_hour: 120

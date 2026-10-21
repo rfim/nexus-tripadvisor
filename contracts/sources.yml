@@ -1,0 +1,63 @@
+# The three Kafka topics NEXUS reads: what each record is, how it is keyed, which fields are personal data,
+# and the data products built from it with their SLAs. The stream job, the nightly batch, the warehouse SQL
+# for Snowflake and BigQuery, and the SLA monitor all read this one file.
+- topic: page_views
+  owner: data-platform
+  partitions: 6
+  key: session_id
+  id: event_id                 # producer retries re-send the same event_id at a new offset
+  time: event_time
+  schemas:
+    1: {event_id: string, event_time: timestamp, session_id: string, user_hash: string, location_id: string,
+        page_type: string, platform: string, app_version: string}
+  pii: [user_hash]
+  product:
+    name: location_views_hourly
+    window_minutes: 60
+    group_by: [location_id]
+    measures: {views: count}
+    out_of_orderness_minutes: 10
+    allowed_lateness_minutes: 60
+    sla: {freshness_minutes: 90, tier: 2, slo: 0.995}
+
+- topic: partner_clicks
+  owner: data-platform
+  partitions: 4
+  key: session_id
+  id: click_id
+  time: event_time
+  schemas:
+    1: {click_id: string, event_time: timestamp, session_id: string, location_id: string, partner: string,
+        platform: string, cpc_gbp: decimal}
+    # app 7.4 sends the price as an object, in the partner's currency. Not BACKWARD compatible with v1:
+    # cpc_gbp is gone. The reader upcasts both to revenue_gbp (contracts.upcast).
+    2: {click_id: string, event_time: timestamp, session_id: string, location_id: string, partner: string,
+        platform: string, price: {amount: decimal, currency: string}}
+  pii: []
+  product:
+    name: partner_revenue_15m
+    window_minutes: 15
+    group_by: [partner]
+    measures: {clicks: count, revenue_gbp: sum}
+    out_of_orderness_minutes: 5
+    allowed_lateness_minutes: 30
+    sla: {freshness_minutes: 45, tier: 1, slo: 0.999}
+
+- topic: reviews
+  owner: data-platform
+  partitions: 3
+  key: review_id
+  id: event_id
+  time: event_time
+  version: version             # newest version wins; an erasure is a tombstone that no older version can undo
+  schemas:
+    1: {event_id: string, event_time: timestamp, review_id: string, version: int, op: string, location_id: string,
+        rating: int, status: string, reviewer_hash: string, reviewer_email: string, text_chars: int, lang: string}
+  pii: [reviewer_hash, reviewer_email]
+  product:
+    name: reviews_current
+    state: latest_by_version
+    sla: {freshness_minutes: 60, tier: 2, slo: 0.995}
+
+# what the reader converts a v2 price with (fixed for the week, so every run agrees)
+- fx_to_gbp: {GBP: 1.0, EUR: 0.86, USD: 0.79}

@@ -1,0 +1,332 @@
+[
+ {
+  "path": "examples/01_simulate_the_topics.py",
+  "folder": "examples",
+  "runs": "browser",
+  "lines": 10
+ },
+ {
+  "path": "examples/02_read_a_record.py",
+  "folder": "examples",
+  "runs": "browser",
+  "lines": 15
+ },
+ {
+  "path": "examples/03_watermarks_by_hand.py",
+  "folder": "examples",
+  "runs": "browser",
+  "lines": 27
+ },
+ {
+  "path": "examples/04_the_whole_run.py",
+  "folder": "examples",
+  "runs": "browser",
+  "lines": 16
+ },
+ {
+  "path": "examples/05_the_incident.py",
+  "folder": "examples",
+  "runs": "browser",
+  "lines": 14
+ },
+ {
+  "path": "src/nexus/__init__.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 1
+ },
+ {
+  "path": "src/nexus/batch.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 108
+ },
+ {
+  "path": "src/nexus/contracts.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 74
+ },
+ {
+  "path": "src/nexus/generate.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 254
+ },
+ {
+  "path": "src/nexus/paths.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 7
+ },
+ {
+  "path": "src/nexus/pipeline.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 257
+ },
+ {
+  "path": "src/nexus/sla.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 168
+ },
+ {
+  "path": "src/nexus/spark_batch.py",
+  "folder": "src/nexus",
+  "runs": "spark",
+  "lines": 49
+ },
+ {
+  "path": "src/nexus/stream.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 275
+ },
+ {
+  "path": "src/nexus/warehouse.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 203
+ },
+ {
+  "path": "java/src/nexus/Json.java",
+  "folder": "java/src/nexus",
+  "runs": "java",
+  "lines": 83
+ },
+ {
+  "path": "java/src/nexus/WindowJob.java",
+  "folder": "java/src/nexus",
+  "runs": "java",
+  "lines": 179
+ },
+ {
+  "path": "flink/page_views_hourly.sql",
+  "folder": "flink",
+  "runs": "local",
+  "lines": 52
+ },
+ {
+  "path": "flink/partner_revenue_15m.sql",
+  "folder": "flink",
+  "runs": "local",
+  "lines": 50
+ },
+ {
+  "path": "contracts/quality.yml",
+  "folder": "contracts",
+  "runs": "view",
+  "lines": 22
+ },
+ {
+  "path": "contracts/sources.yml",
+  "folder": "contracts",
+  "runs": "view",
+  "lines": 63
+ },
+ {
+  "path": "tests/conftest.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 10
+ },
+ {
+  "path": "tests/helpers.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 26
+ },
+ {
+  "path": "tests/test_batch.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 24
+ },
+ {
+  "path": "tests/test_contracts.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 23
+ },
+ {
+  "path": "tests/test_data.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 29
+ },
+ {
+  "path": "tests/test_generate.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 69
+ },
+ {
+  "path": "tests/test_java_twin.py",
+  "folder": "tests",
+  "runs": "java",
+  "lines": 26
+ },
+ {
+  "path": "tests/test_site.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 52
+ },
+ {
+  "path": "tests/test_sla.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 21
+ },
+ {
+  "path": "tests/test_spark_batch.py",
+  "folder": "tests",
+  "runs": "spark",
+  "lines": 17
+ },
+ {
+  "path": "tests/test_stream.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 85
+ },
+ {
+  "path": "tests/test_warehouse.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 26
+ },
+ {
+  "path": "warehouse/snowflake/erasure.sql",
+  "folder": "warehouse/snowflake",
+  "runs": "local",
+  "lines": 3
+ },
+ {
+  "path": "warehouse/snowflake/governance.sql",
+  "folder": "warehouse/snowflake",
+  "runs": "local",
+  "lines": 6
+ },
+ {
+  "path": "warehouse/snowflake/location_views_hourly.sql",
+  "folder": "warehouse/snowflake",
+  "runs": "local",
+  "lines": 14
+ },
+ {
+  "path": "warehouse/snowflake/partner_revenue_15m.sql",
+  "folder": "warehouse/snowflake",
+  "runs": "local",
+  "lines": 15
+ },
+ {
+  "path": "warehouse/snowflake/raw_page_views.sql",
+  "folder": "warehouse/snowflake",
+  "runs": "local",
+  "lines": 15
+ },
+ {
+  "path": "warehouse/snowflake/raw_partner_clicks.sql",
+  "folder": "warehouse/snowflake",
+  "runs": "local",
+  "lines": 17
+ },
+ {
+  "path": "warehouse/snowflake/raw_reviews.sql",
+  "folder": "warehouse/snowflake",
+  "runs": "local",
+  "lines": 19
+ },
+ {
+  "path": "warehouse/snowflake/reviews_current.sql",
+  "folder": "warehouse/snowflake",
+  "runs": "local",
+  "lines": 18
+ },
+ {
+  "path": "warehouse/bigquery/erasure.sql",
+  "folder": "warehouse/bigquery",
+  "runs": "local",
+  "lines": 3
+ },
+ {
+  "path": "warehouse/bigquery/governance.sql",
+  "folder": "warehouse/bigquery",
+  "runs": "local",
+  "lines": 6
+ },
+ {
+  "path": "warehouse/bigquery/location_views_hourly.sql",
+  "folder": "warehouse/bigquery",
+  "runs": "local",
+  "lines": 15
+ },
+ {
+  "path": "warehouse/bigquery/partner_revenue_15m.sql",
+  "folder": "warehouse/bigquery",
+  "runs": "local",
+  "lines": 16
+ },
+ {
+  "path": "warehouse/bigquery/raw_page_views.sql",
+  "folder": "warehouse/bigquery",
+  "runs": "local",
+  "lines": 16
+ },
+ {
+  "path": "warehouse/bigquery/raw_partner_clicks.sql",
+  "folder": "warehouse/bigquery",
+  "runs": "local",
+  "lines": 18
+ },
+ {
+  "path": "warehouse/bigquery/raw_reviews.sql",
+  "folder": "warehouse/bigquery",
+  "runs": "local",
+  "lines": 20
+ },
+ {
+  "path": "warehouse/bigquery/reviews_current.sql",
+  "folder": "warehouse/bigquery",
+  "runs": "local",
+  "lines": 18
+ },
+ {
+  "path": "scripts/build.sh",
+  "folder": "scripts",
+  "runs": "view",
+  "lines": 7
+ },
+ {
+  "path": "scripts/manifest.py",
+  "folder": "scripts",
+  "runs": "view",
+  "lines": 37
+ },
+ {
+  "path": "scripts/test_report.py",
+  "folder": "scripts",
+  "runs": "view",
+  "lines": 45
+ },
+ {
+  "path": "docs/pdf-src/build.py",
+  "folder": "docs/pdf-src",
+  "runs": "view",
+  "lines": 197
+ },
+ {
+  "path": ".github/workflows/ci.yml",
+  "folder": ".github/workflows",
+  "runs": "view",
+  "lines": 23
+ },
+ {
+  "path": "requirements.txt",
+  "folder": ".",
+  "runs": "view",
+  "lines": 3
+ }
+]

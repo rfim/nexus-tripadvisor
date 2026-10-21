@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Nexus for Tripadvisor · One page</title><link rel="stylesheet" href="style.css"><style>
+@page{margin:0}
+body{width:238mm;position:relative}
+body::before{content:"";position:absolute;left:0;top:0;bottom:0;width:6mm;background:linear-gradient(180deg,var(--navy) 0 40%,var(--violet) 40% 75%,var(--violet2) 75% 100%)}
+.page{padding:9mm 11mm 8mm 15mm}
+.top{display:grid;grid-template-columns:1fr 64mm;gap:8mm;align-items:end}
+.top h1{font-size:34pt;line-height:1.05;margin:3mm 0 1mm}
+.top .tl{font-size:11.5pt;font-weight:800}
+.top p{font-size:9pt;color:var(--ink2);margin-top:3mm}
+.sec{margin-top:6mm}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:7mm}
+.feat td{font-size:8pt;padding:5px 7px}
+.feat td.k{font-family:var(--mono);font-size:7.4pt;width:28mm}
+.days{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.days .card h3{font-size:9.5pt}
+.days .n{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--navy);color:#fff;font-size:7pt;font-weight:800;margin-right:4px}
+</style></head><body><div class="page">
+<div class="kicker">One page · prepared for Tripadvisor Data Platform · Senior Data Engineer</div>
+<div class="top"><div><h1>Every event counted once, <b>on time, and checked.</b></h1>
+  <div class="tl">NEXUS, the platform I built at Lifepal, applied to a travel site's events.</div>
+  <p>Kafka topics → an event-time stream job (Python, with a Java twin) → a nightly Spark batch that checks it → one contract rendered to Snowflake and BigQuery → SLAs with an incident and its postmortem. Synthetic data; everything runs from <b>rfim.github.io/nexus-tripadvisor</b>.</p></div>
+  <div><div class="built"><div><div class="k2">BUILT IN</div><img src="lifepal.png" alt="Lifepal" style="height:30px"></div><span class="arrow">→</span><div><div class="k2">PRESENTED TO</div><span class="codat" style="font-size:16pt">Tripadvisor</span></div></div></div></div>
+<div class="sec"><div class="sh"><b>Proven at Lifepal</b><i>from my CV</i></div><div class="proof"><span><b>24h → &lt;5m</b> reporting latency</span><span><b>6h → 90m</b> nightly batch</span><span><b>$11k</b> vs $19k forecast</span><span><b>500+</b> quality checks</span><span><b>−60%</b> data-trust escalations</span><span><b>3–5</b> engineers led, 2 promoted</span></div></div>
+<div class="sec"><div class="sh"><b>The last run</b><i>a week, 5–11 October</i></div><div class="grid four">
+  <div class="card"><div class="big">26,426</div><p>Kafka records, 13 partitions, three topics</p></div>
+  <div class="card"><div class="big">0</div><p>stream/batch differences unexplained, of 9,748 windows</p></div>
+  <div class="card"><div class="big">11/11</div><p>warehouse checks pass, masking and erasure included</p></div>
+  <div class="card"><div class="big">79 min</div><p>the one SLA breach; 74 restarts; postmortem written</p></div></div></div>
+<div class="sec"><div class="sh"><b>Six problems, planted and caught</b><i>each tested</i></div><table><tr><th>Problem</th><th>In the run</th><th>What handles it</th></tr><tr><td class="k">SDK retries</td><td class="">112 events re-sent, same event_id, new offset</td><td class="">Dedupe on id, 24 h checkpointed state: 112 dropped</td></tr><tr><td class="k">An offline upload</td><td class="">192 iOS events, 2–8 hours late</td><td class="">Side output past an hour's lateness; the batch explains 159 windows</td></tr><tr><td class="k">A schema change</td><td class="">app 7.4: price {amount, currency}, 302 records</td><td class="">One reader upcasts v1 and v2; unknown currency is a dead letter</td></tr><tr><td class="k">A poison pill</td><td class="">partition 3, offset 171: 57 bytes of truncated JSON</td><td class="">74 restarts, paged at 14:35; fixed with the DLQ</td></tr><tr><td class="k">A scraper</td><td class="">1,515 views in an hour that has 29.0</td><td class="">Hour held (2σ and ×2); 3 users removed; released</td></tr><tr><td class="k">Erasure, then a stale version</td><td class="">an outbox replay re-sends version 3 after the tombstone</td><td class="">Version rule: 1 rejected; deleted in both warehouses</td></tr></table></div>
+<div class="sec cols"><div><div class="sh"><b>The role, and where it shows</b><i>stated plainly</i></div><table><tr><th>Ask</th><th>Here</th></tr><tr><td class="k">Snowflake · BigQuery</td><td class="">warehouse/ from one contract</td></tr><tr><td class="k">SLAs · RCA</td><td class="">sla.py, the incident page</td></tr><tr><td class="k">Kafka · Spark</td><td class="">stream.py, spark_batch.py</td></tr><tr><td class="k">Java</td><td class="">WindowJob.java, identical to Python</td></tr><tr><td class="k">Flink</td><td class="">flink/*.sql; not in production, said so</td></tr></table></div>
+<div><div class="sh"><b>Questions I'd bring</b><i>for Data Platform</i></div><div class="plain"><b>1.</b> Which pipelines page most, and why?<br><b>2.</b> How are freshness SLAs measured today?<br><b>3.</b> Where do Snowflake and BigQuery each fit?<br><b>4.</b> How is streaming split between Flink and Spark?<br><b>5.</b> What would a great first 90 days look like?</div></div></div>
+<p class="src" style="margin-top:5mm">R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · right to work in the UK, no sponsorship · firman.insan.m@gmail.com · rfim.github.io/nexus-tripadvisor. Synthetic data; an independent application, not affiliated with or endorsed by Tripadvisor.</p>
+</div></body></html>

@@ -1,0 +1,330 @@
+{
+ "generated_at": "2026-10-21T04:20:16+00:00",
+ "total": 48,
+ "passed": 48,
+ "failed": 0,
+ "skipped": 0,
+ "seconds": 28.4,
+ "suites": [
+  {
+   "file": "tests/test_generate.py",
+   "about": "The simulated topics: deterministic, every planted problem really in the log",
+   "spark": false,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_deterministic",
+     "outcome": "passed",
+     "seconds": 0.73
+    },
+    {
+     "name": "test_offsets_follow_arrival_within_a_partition",
+     "outcome": "passed",
+     "seconds": 0.139
+    },
+    {
+     "name": "test_retries_resend_the_same_event_id",
+     "outcome": "passed",
+     "seconds": 0.16
+    },
+    {
+     "name": "test_the_offline_upload_arrives_hours_after_it_happened",
+     "outcome": "passed",
+     "seconds": 0.175
+    },
+    {
+     "name": "test_schema_v2_only_from_the_74_app",
+     "outcome": "passed",
+     "seconds": 0.007
+    },
+    {
+     "name": "test_exactly_one_poison_pill_where_planted",
+     "outcome": "passed",
+     "seconds": 0.008
+    },
+    {
+     "name": "test_the_erasure_is_followed_by_a_stale_version",
+     "outcome": "passed",
+     "seconds": 0.012
+    }
+   ]
+  },
+  {
+   "file": "tests/test_contracts.py",
+   "about": "Schema v1 and v2 read as one; the registry would reject v2; no guessing on bad records",
+   "spark": false,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_v2_would_be_rejected_by_a_backward_compatibility_check",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_both_versions_read_as_revenue_in_gbp[{\"click_id\":\"c\",\"event_time\":\"2026-10-07T09:00:00.000Z\",\"cpc_gbp\":0.5}-0.5]",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_both_versions_read_as_revenue_in_gbp[{\"click_id\":\"c\",\"event_time\":\"2026-10-07T09:00:00.000Z\",\"price\":{\"amount\":1.0,\"currency\":\"EUR\"}}-0.86]",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_both_versions_read_as_revenue_in_gbp[{\"click_id\":\"c\",\"event_time\":\"2026-10-07T09:00:00.000Z\",\"price\":{\"amount\":1.0,\"currency\":\"USD\"}}-0.79]",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_an_unknown_currency_is_a_dead_letter_not_a_guess",
+     "outcome": "passed",
+     "seconds": 0.0
+    }
+   ]
+  },
+  {
+   "file": "tests/test_stream.py",
+   "about": "Watermarks, idle partitions, lateness, dedupe, dead letters, crash and restore, tombstones",
+   "spark": false,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_a_window_fires_once_the_watermark_passes_its_end",
+     "outcome": "passed",
+     "seconds": 0.002
+    },
+    {
+     "name": "test_the_same_event_id_twice_counts_once",
+     "outcome": "passed",
+     "seconds": 0.001
+    },
+    {
+     "name": "test_late_within_allowed_lateness_updates_and_refires",
+     "outcome": "passed",
+     "seconds": 0.002
+    },
+    {
+     "name": "test_past_allowed_lateness_goes_to_the_side_output_not_the_window",
+     "outcome": "passed",
+     "seconds": 0.002
+    },
+    {
+     "name": "test_an_idle_partition_does_not_hold_the_watermark_back",
+     "outcome": "passed",
+     "seconds": 0.004
+    },
+    {
+     "name": "test_a_poison_pill_without_a_dead_letter_topic_stops_the_job",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_with_a_dead_letter_topic_the_job_keeps_going",
+     "outcome": "passed",
+     "seconds": 0.001
+    },
+    {
+     "name": "test_a_lost_taskmanager_changes_nothing_downstream",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_the_crash_loop_lasts_until_the_fix",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_a_stale_version_never_resurrects_an_erased_review",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_the_ledger_balances",
+     "outcome": "passed",
+     "seconds": 0.0
+    }
+   ]
+  },
+  {
+   "file": "tests/test_java_twin.py",
+   "about": "The Java job reaches exactly the Python job's windows and ledger (JDK 17)",
+   "spark": false,
+   "java": true,
+   "tests": [
+    {
+     "name": "test_java_matches_python_window_for_window",
+     "outcome": "passed",
+     "seconds": 2.292
+    }
+   ]
+  },
+  {
+   "file": "tests/test_spark_batch.py",
+   "about": "The PySpark batch matches the plain-Python batch window for window",
+   "spark": true,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_spark_matches_python[page_views]",
+     "outcome": "passed",
+     "seconds": 1.605
+    },
+    {
+     "name": "test_spark_matches_python[partner_clicks]",
+     "outcome": "passed",
+     "seconds": 0.817
+    }
+   ]
+  },
+  {
+   "file": "tests/test_batch.py",
+   "about": "Every stream/batch difference explained; only the scraper hour held",
+   "spark": false,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_every_difference_between_stream_and_batch_is_explained",
+     "outcome": "passed",
+     "seconds": 22.289
+    },
+    {
+     "name": "test_the_batch_counts_every_event_exactly_once",
+     "outcome": "passed",
+     "seconds": 0.001
+    },
+    {
+     "name": "test_only_the_scraper_hour_is_held",
+     "outcome": "passed",
+     "seconds": 0.0
+    }
+   ]
+  },
+  {
+   "file": "tests/test_sla.py",
+   "about": "Freshness from published completeness: the incident is the only breach",
+   "spark": false,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_the_incident_is_the_only_breach_all_week",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_detection_mitigation_and_recovery_are_in_order",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_nothing_but_the_bad_record_is_lost",
+     "outcome": "passed",
+     "seconds": 0.0
+    }
+   ]
+  },
+  {
+   "file": "tests/test_warehouse.py",
+   "about": "Snowflake and BigQuery SQL from one contract; masking, merge, erasure",
+   "spark": false,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_the_committed_sql_is_what_the_contract_renders",
+     "outcome": "passed",
+     "seconds": 0.009
+    },
+    {
+     "name": "test_every_personal_field_is_masked_in_both_warehouses",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_reviews_merge_never_lets_an_older_version_win",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_quality_and_erasure_pass_in_the_loaded_warehouse",
+     "outcome": "passed",
+     "seconds": 0.0
+    }
+   ]
+  },
+  {
+   "file": "tests/test_data.py",
+   "about": "The published run keeps its promises",
+   "spark": false,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_published_replay_is_identical",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_published_reconciliation_has_nothing_unexplained",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_published_checks_all_pass",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_published_incident_has_a_postmortem",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_every_planted_problem_shows_in_the_trace",
+     "outcome": "passed",
+     "seconds": 0.0
+    }
+   ]
+  },
+  {
+   "file": "tests/test_site.py",
+   "about": "Pages link to real files; every element the scripts fill exists",
+   "spark": false,
+   "java": false,
+   "tests": [
+    {
+     "name": "test_every_id_each_script_fills_exists",
+     "outcome": "passed",
+     "seconds": 0.002
+    },
+    {
+     "name": "test_pages_link_to_each_other",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_repository_links_point_at_real_paths",
+     "outcome": "passed",
+     "seconds": 0.001
+    },
+    {
+     "name": "test_local_assets_exist",
+     "outcome": "passed",
+     "seconds": 0.001
+    },
+    {
+     "name": "test_strip_has_one_pill_per_section",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_stated_plainly",
+     "outcome": "passed",
+     "seconds": 0.0
+    },
+    {
+     "name": "test_the_editor_lists_every_runnable_file_and_they_exist",
+     "outcome": "passed",
+     "seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

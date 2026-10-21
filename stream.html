@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Streaming &amp; step by step · NEXUS for Tripadvisor</title>
+<meta name="description" content="Step through six streaming problems as Kafka records move through an event-time job: retries, late uploads, a schema change, a poison pill, a scraper and an erasure, each decision taken from the run.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/tripadvisor.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="shell">
+  <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span>NEXUS <small>for Tripadvisor</small></span><span class="built-in"><small>built in</small><span class="logo-chip"><img src="assets/lifepal.png" alt="Lifepal" width="56" height="20"></span></span></a>
+  <nav aria-label="Primary">
+    <a href="index.html" class="keep">Home</a>
+    <a href="stream.html" aria-current="page" class="keep"><span class="live" aria-hidden="true"></span>Streaming &amp; step by step</a>
+    <a href="oncall.html" class="keep">The incident &amp; replayed</a>
+    <a href="run.html" class="keep">The code &amp; runnable</a>
+    <a href="https://github.com/rfim/nexus-tripadvisor" class="nav-code keep">Code ↗</a>
+  </nav>
+</div></header>
+<main id="main">
+<section class="section dark" style="padding-top:3rem">
+  <div class="shell">
+    <div class="index"><span>Streaming · step by step</span><span>every decision below is the job's own, from the last run</span></div>
+    <div class="head"><h2>Kafka to the warehouse. <em>One record at a time.</em></h2>
+      <p>A record lands on a partition. The job reads it, de-duplicates it, puts it in a window by event time, and fires the window when the watermark passes. What doesn't fit goes somewhere on purpose. Pick a problem and step through it.</p></div>
+
+    <div class="tabs" id="views" role="tablist" aria-label="Which problem"></div>
+    <div class="stage" id="stage" data-view="run">
+      <div class="svgwrap"><svg viewBox="0 0 1200 430" role="img" aria-labelledby="stage-title">
+        <title id="stage-title">Kafka partitions feed a stream job that reads, de-duplicates and windows records; windows go to Snowflake and BigQuery, late records to a side output the nightly batch counts, and unreadable records to a dead-letter topic.</title>
+        <path id="w-kr" class="wire" d="M200 200 L250 200"/>
+        <path id="w-rd" class="wire" d="M400 200 L450 200"/>
+        <path id="w-dw" class="wire" d="M600 200 L650 200"/>
+        <path id="w-ws" class="wire" d="M820 175 C 860 140, 880 110, 920 100"/>
+        <path id="w-wl" class="wire" d="M820 225 C 860 260, 880 290, 920 300"/>
+        <path id="w-rq" class="wire" d="M325 245 C 325 330, 380 370, 450 375"/>
+        <path id="w-lb" class="wire" d="M1000 330 L1000 360"/>
+        <path id="w-sb" class="wire" d="M1080 120 C 1150 180, 1150 300, 1080 370"/>
+
+        <g class="node" id="n-kafka" transform="translate(30,120)"><rect width="170" height="160" rx="14"/>
+          <text x="85" y="34" text-anchor="middle">Kafka</text><text class="sm" x="85" y="54" text-anchor="middle" id="k-topic">topic</text>
+          <g id="k-parts"></g></g>
+        <g class="node off" id="n-read" transform="translate(250,155)"><rect width="150" height="90" rx="14"/>
+          <text x="75" y="38" text-anchor="middle">Read</text><text class="sm" x="75" y="58" text-anchor="middle">upcast v1 · v2</text></g>
+        <g class="node off" id="n-dedupe" transform="translate(450,155)"><rect width="150" height="90" rx="14"/>
+          <text x="75" y="38" text-anchor="middle">Dedupe</text><text class="sm" x="75" y="58" text-anchor="middle">id, 24 h state</text></g>
+        <g class="node off" id="n-window" transform="translate(650,140)"><rect width="170" height="120" rx="16"/>
+          <text x="85" y="36" text-anchor="middle">Window</text><text class="sm" x="85" y="56" text-anchor="middle">event time</text>
+          <text class="xs" x="85" y="82" text-anchor="middle" id="wm-label">watermark –</text></g>
+        <g class="node off" id="n-sink" transform="translate(920,50)"><rect width="160" height="90" rx="14"/>
+          <text x="80" y="36" text-anchor="middle">Snowflake</text><text x="80" y="58" text-anchor="middle">BigQuery</text><text class="sm" x="80" y="76" text-anchor="middle">upsert by window</text></g>
+        <g class="node off" id="n-side" transform="translate(920,260)"><rect width="160" height="70" rx="14"/>
+          <text x="80" y="32" text-anchor="middle">Side output</text><text class="sm" x="80" y="52" text-anchor="middle">too late for the stream</text></g>
+        <g class="node off" id="n-batch" transform="translate(920,360)"><rect width="160" height="60" rx="14"/>
+          <text x="80" y="27" text-anchor="middle">Nightly batch</text><text class="sm" x="80" y="45" text-anchor="middle">Spark · checks the stream</text></g>
+        <g class="node off" id="n-dlq" transform="translate(450,340)"><rect width="170" height="70" rx="14"/>
+          <text x="85" y="32" text-anchor="middle">Dead letters</text><text class="sm" x="85" y="52" text-anchor="middle">kept, never guessed</text></g>
+        <g id="packets"></g>
+      </svg></div>
+      <div class="caption" id="caption">Pick a problem above, then press Play or step through.</div>
+      <div class="stage-ui">
+        <ol class="steps-list" id="steps"></ol>
+        <div class="wirelog" id="log" aria-live="polite"></div>
+      </div>
+      <div class="controls"><button id="prev">← Back</button><button id="play" class="primary">▶ Play</button><button id="next">Next →</button>
+        <span class="grow"></span><label>Speed <select id="speed"><option value="1600">calm</option><option value="900" selected>normal</option><option value="450">fast</option></select></label></div>
+    </div>
+    <div class="grid g3" style="margin-top:1.4rem">
+      <div class="card"><div class="kicker" style="color:var(--violet2)">The watermark</div><h3 style="color:#fff">min over active partitions − out-of-orderness</h3><p>A partition with nothing for five minutes stops holding it back. When every partition is quiet, processing time carries it, so a 3 a.m. window still closes.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">Lateness</div><h3 style="color:#fff">Re-fire within the hour, side output after</h3><p>A window keeps its state an hour past the watermark. A record inside that hour updates the window and fires it again; the sink upserts. After it, the batch is the place.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">Exactly once, from outside</div><h3 style="color:#fff">Checkpointed state, keyed sinks</h3><p>Offsets, windows, dedupe state and the ledger are restored together. The sink and side outputs are keyed, so what a restore re-sends changes nothing.</p></div>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="shell">
+  <p>R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a>. Synthetic data; an independent application, not affiliated with or endorsed by Tripadvisor.</p>
+</div></footer>
+<script src="assets/common.js"></script>
+<script src="assets/stream.js"></script>
+</body></html>

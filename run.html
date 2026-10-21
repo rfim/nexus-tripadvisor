@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The code &amp; runnable · NEXUS for Tripadvisor</title>
+<meta name="description" content="Every file of NEXUS for Tripadvisor in an editor: the simulated topics, the stream job, the batch, the SLA monitor and the whole week run in your browser; the Spark batch and the Java twin run in CI.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/vendor/codemirror/codemirror.css">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/tripadvisor.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header"><div class="shell">
+  <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true"></span><span>NEXUS <small>for Tripadvisor</small></span><span class="built-in"><small>built in</small><span class="logo-chip"><img src="assets/lifepal.png" alt="Lifepal" width="56" height="20"></span></span></a>
+  <nav aria-label="Primary">
+    <a href="index.html" class="keep">Home</a>
+    <a href="stream.html" class="keep">Streaming &amp; step by step</a>
+    <a href="oncall.html" class="keep">The incident &amp; replayed</a>
+    <a href="run.html" aria-current="page" class="keep"><span class="live" aria-hidden="true"></span>The code &amp; runnable</a>
+    <a href="#tests">Tests</a>
+    <a href="https://github.com/rfim/nexus-tripadvisor" class="nav-code keep">GitHub ↗</a>
+  </nav>
+</div></header>
+<main id="main">
+<section class="section dark" id="code" style="padding-top:3rem">
+  <div class="shell">
+    <div class="index"><span>The code &amp; runnable</span><span>Python in your browser · Pyodide</span></div>
+    <div class="head"><h2>Open it. Edit it. <em>Run it.</em></h2>
+      <p>Every file in the repository, as it is on GitHub. The Python runs here in your browser: the simulated topics, the stream job, the batch and its reconciliation, the SLA monitor, and the whole week with its incident. The Java twin and the PySpark batch ran for real to make this site; they run in CI and with <code>./scripts/build.sh</code>.</p></div>
+    <div class="ide">
+      <nav class="tree" id="tree" aria-label="Repository files"></nav>
+      <div class="ide-main">
+        <div class="ide-bar"><code id="fname"></code><span id="badge" class="badge"></span><span id="dirty" class="badge b-dirty" hidden>edited</span>
+          <span class="grow"></span><button id="reset" class="ghost">Reset</button><a id="gh" class="ghost" href="#" target="_blank" rel="noopener">GitHub ↗</a>
+          <button id="run" class="primary">▶ Run <kbd>Ctrl ↵</kbd></button></div>
+        <div id="editor" class="editor"></div>
+        <pre id="out" class="console" aria-live="polite"><span class="o-note">Pick a file on the left. Files marked green run here; press Run. Start with examples/: 03 is instant and yours to break, 04 runs the whole week, 05 replays the incident.</span></pre>
+      </div>
+    </div>
+    <div class="legend"><span><i class="dot-browser"></i>runs in your browser</span><span><i class="dot-spark"></i>needs Spark · runs in CI</span><span><i class="dot-java"></i>Java · runs in CI</span><span><i class="dot-local"></i>Flink SQL · warehouse SQL</span><span><i class="dot-tests"></i>tests</span><span><i class="dot-view"></i>read only</span></div>
+    <div class="grid g4" style="margin-top:1.4rem">
+      <div class="card"><div class="kicker" style="color:var(--violet2)">examples/03</div><h3>Watermarks by hand</h3><p>Six records: a retry, a late one inside the hour, one two hours late. Change a time and run it again.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">examples/04</div><h3>The whole week</h3><p>Three jobs, a lost TaskManager, a poison pill, the batch, the warehouse checks and the SLAs.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">examples/05</div><h3>The incident</h3><p>The crash loop without a dead-letter topic, the freshness curve, and the postmortem it writes.</p></div>
+      <div class="card"><div class="kicker" style="color:var(--violet2)">java/ · flink/</div><h3>The twins</h3><p>WindowJob.java is the page_views job in plain JDK 17; the Flink SQL is the same job as a cluster would run it.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section alt" id="tests">
+  <div class="shell">
+    <div class="index"><span>The tests</span><span>pytest · CI on every push</span></div>
+    <div class="head"><h2>Everything here is <em>tested.</em></h2>
+      <p>The full suite, including the Java twin and the Spark batch, ran with pytest; the report below is its output. Run the Python suites again here, in your browser, against the same files.</p></div>
+    <p id="t-sum"></p>
+    <div id="t-suites"></div>
+    <div class="cta"><button id="t-run" class="button b-primary">▶ Run the browser-safe tests here</button></div>
+    <div id="t-live"></div>
+  </div>
+</section>
+</main>
+<footer><div class="shell">
+  <p>R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a>. Synthetic data; an independent application, not affiliated with or endorsed by Tripadvisor.</p>
+</div></footer>
+<script src="assets/common.js"></script>
+<script src="assets/vendor/codemirror/codemirror.js"></script>
+<script src="assets/vendor/codemirror/mode/python.js"></script>
+<script src="assets/vendor/codemirror/mode/yaml.js"></script>
+<script src="assets/vendor/codemirror/mode/sql.js"></script>
+<script src="assets/vendor/codemirror/mode/javascript.js"></script>
+<script src="assets/vendor/js-yaml.min.js"></script>
+<script src="assets/vendor/pyodide/pyodide.js"></script>
+<script src="assets/code.js"></script>
+</body></html>

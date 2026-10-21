@@ -1,0 +1,6 @@
+-- Generated from contracts/sources.yml: every field listed under pii, in every raw table.
+-- BigQuery column-level security: attach the policy tag in the table schema (bq update --schema),
+-- and a data masking rule (SHA256) on the tag for every role without Fine-Grained Reader.
+-- `nexus-data.raw.page_views`.user_hash → projects/nexus-data/locations/eu/taxonomies/pii/policyTags/restricted
+-- `nexus-data.raw.reviews`.reviewer_hash → projects/nexus-data/locations/eu/taxonomies/pii/policyTags/restricted
+-- `nexus-data.raw.reviews`.reviewer_email → projects/nexus-data/locations/eu/taxonomies/pii/policyTags/restricted

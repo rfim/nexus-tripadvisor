@@ -1,0 +1,23 @@
+name: ci
+on:
+  pull_request:
+  push: {branches: [main]}
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env: {TZ: UTC}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: "17"}   # Spark 3.5, and the Java twin of the stream job
+      - run: pip install -r requirements.txt
+      - name: Tests (topics, stream rules, Java twin, Spark batch, reconciliation, SLAs, warehouse SQL, published data, site)
+        run: PYTHONPATH=src python -m pytest -q --junitxml=target/junit.xml
+      - name: Test report for the site
+        run: python scripts/test_report.py target/junit.xml target/tests.json
+      - name: The code editor's file list is current
+        run: python scripts/manifest.py && git diff --exit-code -- assets/data/files.json
+      - name: The whole run, then the site data and the warehouse SQL must be what's committed
+        run: ./scripts/build.sh && git diff --stat -- assets/data warehouse
