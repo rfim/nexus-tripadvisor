@@ -112,6 +112,95 @@
   };
   Object.entries(FL).forEach(([k, xs]) => SCEN[k].steps.forEach((st, i) => { st.flink = xs[Math.min(i, xs.length - 1)]; }));
 
+  // ---------- how each step's decision was chosen (assets/choice.js): measured on this week, or scored on criteria ----------
+  const B = await fetch("assets/data/benchmarks.json").then((r) => r.json()).catch(() => null);
+  if (B) {
+    const o = B.out_of_orderness, lt = B.allowed_lateness, tt = B.dedupe_ttl, rg = B.retry_gap_seconds, br = B.bad_record,
+          al = B.alerting, vr = B.volume_rule, ld = B.late_distribution, nDup = d.streams.page_views.ledger.duplicates;
+    const ttlName = { "0.01": "remember 36 s", "0.25": "remember 15 min", "1": "remember 1 h", "24": "remember 24 h" };
+    const policy = { fail_and_restart: "Fail and restart", skip_silently: "Skip silently", dead_letter: "Dead-letter topic" };
+    const versionRule = { q: "which version of a review wins?", crit: ["Stale replay blocked", "Erasure sticks", "No extra state"],
+      o: [["Last arrival wins", [0, 0, 1]], ["Dedupe by event_id", [0, 0, 0]], ["Highest version wins · tombstone is final", [1, 1, 0], 1]],
+      why: "A replay re-sends version 3 with a new event_id, so dedupe can't see it. Only the version number can. The cost: one integer of state per review." };
+    const CH = {
+      retries: [
+        { q: "what makes two records the same page view?", unit: "retries recognised", low: false,
+          o: [["Kafka partition + offset", 0], ["event_id stamped by the SDK", nDup, 1]],
+          why: "A re-send lands at a new offset. Only the id the SDK stamps survives it." },
+        { q: "how long to remember an id?", unit: "ids held in memory at peak",
+          o: ["0.01", "0.25", "1", "24"].map((k) => [ttlName[k], tt[k].peak_dedupe_keys, k === "24", `catches ${tt[k].duplicates_dropped} of ${rg.count}`]),
+          why: `Every option catches all ${rg.count} retries: the slowest came ${Math.round(rg.max)} s later. 24 h is margin for a consumer rewind after an outage, and costs only ${tt["24"].peak_dedupe_keys.toLocaleString("en-GB")} ids.` },
+        { q: "count every record, or dedupe in the stream?", unit: "page views counted twice",
+          o: [["Count every record", nDup], ["Dedupe in the stream", 0, 1]],
+          why: "Kafka's idempotent producer can't help here: the app re-sent the event, not the broker." },
+      ],
+      late: [
+        { q: "how long to wait for out-of-order events?", unit: "p95 freshness, minutes",
+          o: Object.entries(o).map(([k, v]) => [`wait ${k} min`, v.freshness_p95, k === "10", `${v.late_refires} re-fires`]),
+          why: `2 min would be ${o["10"].freshness_p95 - o["2"].freshness_p95} min fresher. 10 min is headroom for phone clocks, well inside the 90-min SLA.` },
+        { q: "how long to keep a fired window open?", unit: "late page views the stream misses (the batch still counts them)", low: null,
+          o: Object.entries(lt).map(([k, v]) => [`keep ${k} min`, v.missed_vs_batch, k === "60", `${v.peak_open_windows} open windows`]),
+          why: `180 min catches ${lt["60"].missed_vs_batch - lt["180"].missed_vs_batch} more but holds ${(lt["180"].peak_open_windows / lt["60"].peak_open_windows).toFixed(1)}× the windows. The batch counts the rest anyway.` },
+        { q: "how late are late page views?", unit: "page views that missed their first firing", low: null,
+          o: ld.buckets.map((b) => [b.bucket + " late", b.records, false]),
+          why: `${Math.round(100 * ld.buckets[3].records / ld.records_missing_first_firing)}% arrive more than 3 h late: offline uploads. No stream wait catches them cheaply.` },
+        { q: "drop a too-late record, or send it somewhere?", unit: "stream-vs-batch differences nobody can explain",
+          o: [["Drop it silently", d.reconcile.page_views.explained_by_side_output], ["Side output", d.reconcile.page_views.unexplained, 1]],
+          why: "The side output is the receipt: every window where stream and batch differ is explained by it." },
+        { q: "who has the final say on the count?", crit: ["Fresh within the hour", "Counts every record", "Checks the other"],
+          o: [["Stream only", [1, 0, 0]], ["Batch only", [0, 1, 0]], ["Stream now · batch checks nightly", [1, 1, 1], 1]],
+          why: "Two engines on the same records, reconciled every night. A difference nobody can explain is a bug." },
+      ],
+      schema: [
+        { q: "how does v2 ship?", crit: ["App ships on time", "Consumers unchanged", "One history"],
+          o: [["Refuse v2 at the registry", [0, 1, 1]], ["A new topic for v2", [1, 0, 0]], ["One reader upcasts both", [1, 1, 1], 1]],
+          why: "The app team ships. Every consumer still reads one topic and one meaning: revenue in GBP." },
+        { q: "which rate converts EUR and USD?", crit: ["A replay gives the same £", "No network call in the job", "£ at once"],
+          o: [["Live FX API", [0, 0, 1]], ["Convert later in the warehouse", [1, 1, 0]], ["Weekly rate in the contract", [1, 1, 1], 1]],
+          why: "A replay must give the same answer as the first run. A live rate can't promise that." },
+        { q: "an unknown currency arrives. Then what?", crit: ["No wrong revenue", "Evidence kept", "Job keeps running"],
+          o: [["Assume GBP", [0, 0, 1]], ["Drop it", [1, 0, 1]], ["Dead-letter it", [1, 1, 1], 1]] },
+      ],
+      poison: [
+        { q: "what does the job do with a record it can't read?", unit: "restarts in the replayed week",
+          o: Object.entries(br).map(([k, v]) => [policy[k], v.restarts, k === "dead_letter", `${v.records_kept_for_inspection} kept for inspection`]),
+          why: "Skipping is free but loses the evidence. Dead-lettering is free and keeps it." },
+        { q: "what does each policy cost the product?", unit: "minutes partner revenue was late",
+          o: Object.entries(br).map(([k, v]) => [policy[k], v.minutes_late, k === "dead_letter"]),
+          why: "A restart can't fix a bad record: it is still at the same offset after every restore." },
+        { q: "which alert pages first?", unit: "minutes from the first failure to a page",
+          o: [["Freshness over the SLA", al.freshness_over_sla], ["Restarts > 3 in 10 min", al.restarts_over_3_in_10_min, 1]],
+          why: "Freshness has to exceed the SLA before it says anything. The restart count says it in minutes." },
+        { q: "after the fix: how old does the product get?", unit: "worst age of partner revenue, minutes",
+          o: [["Fail and restart", br.fail_and_restart.worst_age_minutes], ["Dead-letter topic", br.dead_letter.worst_age_minutes, 1]] },
+      ],
+      bots: [
+        { q: "where do we catch a scraper?", crit: ["Stream stays simple", "History to compare", "Rows kept as evidence"],
+          o: [["Ignore it", [1, 0, 1]], ["Filter in the stream", [0, 0, 0]], ["Hold the hour before Gold", [1, 1, 1], 1]],
+          why: "To the stream a scraper's view is a valid view. Only a comparison with earlier days shows it." },
+        { q: "which rule holds the scraper and nothing else?", unit: "false holds in the week",
+          o: Object.entries(vr).map(([k, v]) => [k.replace(" (chosen)", ""), v.false_holds, k.includes("chosen"), v.caught_scraper ? "caught the scraper" : "missed it"]),
+          why: "A week of history makes σ small and Saturdays look odd. Requiring at least double left only the scraper." },
+        { q: "who made the views in the held hour?", unit: `views per user in the hour · over ${inv.max_per_hour} is not a person`, low: null,
+          o: inv.top.slice(0, 6).map((u) => [u.user_hash, u.views, false, u.views > inv.max_per_hour ? "removed" : "kept"]),
+          why: `${inv.bots.length} users over ${inv.max_per_hour} views an hour are removed. Everyone else stays.` },
+      ],
+      erasure: [versionRule],
+      crash: [
+        { q: "how often to checkpoint?", crit: ["Little replay after a crash", "Low overhead"],
+          o: [["Every 1 min", [1, .5]], ["Every 10 min", [.5, 1], 1], ["Every hour", [0, 1]]],
+          why: "10 minutes of records to replay is small next to a 90-minute SLA. Not benchmarked here: a design call." },
+        { q: "what comes back on restore?", crit: ["Counts right", "No duplicates", "No gaps"],
+          o: [["Offsets only", [0, 0, 1]], ["State only", [0, 1, 0]], ["Offsets + state from one checkpoint", [1, 1, 1], 1]],
+          why: "Offsets and state are saved together, so the job resumes exactly where its state says it was." },
+        { q: "how does the sink take re-sent windows?", unit: "duplicate rows after the restore",
+          o: [["Plain INSERT", d.replay.re_emitted], ["MERGE on the window key", 0, 1]],
+          why: `${d.replay.re_emitted} windows were sent twice. Keyed upserts make that harmless: the result is identical to a run without the crash.` },
+      ],
+    };
+    Object.entries(CH).forEach(([k, xs]) => SCEN[k].steps.forEach((st, i) => { st.choice = xs[Math.min(i, xs.length - 1)]; }));
+  }
+
 
   // ---------- the checkpoint node lights where state is saved or restored ----------
   const ck = (st) => { st.nodes = [...st.nodes, "ckpt"]; st.wires = [...st.wires, "w-ck"]; };
@@ -260,7 +349,7 @@
     const sc = SCEN[key], st = sc.steps[i];
     $("steps").innerHTML = sc.steps.map((s, k) => `<li class="${k < i ? "done" : k === i ? "now" : ""}" data-i="${k}"><span class="dot">${k + 1}</span><span><b>${s.title}</b></span></li>`).join("");
     if (!st) { NODES.forEach((n) => $("n-" + n).setAttribute("class", "node" + (n === "kafka" ? "" : " off"))); WIRES.forEach((w) => $(w).setAttribute("class", "wire"));
-      $("caption").innerHTML = `<b>${sc.label.replace(/^[\d+]+ · /, "")}.</b> Press Play, or Next to step through it.`; $("log").innerHTML = ""; return; }
+      $("caption").innerHTML = `<b>${sc.label.replace(/^[\d+]+ · /, "")}.</b> Press Play, or Next to step through it.`; $("log").innerHTML = ""; NXChoice.render($("choice"), null); return; }
     NODES.forEach((n) => $("n-" + n).setAttribute("class", "node " + ((st.hot || []).includes(n) ? "hot" : st.nodes.includes(n) ? "on" : "off")));
     WIRES.forEach((w) => $(w).setAttribute("class", "wire" + (st.wires.includes(w) ? ((st.hot || []).length ? " hot" : " on") : "")));
     document.querySelectorAll("[id^=kp]").forEach((r) => (r.style.fill = r.id === `kp${st.part}` ? "#0b6b53" : "#0a2a21"));
@@ -271,6 +360,7 @@
     m.className = `msg ${(st.hot || []).length ? "err" : "res"}`;
     m.innerHTML = `<span class="dir">step ${i + 1} · ${sc.topic}</span>${NX.esc(JSON.stringify(st.log, null, 1).replace(/\n\s*/g, " "))}`;
     $("log").prepend(m);
+    NXChoice.render($("choice"), st.choice);
     paint(st);
     for (const w of st.wires) await packet(w, (st.hot || []).length);
   };
