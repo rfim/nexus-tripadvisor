@@ -22,6 +22,7 @@
       <a href="#proof">Code & proof</a>
       <a href="#flink">Flink</a>
       <a href="#governance">Governance</a>
+      <a href="#why">Why</a>
       <a href="#codebase">All the code</a>
       <a href="#contact">Contact</a>
       <a href="index.html">NEXUS home →</a>
@@ -262,6 +263,109 @@
   } catch (e) {}
 })();
 </script>
+    <section id="why" class="proof-section" aria-labelledby="why-title">
+      <div class="page-width">
+        <div class="proof-heading"><div><p class="eyebrow light"><span class="eyebrow-line"></span> Why this · not that</p><h2 id="why-title">Every decision · measured against its alternatives</h2></div><p>The same week of Kafka records is re-run under each alternative and measured. The method is named on each decision: a benchmark sweep · trial and error · a failure replay · or how other engines do it. Where the data says a choice is oversized the page says so.</p></div>
+        <div id="why-tabs" style="display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px"></div>
+        <div class="proof-layout">
+          <div class="code-panel" style="padding:0"><div class="code-top"><span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span><span id="why-file">assets/data/benchmarks.json</span><span class="language-tag" id="why-method">BENCHMARK</span></div>
+            <div id="why-body" style="padding:16px 18px;overflow-x:auto"></div></div>
+          <aside class="proof-notes" aria-label="Why">
+            <div class="proof-note primary"><span class="note-num">What the numbers say</span><h3 id="why-h"></h3><p id="why-say"></p></div>
+            <div class="proof-note"><span class="note-num">How I got here</span><p id="why-how"></p></div>
+            <div class="proof-note"><span class="note-num">Elsewhere</span><p id="why-else"></p></div>
+            <div class="proof-note"><span class="note-num">What I'd revisit</span><p id="why-rev"></p></div>
+          </aside>
+        </div>
+      </div>
+    </section>
+<style>
+#why-body table{border-collapse:collapse;width:100%;font:500 13px Inter,system-ui,sans-serif;color:#dfeae5;margin-bottom:14px}
+#why-body th{font:700 10.5px ui-monospace,Menlo,monospace;letter-spacing:.1em;text-transform:uppercase;color:#9cc0b7;text-align:left;padding:7px 8px;border-bottom:1px solid #34584b}
+#why-body td{padding:7px 8px;border-bottom:1px solid #1f3b33}
+#why-body tr.pick td{background:rgba(52,224,161,.12);color:#fff;font-weight:700}
+#why-body tr.pick td:first-child::after{content:"  ✓";color:#34e0a1}
+#why-body caption{caption-side:top;text-align:left;font:700 11px ui-monospace,Menlo,monospace;letter-spacing:.12em;color:#ffd27a;padding:4px 0 6px}
+</style>
+<script>
+(async () => {
+  const $ = (id) => document.getElementById(id);
+  let B;
+  try { B = await fetch("assets/data/benchmarks.json").then((r) => r.json()); } catch (e) { return; }
+  const int = (v) => Number(v).toLocaleString("en-GB");
+  const tbl = (cap, cols, rows) => `<table><caption>${cap}</caption><tr>${cols.map((c) => `<th>${c}</th>`).join("")}</tr>` +
+    rows.map(([pick, ...cells]) => `<tr class="${pick ? "pick" : ""}">${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("") + "</table>";
+  const w = B.watermark, o = B.out_of_orderness, lt = B.allowed_lateness, tt = B.dedupe_ttl, rg = B.retry_gap_seconds, br = B.bad_record,
+        al = B.alerting, fm = B.freshness_metric, vr = B.volume_rule, ly = B.layout, en = B.engines;
+  const D = [
+    { k: "Watermark", m: "BENCHMARK · COMPARISON",
+      body: tbl("Three watermarks · same week of page_views", ["Watermark", "Counted", "Missed", "Fresh p95", "Worst", "SLA breaches"],
+        Object.entries(w).map(([k, v]) => [k === "active_min", { active_min: "Min over active partitions", min_all: "Min over every partition", global_max: "One global clock (max)" }[k],
+          int(v.counted), v.missed_vs_batch, v.freshness_p95 + " min", v.freshness_max + " min", v.sla_breach_samples])) +
+        tbl("Out-of-orderness sweep", ["Wait", "Late re-fires", "Fresh p50", "Fresh p95", "SLA breaches"],
+        Object.entries(o).map(([k, v]) => [k === "10", k + " min", v.late_refires, v.freshness_p50 + " min", v.freshness_p95 + " min", v.sla_breach_samples])),
+      h: `0 breaches · vs ${w.min_all.sla_breach_samples}`,
+      say: `Waiting for every partition stalls whenever one goes quiet: p95 ${w.min_all.freshness_p95} min. A global clock costs nothing here because the partitions stay in step; it is the one that drops records when a partition lags.`,
+      how: "A benchmark sweep: the same week re-run with each watermark and each out-of-orderness.",
+      el: "Flink: per-split watermarks · the minimum wins · withIdleness. Spark Structured Streaming: one watermark from the max event time. Kafka Streams: stream time per task plus a grace period.",
+      rev: `10 min of out-of-orderness is headroom for phone clocks. The data says 2 min would be ${o["10"].freshness_p95 - o["2"].freshness_p95} min fresher at p95 for ${o["2"].late_refires - o["10"].late_refires} more re-fires a week.` },
+    { k: "Lateness", m: "BENCHMARK",
+      body: tbl("Allowed lateness sweep", ["Lateness", "Counted", "Missed (batch has it)", "Re-fires", "Peak open windows"],
+        Object.entries(lt).map(([k, v]) => [k === "60", k + " min", int(v.counted), v.missed_vs_batch, v.late_refires, v.peak_open_windows])),
+      h: "The smallest value that absorbs organic lateness",
+      say: `At 60 min what's left (${lt["60"].missed_vs_batch}) is the offline upload · hours late. 180 min counts ${lt["60"].missed_vs_batch - lt["180"].missed_vs_batch} more but holds ${(lt["180"].peak_open_windows / lt["60"].peak_open_windows).toFixed(1)}× the state · and the nightly batch already counts them.`,
+      how: "A benchmark sweep over 0 · 15 · 60 · 180 minutes.", el: "Flink allowedLateness · Kafka Streams grace() · Beam allowed lateness with triggers. Spark drops what is past the watermark.",
+      rev: "If the app team shortens its offline flush · lateness can shrink with it." },
+    { k: "Dedupe", m: "BENCHMARK",
+      body: tbl("Dedupe TTL sweep", ["TTL", "Retries caught", "Peak keys held"],
+        Object.entries(tt).map(([k, v]) => [k === "24", { "0.01": "36 s", "0.25": "15 min", "1": "1 h", "24": "24 h" }[k], v.duplicates_dropped, int(v.peak_dedupe_keys)])),
+      h: `All ${rg.count} retries within ${Math.round(rg.max)} s`,
+      say: `Every TTL catches them all: retries arrive within ${Math.round(rg.max)} s (p50 ${Math.round(rg.p50)} s). 24 h is a deliberate margin for re-delivery after an outage: ${int(tt["24"].peak_dedupe_keys)} keys · well under a megabyte.`,
+      how: "A benchmark sweep · plus the retry gaps measured from the topic itself.", el: "Flink keyed state TTL · Spark dropDuplicatesWithinWatermark. Kafka's idempotent producer only dedupes broker-level retries · not an app re-sending.",
+      rev: "Size the TTL from the longest consumer rewind the team has actually done · not from retries." },
+    { k: "Bad records", m: "FAILURE REPLAY",
+      body: tbl("The poison pill · replayed three ways", ["Policy", "Restarts", "Product late", "Windows late", "Record kept"],
+        Object.entries(br).map(([k, v]) => [k === "dead_letter", { fail_and_restart: "Fail and restart", skip_silently: "Skip silently", dead_letter: "Dead-letter topic" }[k],
+          v.restarts, v.minutes_late + " min", v.windows_late, v.records_kept_for_inspection])) +
+        tbl("Which alert pages first", ["Alert", "Time to page"], [[false, "Freshness over the SLA", al.freshness_over_sla + " min"], [true, "Restarts > 3 in 10 min too", al.restarts_over_3_in_10_min + " min"]]),
+      h: `${br.fail_and_restart.restarts} restarts · for one record`,
+      say: `Failing cost ${br.fail_and_restart.minutes_late} minutes on a tier-1 product. Skipping costs nothing now and loses the evidence. Dead-lettering costs nothing and keeps it. Freshness paged after ${al.freshness_over_sla} min · the restart count said it in ${al.restarts_over_3_in_10_min}.`,
+      how: "A failure replay: the incident re-run with each policy.", el: "Kafka Connect errors.tolerance=all with a DLQ topic · Flink side outputs · Spark permissive parsing with a corrupt-record column.",
+      rev: "Alert on DLQ depth for tier-1 topics · with the record and its producer attached." },
+    { k: "Freshness", m: "TRIAL AND ERROR",
+      body: tbl("What freshness is measured from", ["Measured from", "Pages in a week", "Late samples", "Worst"],
+        [[false, "Newest non-empty window (first version)", fm.last_non_empty_window.pages, fm.last_non_empty_window.breach_samples, fm.last_non_empty_window.max + " min"],
+         [true, "Published completeness", fm.published_completeness.pages, fm.published_completeness.breach_samples, fm.published_completeness.max + " min"]]),
+      h: `${fm.last_non_empty_window.pages} false pages · then 0`,
+      say: "With no incident at all · the first version paged every quiet night: 3 a.m. has no clicks · not a stale product. The job now publishes 'complete up to' with the data.",
+      how: "Trial and error: built the obvious version · measured it · changed it.", el: "dbt source freshness checks the newest loaded_at: the first version here · fine for busy sources.",
+      rev: "Publish completeness as a column consumers can read · not only an alert." },
+    { k: "Volume hold", m: "TRIAL AND ERROR · BENCHMARK",
+      body: tbl("Which rule holds the scraper and nothing else", ["Rule", "Hours held", "Caught the scraper", "False holds"],
+        Object.entries(vr).map(([k, v]) => [k.includes("chosen"), k.replace(" (chosen)", "") + (k === "2σ" ? " (first version)" : ""), v.holds, v.caught_scraper ? "yes" : "no", v.false_holds])),
+      h: `${vr["2σ"].false_holds} false holds · then 0`,
+      say: "A week of history makes σ small and Saturdays look odd. Adding 'at least double' left only the scraper.",
+      how: "Trial and error first · then a sweep of the rules.", el: "Seasonal anomaly tools compare the same hour on earlier days · as this rule does. Static thresholds page on every busy weekend.",
+      rev: "×2 alone also works on this week. σ stays to protect low-volume hours; at Lifepal the baseline was 30 days." },
+    { k: "Layout · engines", m: "BENCHMARK (MODELLED) · COMPARISON",
+      body: tbl(`${ly.query} · bytes scanned (${ly.row_bytes_assumed} bytes a row · assumed)`, ["Layout", "Bytes", "vs none"],
+        [[false, "No partitioning", int(ly.no_partitioning), "1×"], [false, "Partition by day", int(ly.partition_by_day), Math.round(ly.no_partitioning / ly.partition_by_day) + "× less"],
+         [true, "Day partitions · cluster by partner", int(ly.partition_by_day_cluster_by_partner), Math.round(ly.no_partitioning / ly.partition_by_day_cluster_by_partner) + "× less"]]) +
+        tbl("The same week on four engines", ["Engine", "The week", "Output"], Object.entries(en).map(([k, v]) => [k.includes("Flink"), k, v.seconds + " s", v.identical ? "identical" : "—"])),
+      h: `${Math.round(ly.no_partitioning / ly.partition_by_day_cluster_by_partner)}× less scanned · one answer`,
+      say: "On a petabyte table the ratio is the bill. Flink is slowest on a laptop-sized week because start-up dominates; it is chosen for state · checkpoints and per-split watermarks at scale.",
+      how: "Bytes modelled from the run's own row counts · engines benchmarked on the same week.", el: "BigQuery: partition and cluster · billed on bytes scanned. Snowflake: micro-partitions and clustering keys · billed on warehouse time.",
+      rev: "Measure the real query mix first: cluster on what consumers filter by · not on what seems natural." },
+  ];
+  const show = (i) => { [...$("why-tabs").children].forEach((b, k) => { b.style.background = k === i ? "#34e0a1" : "transparent"; b.style.color = k === i ? "#0a1b15" : "#cfe3db"; });
+    const d = D[i]; $("why-method").textContent = d.m; $("why-body").innerHTML = d.body; $("why-h").textContent = d.h;
+    $("why-say").textContent = d.say; $("why-how").textContent = d.how; $("why-else").textContent = d.el; $("why-rev").textContent = d.rev; };
+  $("why-tabs").innerHTML = D.map((d) => `<button type="button" style="border:1px solid #34584b;border-radius:8px;padding:5px 11px;font:600 12px Inter,system-ui,sans-serif;cursor:pointer">${d.k}</button>`).join("");
+  $("why-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (b) show([...$("why-tabs").children].indexOf(b)); });
+  show(0);
+})();
+</script>
+
 
     <section id="codebase" class="proof-section" aria-labelledby="codebase-title">
       <div class="page-width">
