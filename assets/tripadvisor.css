@@ -39,3 +39,15 @@ svg .grid{stroke:var(--line)}svg .ax{font:500 11px var(--font);fill:var(--muted)
 .b-flink{background:#4a1626;color:#ff9db2}
 .on-flink{display:block;margin-top:.55rem;padding:.45rem .7rem;background:#04130f;border-left:3px solid #e6526f;border-radius:6px;font:400 .76rem/1.5 var(--mono);color:#ffd2dc;white-space:pre-wrap}
 .on-flink span{display:block;font:700 .62rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#ff9db2;margin-bottom:.15rem}
+/* the three highlighted technologies */
+.stack3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.8rem;margin:1.6rem 0 .4rem;max-width:960px}
+.stack-tile{display:block;border-radius:16px;padding:1rem 1.2rem;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.05);transition:transform .15s}
+.stack-tile:hover{transform:translateY(-3px)}
+.stack-tile small{display:block;font:700 .64rem var(--mono);letter-spacing:.18em;text-transform:uppercase;opacity:.8}
+.stack-tile b{display:block;font-size:clamp(1.4rem,2.6vw,2rem);font-weight:800;letter-spacing:-.02em;margin:.2rem 0}
+.stack-tile span{font-size:.84rem;color:#d3ece5}
+.stack-tile.flink{border-color:#e6526f;background:linear-gradient(150deg,rgba(230,82,111,.28),rgba(230,82,111,.06))}.stack-tile.flink small{color:#ff9db2}
+.stack-tile.kafka{border-color:#9aa7ff;background:linear-gradient(150deg,rgba(154,167,255,.26),rgba(154,167,255,.05))}.stack-tile.kafka small{color:#c3caff}
+.stack-tile.bq{border-color:#5fa8ff;background:linear-gradient(150deg,rgba(95,168,255,.28),rgba(95,168,255,.05))}.stack-tile.bq small{color:#a9d0ff}
+.hero .also{font:600 .8rem var(--mono);color:#9cc0b7;letter-spacing:.06em;margin-top:.3rem}
+@media (max-width:760px){.stack3{grid-template-columns:1fr}}

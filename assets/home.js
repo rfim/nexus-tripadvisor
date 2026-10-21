@@ -9,7 +9,10 @@
   const ok = (b, yes = "pass", no = "fail") => `<span class="verdict ${b ? "ok" : "bad"}">${b ? yes : no}</span>`;
 
   // ---------- the path ----------
+  const FV = d.flink && d.flink.location_views_hourly;
   const k = { partitions: sum(G.partitions), records: NX.int(sum(G.records)),
+              flink_line: FV ? `Flink ${d.flink.flink}: ${NX.int(FV.windows)} windows, identical to the Python job` : "Flink 1.20 job, checked in CI",
+              kafka_line: `${NX.int(sum(G.records))} records · ${sum(G.partitions)} partitions · six planted problems`,
               unexplained: R.page_views.unexplained + R.partner_clicks.unexplained };
   document.querySelectorAll("[data-k]").forEach((el) => (el.textContent = k[el.dataset.k]));
 
@@ -100,15 +103,15 @@
   $("bots").innerHTML = `<p style="font-size:.84rem;margin-top:.4rem">Held: ${hold.hour.slice(0, 13).replace("T", " ")}:00, ${NX.int(hold.views)} views (z = ${hold.z}). ${inv.users_in_hour} users in that hour; ${inv.top.slice(0, 3).map((u) => `<code>${u.user_hash}</code> ${u.views}`).join(", ")}. After removing them: ${d.volume.holds_after_filter.length} holds.</p>`;
 
   // ---------- warehouses ----------
-  $("dialects").innerHTML = `<div class="tablewrap wrap"><table><tr><th>concern</th><th>Snowflake</th><th>BigQuery</th></tr>${d.warehouse.dialects.map((r) =>
-    `<tr><td class="k">${r.concern}</td><td class="mono" style="font-size:.76rem">${NX.esc(r.snowflake)}</td><td class="mono" style="font-size:.76rem">${NX.esc(r.bigquery)}</td></tr>`).join("")}</table></div>`;
+  $("dialects").innerHTML = `<div class="tablewrap wrap"><table><tr><th>concern</th><th>BigQuery</th><th>Snowflake</th></tr>${d.warehouse.dialects.map((r) =>
+    `<tr><td class="k">${r.concern}</td><td class="mono" style="font-size:.76rem"><b>${NX.esc(r.bigquery)}</b></td><td class="mono" style="font-size:.76rem">${NX.esc(r.snowflake)}</td></tr>`).join("")}</table></div>`;
   const files = ["partner_revenue_15m", "reviews_current", "governance", "erasure", "raw_reviews"];
-  let cur = ["snowflake", "partner_revenue_15m"];
+  let cur = ["bigquery", "partner_revenue_15m"];
   const showSql = async () => {
     $("sql-tabs").querySelectorAll("button").forEach((b) => b.classList.toggle("on", b.dataset.d === cur[0] || b.dataset.f === cur[1]));
     $("sql").textContent = await fetch(`warehouse/${cur[0]}/${cur[1]}.sql`).then((r) => r.text());
   };
-  $("sql-tabs").innerHTML = ["snowflake", "bigquery"].map((x) => `<button data-d="${x}">${x === "snowflake" ? "Snowflake" : "BigQuery"}</button>`).join("") +
+  $("sql-tabs").innerHTML = ["bigquery", "snowflake"].map((x) => `<button data-d="${x}">${x === "snowflake" ? "Snowflake" : "BigQuery"}</button>`).join("") +
     `<span class="sep"></span>` + files.map((f) => `<button data-f="${f}">${f}</button>`).join("");
   $("sql-tabs").addEventListener("click", (e) => { const b = e.target.closest("button"); if (!b) return;
     if (b.dataset.d) cur[0] = b.dataset.d; else cur[1] = b.dataset.f; showSql(); });

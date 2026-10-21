@@ -92,10 +92,10 @@ def deck():
   <div class="built"><div><div class="k2">PLATFORM BUILT IN</div><span class="lp"><img src="lifepal.png" alt="Lifepal"></span></div></div>
   <div class="kicker" style="margin-top:14mm">Data engineering · Fireside chat · Nexus best practices from Lifepal</div>
   <h1>Nexus</h1>
-  <div class="sub">Every event counted once, on time, and checked</div>
+  <div class="sub">Kafka in, Flink in the middle, BigQuery out. Every event counted once, on time, and checked</div>
   <p class="desc">Four years leading the data platform at Lifepal, a high-traffic consumer marketplace: Kafka and Debezium streams next to batch sources, a config-driven framework other engineers built on, SLAs, 500+ quality checks and a root-cause review after every incident. This pack applies those practices to a travel site's data on Tripadvisor's listed stack, Kafka → stream processing → Spark → Snowflake and BigQuery, in a runnable repository with synthetic data. Every run figure comes from that run; every Lifepal figure is from my CV.</p>
   <div class="meta"><div><b>PRESENTED BY</b>R. Firman Insan Muhammad (Vim)<br>Senior Data Engineer · London</div><div><b>TO</b>Data Platform<br>Tripadvisor</div>
-    <div><b>ROLE</b>Senior Data Engineer<br>London, remote / hybrid</div><div><b>STACK</b>Kafka · Flink · Spark<br>Snowflake · BigQuery · Java · Python</div></div>
+    <div><b>ROLE</b>Senior Data Engineer<br>London, remote / hybrid</div><div><b>STACK</b>Kafka · Flink · BigQuery<br>Spark · Snowflake · Java · Python</div></div>
   <div class="foot"><span>Nexus · Lifepal best practices · applied to Tripadvisor</span><span>Vim · 01</span></div></section>''')
     s.append(slide("Contents", "What I'd like to cover", "Ten minutes on what I've built, then the parts of the role I'd own first. Every page points to working code.",
         '<table class="toc">' + "".join(f'<tr><td class="n">{a}</td><td><b>{b}</b></td><td>{c}</td></tr>' for a, b, c in [
@@ -191,7 +191,7 @@ def one_page():
     return head("Nexus for Tripadvisor · One page", "one_page.css") + f'''<div class="page">
 <div class="kicker">One page · prepared for Tripadvisor Data Platform · Senior Data Engineer</div>
 <div class="top"><div><h1>Every event counted once, <b>on time, and checked.</b></h1>
-  <div class="tl">NEXUS, the platform I built at Lifepal, applied to a travel site's events.</div>
+  <div class="tl">Kafka in, Flink in the middle, BigQuery out: NEXUS, the platform I built at Lifepal, applied to a travel site's events.</div>
   <p>Kafka topics → an event-time stream job (Python, with a Java twin) → a nightly Spark batch that checks it → one contract rendered to Snowflake and BigQuery → SLAs with an incident and its postmortem. Synthetic data; everything runs from <b>{SITE}</b>.</p></div>
   <div><div class="built"><div><div class="k2">BUILT IN</div><img src="lifepal.png" alt="Lifepal" style="height:30px"></div><span class="arrow">→</span><div><div class="k2">PRESENTED TO</div><span class="codat" style="font-size:16pt"><img src="tripadvisor-owl.png" alt="" style="height:24px;display:inline;vertical-align:-5px;margin-right:5px">Tripadvisor</span></div></div></div></div>
 <div class="sec"><div class="sh"><b>Proven at Lifepal</b><i>from my CV</i></div><div class="proof"><span><b>24h → &lt;5m</b> reporting latency</span><span><b>6h → 90m</b> nightly batch</span><span><b>$11k</b> vs $19k forecast</span><span><b>500+</b> quality checks</span><span><b>−60%</b> data-trust escalations</span><span><b>3–5</b> engineers led, 2 promoted</span></div></div>
