@@ -349,7 +349,7 @@
     const sc = SCEN[key], st = sc.steps[i];
     $("steps").innerHTML = sc.steps.map((s, k) => `<li class="${k < i ? "done" : k === i ? "now" : ""}" data-i="${k}"><span class="dot">${k + 1}</span><span><b>${s.title}</b></span></li>`).join("");
     if (!st) { NODES.forEach((n) => $("n-" + n).setAttribute("class", "node" + (n === "kafka" ? "" : " off"))); WIRES.forEach((w) => $(w).setAttribute("class", "wire"));
-      $("caption").innerHTML = `<b>${sc.label.replace(/^[\d+]+ · /, "")}.</b> Press Play, or Next to step through it.`; $("log").innerHTML = ""; NXChoice.render($("choice"), null); return; }
+      $("caption").innerHTML = `<b>${sc.label.replace(/^[\d+]+ · /, "")}.</b> Press Play, or Next to step through it.`; $("log").innerHTML = ""; NXChoice.render($("choice"), sc.steps[0] && sc.steps[0].choice); return; }
     NODES.forEach((n) => $("n-" + n).setAttribute("class", "node " + ((st.hot || []).includes(n) ? "hot" : st.nodes.includes(n) ? "on" : "off")));
     WIRES.forEach((w) => $(w).setAttribute("class", "wire" + (st.wires.includes(w) ? ((st.hot || []).length ? " hot" : " on") : "")));
     document.querySelectorAll("[id^=kp]").forEach((r) => (r.style.fill = r.id === `kp${st.part}` ? "#0b6b53" : "#0a2a21"));
