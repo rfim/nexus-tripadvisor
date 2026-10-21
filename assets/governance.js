@@ -47,7 +47,8 @@
   $("g-wires").innerHTML = Object.entries(WIRES).map(([id, dd]) => `<path id="${id}" class="wire" d="${dd}"/>`).join("");
   $("g-nodes").innerHTML = Object.entries(N).map(([k, [x, y, w, h, t, s]]) => `<g class="node off" id="n-${k}" transform="translate(${x},${y})">
     <rect width="${w}" height="${h}" rx="12"/><text x="${w / 2}" y="${h / 2 - 3}" text-anchor="middle" style="font-size:${t.length > 18 ? 12.5 : 14}px">${t}</text>
-    <text class="sm" x="${w / 2}" y="${h / 2 + 15}" text-anchor="middle">${NX.esc(s || sub(k))}</text></g>`).join("") +
+    <text class="sm" x="${w / 2}" y="${h / 2 + 15}" text-anchor="middle">${NX.esc(s || sub(k))}</text>${
+      k.startsWith("t-") ? `<use href="#ti-kafka" x="10" y="10" width="16" height="16"/>` : k.startsWith("raw_") || k === "dim_location" || ["location_views_hourly", "partner_revenue_15m", "reviews_current"].includes(k) ? `<use href="#ti-db" x="10" y="10" width="14" height="14" opacity=".75"/>` : ""}</g>`).join("") +
     `<text x="109" y="92" text-anchor="middle" class="flink-label" style="fill:#c3caff">KAFKA</text><text x="350" y="92" text-anchor="middle" class="flink-label" style="fill:#9cc0b7">RAW</text>
      <text x="621" y="92" text-anchor="middle" class="flink-label" style="fill:#34e0a1">GOLD</text><text x="882" y="92" text-anchor="middle" class="flink-label" style="fill:#ffd27a">GOVERNANCE</text>
      <text x="1098" y="138" text-anchor="middle" class="flink-label" style="fill:#a9d0ff">WAREHOUSE</text>

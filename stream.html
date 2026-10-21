@@ -9,8 +9,8 @@
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=e11">
-<link rel="stylesheet" href="assets/tripadvisor.css?v=e11">
+<link rel="stylesheet" href="assets/site.css?v=e13">
+<link rel="stylesheet" href="assets/tripadvisor.css?v=e13">
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -47,10 +47,10 @@
         <path id="w-sb" class="wire" d="M1080 120 C 1150 180, 1150 300, 1080 370"/>
 
         <g class="node" id="n-kafka" transform="translate(30,120)"><rect width="170" height="160" rx="14"/>
-          <text x="85" y="34" text-anchor="middle">Kafka</text><text class="sm" x="85" y="54" text-anchor="middle" id="k-topic">topic</text>
+          <use href="#ti-kafka" x="44" y="19" width="19" height="19"/><text x="92" y="34" text-anchor="middle">Kafka</text><text class="sm" x="85" y="54" text-anchor="middle" id="k-topic">topic</text>
           <g id="k-parts"></g></g>
         <g id="flink-frame"><rect x="232" y="104" width="606" height="190" rx="20" class="flink-frame"/>
-          <text x="250" y="126" class="flink-label">APACHE FLINK 1.20 · DataStream job · TaskManager</text>
+          <use href="#ti-flink" x="248" y="113" width="16" height="16"/><text x="270" y="126" class="flink-label">APACHE FLINK 1.20 · DataStream job</text>
           <text x="820" y="126" text-anchor="end" class="flink-label dim" id="flink-job">nexus location_views_hourly</text></g>
         <path id="w-ck" class="wire" d="M535 104 L535 72"/>
         <g class="node off" id="n-ckpt" transform="translate(430,14)"><rect width="210" height="58" rx="12"/>
@@ -66,13 +66,13 @@
           <text class="sm" x="85" y="69" text-anchor="middle">allowedLateness</text>
           <text class="xs" x="85" y="96" text-anchor="middle" id="wm-label">watermark –</text></g>
         <g class="node off" id="n-sink" transform="translate(920,50)"><rect width="160" height="90" rx="14"/>
-          <text x="80" y="36" text-anchor="middle">BigQuery</text><text x="80" y="58" text-anchor="middle">Snowflake</text><text class="sm" x="80" y="76" text-anchor="middle">KafkaSink · upsert</text></g>
+          <use href="#ti-bigquery" x="14" y="22" width="18" height="18"/><text x="88" y="36" text-anchor="middle">BigQuery</text><use href="#ti-snowflake" x="14" y="44" width="18" height="18"/><text x="88" y="58" text-anchor="middle">Snowflake</text><text class="sm" x="80" y="76" text-anchor="middle">KafkaSink · upsert</text></g>
         <g class="node off" id="n-side" transform="translate(920,260)"><rect width="160" height="70" rx="14"/>
           <text x="80" y="32" text-anchor="middle">Side output</text><text class="sm" x="80" y="52" text-anchor="middle">sideOutputLateData</text></g>
         <g class="node off" id="n-batch" transform="translate(920,360)"><rect width="160" height="60" rx="14"/>
-          <text x="80" y="27" text-anchor="middle">Nightly batch</text><text class="sm" x="80" y="45" text-anchor="middle">Spark · checks the stream</text></g>
+          <use href="#ti-spark" x="12" y="13" width="18" height="18"/><text x="88" y="27" text-anchor="middle">Nightly batch</text><text class="sm" x="80" y="45" text-anchor="middle">Spark · checks the stream</text></g>
         <g class="node off" id="n-dlq" transform="translate(450,340)"><rect width="170" height="70" rx="14"/>
-          <text x="85" y="32" text-anchor="middle">Dead letters</text><text class="sm" x="85" y="52" text-anchor="middle">OutputTag · dlq topic</text></g>
+          <use href="#ti-kafka" x="14" y="17" width="18" height="18"/><text x="92" y="32" text-anchor="middle">Dead letters</text><text class="sm" x="85" y="52" text-anchor="middle">OutputTag · dlq topic</text></g>
         <g id="packets"></g>
       </svg></div>
       <div class="caption" id="caption">Pick a problem above, then press Play or step through.</div>
@@ -111,8 +111,9 @@
   <p>R. Firman Insan Muhammad (Vim) · Senior Data Engineer · London · <a href="mailto:firman.insan.m@gmail.com">firman.insan.m@gmail.com</a> · <a href="https://github.com/rfim/nexus-tripadvisor">github.com/rfim/nexus-tripadvisor</a>. Synthetic data; an independent application, not affiliated with or endorsed by Tripadvisor.</p>
 </div></footer>
 <script src="assets/common.js"></script>
-<script src="assets/choice.js?v=e11"></script>
+<script src="assets/choice.js?v=e13"></script>
 <script src="assets/flink.js"></script>
-<script src="assets/stream.js?v=e11"></script>
+<script src="assets/stream.js?v=e13"></script>
 <script>NXFlink.mount({ tabs: "flink-tabs", why: "flink-why", code: "flink-code", tiles: "flink-tiles", map: "flink-map" });</script>
+<script src="assets/icons.js?v=e13"></script>
 </body></html>
