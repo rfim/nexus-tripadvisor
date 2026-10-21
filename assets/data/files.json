@@ -42,6 +42,12 @@
   "lines": 108
  },
  {
+  "path": "src/nexus/benchmarks.py",
+  "folder": "src/nexus",
+  "runs": "browser",
+  "lines": 169
+ },
+ {
   "path": "src/nexus/contracts.py",
   "folder": "src/nexus",
   "runs": "browser",
@@ -81,7 +87,7 @@
   "path": "src/nexus/stream.py",
   "folder": "src/nexus",
   "runs": "browser",
-  "lines": 275
+  "lines": 288
  },
  {
   "path": "src/nexus/warehouse.py",
@@ -196,6 +202,12 @@
   "folder": "tests",
   "runs": "tests",
   "lines": 24
+ },
+ {
+  "path": "tests/test_benchmarks.py",
+  "folder": "tests",
+  "runs": "tests",
+  "lines": 38
  },
  {
   "path": "tests/test_contracts.py",
@@ -357,7 +369,7 @@
   "path": "scripts/build.sh",
   "folder": "scripts",
   "runs": "view",
-  "lines": 23
+  "lines": 25
  },
  {
   "path": "scripts/manifest.py",
@@ -369,13 +381,13 @@
   "path": "scripts/test_report.py",
   "folder": "scripts",
   "runs": "view",
-  "lines": 46
+  "lines": 47
  },
  {
   "path": "docs/pdf-src/build.py",
   "folder": "docs/pdf-src",
   "runs": "view",
-  "lines": 225
+  "lines": 471
  },
  {
   "path": ".github/workflows/ci.yml",

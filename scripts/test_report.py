@@ -18,6 +18,7 @@ ABOUT = {
     "test_sla": "Freshness from published completeness: the incident is the only breach",
     "test_warehouse": "Snowflake and BigQuery SQL from one contract; masking, merge, erasure",
     "test_data": "The published run keeps its promises",
+    "test_benchmarks": "Each decision beats its alternatives in the published benchmarks",
     "test_site": "Pages link to real files; every element the scripts fill exists",
 }
 

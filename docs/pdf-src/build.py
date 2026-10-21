@@ -22,6 +22,8 @@ passed = sum(c["status"] == "pass" for c in checks)
 hold = D["volume"]["holds"][0]
 sla = {r["product"]: r for r in D["sla"]}
 J, SP, FL = D.get("java"), D.get("spark"), D.get("flink")
+_bp = ROOT / "assets/data/benchmarks.json"
+B = json.loads(_bp.read_text()) if _bp.exists() else None
 KW = r"\b(def|return|if|not|for|in|else|and|or|import|from|with|lambda|while|try|except|raise|class|MERGE|INTO|USING|ON|WHEN|MATCHED|THEN|UPDATE|SET|INSERT|SELECT|FROM|WHERE|DELETE|AND|NOT|BY|GROUP|CREATE|TABLE|WATERMARK|FOR|AS|INTERVAL|long|void|final|private|static|new|public|boolean)\b"
 
 
@@ -85,6 +87,116 @@ PROBLEMS = [
 ]
 
 
+def why_slides():
+    """"Why this, not that": each decision, the alternatives re-run on the same week, and how the choice was reached."""
+    if not B:
+        return []
+    out = []
+    ch = lambda txt: f"<b>{txt} ✓</b>"   # noqa: E731
+    METHOD = {"bench": "Benchmark sweep: the same week re-run per option", "trial": "Trial and error: built, measured, changed",
+              "replay": "Failure replay: the incident re-run each way", "compare": "Comparison with how other engines do it"}
+    tag = lambda *ks: "".join(f'<span class="chip dark">{METHOD[k]}</span>' for k in ks)   # noqa: E731
+    out.append(slide("Why this, not that", "How each decision was reached",
+        "Every choice below was re-run against its alternatives on the same week of Kafka records, and measured. Where the data says a choice is oversized, the slide says so.",
+        table([("Watermark", "min over active partitions, idle skipped", "wait for every partition · one global clock", "bench · compare"),
+               ("Out-of-orderness", "10 min", "0 · 2 · 30 min", "bench"),
+               ("Allowed lateness", "60 min", "0 · 15 · 180 min", "bench"),
+               ("Dedupe state", "24 h TTL", "36 s · 15 min · 1 h", "bench"),
+               ("Bad records", "dead-letter topic", "fail and restart · skip silently", "replay · compare"),
+               ("Alerting", "restarts and freshness", "freshness only", "replay"),
+               ("Freshness metric", "published completeness", "newest non-empty window", "trial"),
+               ("Volume hold", "2σ and ×2", "2σ · 3σ · ×2 only", "trial · bench"),
+               ("Warehouse layout", "day partitions, cluster by partner", "none · day only", "bench (modelled)"),
+               ("Engine", "Flink, checked by Python, Java and Spark", "one engine, unchecked", "bench")],
+              ["Decision", "Chosen", "Alternatives re-run", "Method"])
+        + f'<div class="proof" style="margin-top:6mm"><span class="kicker">Method</span>{tag("bench", "trial", "replay", "compare")}</div>'))
+
+    w, o = B["watermark"], B["out_of_orderness"]
+    out.append(slide("Why · the watermark", "Which clock says an hour is over",
+        "Three watermarks on the same week of page_views. The one that waits for every partition stalls whenever one goes quiet.",
+        '<div class="grid two"><div>' + table([
+            (ch("Min over active partitions") if k == "active_min" else {"min_all": "Min over every partition", "global_max": "One global clock (max)"}[k],
+             n(v["counted"]), v["missed_vs_batch"], f'{v["freshness_p95"]:.0f} min', f'{v["freshness_max"]:.0f} min', v["sla_breach_samples"])
+            for k, v in w.items()], ["Watermark", "Counted", "Missed", "Fresh p95", "Worst", "SLA breaches"])
+        + '<div style="height:4mm"></div>' + table([
+            (ch(f"{k} min") if k == "10" else f"{k} min", v["late_refires"], f'{v["freshness_p50"]:.0f} min', f'{v["freshness_p95"]:.0f} min', v["sla_breach_samples"])
+            for k, v in o.items()], ["Out-of-orderness", "Late re-fires", "Fresh p50", "Fresh p95", "SLA breaches"])
+        + '</div><div class="side">' + side(
+            ("How I got here", [tag("bench", "compare")]),
+            ("What the numbers say", [f"Waiting for every partition: <b>{w['min_all']['sla_breach_samples']}</b> breach samples, p95 {w['min_all']['freshness_p95']:.0f} min. Quiet partitions hold the whole job back.",
+                                      "A global clock costs nothing here because the partitions stay in step. It is the one that drops records when a partition lags, after a restore for example."]),
+            ("Elsewhere", ["<b>Flink</b>: per-split watermarks, the minimum wins, <code>withIdleness</code>. <b>Spark Structured Streaming</b>: one watermark from the max event time. <b>Kafka Streams</b>: stream time per task, plus a grace period."]),
+            ("What I'd revisit", [f"10 min of out-of-orderness is headroom for phone clocks. The data says 2 min would be {o['10']['freshness_p95'] - o['2']['freshness_p95']:.0f} min fresher at p95 for {o['2']['late_refires'] - o['10']['late_refires']} more re-fires a week."])) + '</div></div>'))
+
+    lt, tt, rg = B["allowed_lateness"], B["dedupe_ttl"], B["retry_gap_seconds"]
+    out.append(slide("Why · lateness and dedupe", "How long to wait, how long to remember",
+        "Allowed lateness trades events counted in the stream against state held open. Dedupe TTL trades retries caught against keys kept.",
+        '<div class="grid two"><div>' + table([
+            (ch(f"{k} min") if k == "60" else f"{k} min", n(v["counted"]), v["missed_vs_batch"], v["late_refires"], v["peak_open_windows"])
+            for k, v in lt.items()], ["Allowed lateness", "Counted", "Missed (batch has it)", "Re-fires", "Peak open windows"])
+        + '<div style="height:4mm"></div>' + table([
+            (ch("24 h") if k == "24" else {"0.01": "36 s", "0.25": "15 min", "1": "1 h"}[k], v["duplicates_dropped"], n(v["peak_dedupe_keys"]))
+            for k, v in tt.items()], ["Dedupe TTL", "Retries caught", "Peak keys held"])
+        + '</div><div class="side">' + side(
+            ("How I got here", [tag("bench", "compare")]),
+            ("What the numbers say", [f"60 min is the smallest lateness that absorbs all organic lateness: what's left ({lt['60']['missed_vs_batch']}) is the offline upload, hours late. 180 min counts {lt['60']['missed_vs_batch'] - lt['180']['missed_vs_batch']} more but holds {lt['180']['peak_open_windows'] / lt['60']['peak_open_windows']:.1f}× the state; the nightly batch already counts them.",
+                                      f"Retries arrive within {rg['max']:.0f} s (p50 {rg['p50']:.0f} s), so 15 minutes would catch all {rg['count']}. 24 h is a deliberate margin for re-delivery after an outage: {n(tt['24']['peak_dedupe_keys'])} keys, well under a megabyte."]),
+            ("Elsewhere", ["<b>Flink</b> <code>allowedLateness</code> and keyed state TTL; <b>Kafka Streams</b> <code>grace()</code>; <b>Spark</b> <code>dropDuplicatesWithinWatermark</code>. Kafka's idempotent producer only dedupes broker-level retries, not an app re-sending."]),
+            ("What I'd revisit", ["Size the TTL from the longest consumer rewind the team has actually done, not from retries."])) + '</div></div>'))
+
+    br, al = B["bad_record"], B["alerting"]
+    out.append(slide("Why · bad records and alerting", "Stop, skip, or keep it aside",
+        "The poison pill replayed three ways on the same partner_clicks week, and the two alerts that could have paged.",
+        '<div class="grid two"><div>' + table([
+            (ch("Dead-letter topic") if k == "dead_letter" else {"fail_and_restart": "Fail and restart", "skip_silently": "Skip silently"}[k],
+             v["restarts"], f'{v["minutes_late"]} min', v["windows_late"], v["records_kept_for_inspection"])
+            for k, v in br.items()], ["Policy", "Restarts", "Product late", "Windows late", "Record kept"])
+        + '<div style="height:4mm"></div>' + table([
+            ("Freshness over the SLA", f"{al['freshness_over_sla']} min"), (ch("Restarts > 3 in 10 min, too"), f"{al['restarts_over_3_in_10_min']} min")],
+            ["Alert", "Time to page"])
+        + '</div><div class="side">' + side(
+            ("How I got here", [tag("replay", "compare")]),
+            ("What the numbers say", [f"Failing cost {br['fail_and_restart']['restarts']} restarts and {br['fail_and_restart']['minutes_late']} minutes on a tier-1 product for one record. Skipping costs nothing now and loses the evidence. Dead-lettering costs nothing and keeps it.",
+                                      f"Freshness is a lagging signal: {al['freshness_over_sla']} minutes. The restart count said the same in {al['restarts_over_3_in_10_min']}."]),
+            ("Elsewhere", ["<b>Kafka Connect</b>: <code>errors.tolerance=all</code> with a DLQ topic. <b>Flink</b>: a side output, as here. <b>Spark</b>: permissive parsing with a corrupt-record column."]),
+            ("At Lifepal", ["Every incident ended with a root-cause review and a change to the platform; data-trust escalations fell 60%."])) + '</div></div>'))
+
+    fm, vr = B["freshness_metric"], B["volume_rule"]
+    out.append(slide("Why · freshness and the volume hold", "Built, measured, changed",
+        "Both started as the obvious version. The run showed what it would page for, so both changed. This is the trial and error, kept.",
+        '<div class="grid two"><div>' + table([
+            ("Newest non-empty window (first version)", fm["last_non_empty_window"]["pages"], fm["last_non_empty_window"]["breach_samples"], f'{fm["last_non_empty_window"]["max"]:.0f} min'),
+            (ch("Published completeness"), fm["published_completeness"]["pages"], fm["published_completeness"]["breach_samples"], f'{fm["published_completeness"]["max"]:.0f} min')],
+            ["Freshness measured from", "Pages in a week", "Late samples", "Worst"])
+        + '<div style="height:4mm"></div>' + table([
+            (ch(k.replace(" (chosen)", "")) if "chosen" in k else k + (" (first version)" if k == "2σ" else ""), v["holds"], "yes" if v["caught_scraper"] else "no", v["false_holds"])
+            for k, v in vr.items()], ["Volume hold", "Hours held", "Caught the scraper", "False holds"])
+        + '</div><div class="side">' + side(
+            ("How I got here", [tag("trial", "bench")]),
+            ("What the numbers say", [f"With no incident at all, the first freshness metric paged <b>{fm['last_non_empty_window']['pages']}</b> times in a week: a quiet 3 a.m. has no clicks, not a stale product.",
+                                      f"2σ alone held <b>{vr['2σ']['false_holds']}</b> innocent hours: a week of history makes σ small and Saturdays look odd. Adding ×2 left only the scraper."]),
+            ("Elsewhere", ["<b>dbt source freshness</b> checks the newest <code>loaded_at</code>: the first version here, fine for busy sources. Seasonal anomaly tools compare the same hour on earlier days, as this rule does."]),
+            ("What I'd revisit", ["×2 alone also works on this week. σ stays to protect low-volume hours, where a jump from 2 to 5 is noise; at Lifepal the baseline was 30 days."])) + '</div></div>'))
+
+    ly, en = B["layout"], B["engines"]
+    out.append(slide("Why · layout and engines", "Read less. Check twice.",
+        f"Bytes a query scans in BigQuery, modelled from the run's own row counts ({ly['row_bytes_assumed']} bytes a row, an assumption), and the same week on four engines.",
+        '<div class="grid two"><div>' + table([
+            ("No partitioning", n(ly["no_partitioning"]), "1×"), ("Partition by day", n(ly["partition_by_day"]), f'{ly["no_partitioning"] / ly["partition_by_day"]:.0f}× less'),
+            (ch("Day partitions, cluster by partner"), n(ly["partition_by_day_cluster_by_partner"]), f'{ly["no_partitioning"] / ly["partition_by_day_cluster_by_partner"]:.0f}× less')],
+            [ly["query"].capitalize(), "Bytes scanned", "vs none"])
+        + '<div style="height:4mm"></div>' + table([
+            (ch(k) if "Flink" in k else k, f'{v["seconds"]} s' if v["seconds"] is not None else "—", "identical" if v["identical"] else "—") for k, v in en.items()],
+            ["Engine", "The week", "Output"])
+        + '</div><div class="side">' + side(
+            ("How I got here", [tag("bench", "compare")]),
+            ("What the numbers say", [f"Partitioning and clustering cut the scan {ly['no_partitioning'] / ly['partition_by_day_cluster_by_partner']:.0f}×. At this size BigQuery's 10 MB minimum dominates; on a petabyte table, the ratio is the bill.",
+                                      "Four engines, one answer. Flink is slowest on a laptop-sized week: start-up dominates. It is chosen for state, checkpoints and per-split watermarks at scale, not for this benchmark."]),
+            ("Elsewhere", ["<b>BigQuery</b>: partition and cluster, billed on bytes scanned. <b>Snowflake</b>: micro-partitions and clustering keys, billed on warehouse time."]),
+            ("At Lifepal", ["The same discipline took the nightly batch from 6 hours to 90 minutes and kept spend at $11k against a $19k forecast."])) + '</div></div>'))
+    return out
+
+
 def deck():
     s = [head("Nexus for Tripadvisor · Fireside chat", "deck.css")]
     s.append(f'''<section class="slide cover">
@@ -109,7 +221,8 @@ def deck():
             ("07", "SLAs and an incident", "Detection, root cause, postmortem"),
             ("08", "Apache Flink", "The job on Flink 1.20: topology, state, watermarks, production on Kafka"),
             ("08", "Java", "A twin of the job, tested against the reference"),
-            ("09", "My first 90 days", "How I'd start in Data Platform")]) + "</table>"))
+            ("10", "Why this, not that", "Each decision re-run against its alternatives"),
+            ("11", "My first 90 days", "How I'd start in Data Platform")]) + "</table>"))
     s.append(slide("01 · Measured outcomes", "What changed at Lifepal", "Figures from my CV and production work, described at the level I can share publicly.",
         '<div class="grid nums">' + "".join(f'<div class="card"><div class="big">{a}</div><p>{b}</p></div>' for a, b in [
             ("99.7%", "reporting latency cut: 24 h → under 5 min"), ("75%", "nightly batch cut: 6 h → 90 min by tuning Spark and SQL"),
@@ -211,6 +324,7 @@ def deck():
         side(("In the run", [f"<b>{n(J['windows'])}</b> windows, <b>{'identical' if J['identical'] else 'different'}</b> to the Python job, in {J['millis']} ms." if J else "Runs in CI."]),
              ("Stated plainly", ["Kafka, Spark and Python are production experience. At Lifepal the streaming was Kafka + Debezium with Spark, not Flink. Snowflake is from Deloitte; BigQuery I haven't run in production, so its SQL here is mapped from Snowflake and Databricks.",
                                  "Java is the part I'd ramp up on. This is how I'd start: the same semantics, tested against a reference I trust."]))))
+    s.extend(why_slides())
     s.append(slide("09 · My first 90 days", "How I'd start in Data Platform", "Listen first, then own something small end to end, then make the template better for everyone.",
         '<div class="grid three">' + "".join(f'<div class="card"><div class="kicker">{a}</div><h3>{b}</h3><ul>{"".join(f"<li>{x}</li>" for x in c)}</ul></div>' for a, b, c in [
             ("Days 1–30", "Learn the estate", ["Read the SLAs and the last ten incidents", "Shadow on-call; map pipelines to owners", "Ship a small fix in Java and one in Python"]),

@@ -1,0 +1,332 @@
+{
+ "watermark": {
+  "active_min": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 16,
+   "duplicates_dropped": 112,
+   "sink_writes": 8723,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.1
+  },
+  "min_all": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 13,
+   "duplicates_dropped": 112,
+   "sink_writes": 8664,
+   "freshness_p50": 65.0,
+   "freshness_p95": 145.0,
+   "freshness_max": 245.0,
+   "sla_breach_samples": 362,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.01
+  },
+  "global_max": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 17,
+   "duplicates_dropped": 112,
+   "sink_writes": 8668,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 85.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.19
+  }
+ },
+ "out_of_orderness": {
+  "0": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 20,
+   "duplicates_dropped": 112,
+   "sink_writes": 8727,
+   "freshness_p50": 35.0,
+   "freshness_p95": 60.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.14
+  },
+  "2": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 19,
+   "duplicates_dropped": 112,
+   "sink_writes": 8726,
+   "freshness_p50": 35.0,
+   "freshness_p95": 60.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.31
+  },
+  "10": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 16,
+   "duplicates_dropped": 112,
+   "sink_writes": 8723,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.37
+  },
+  "30": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 4,
+   "duplicates_dropped": 112,
+   "sink_writes": 8711,
+   "freshness_p50": 65.0,
+   "freshness_p95": 90.0,
+   "freshness_max": 95.0,
+   "sla_breach_samples": 3,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.41
+  }
+ },
+ "allowed_lateness": {
+  "0": {
+   "counted": 22489,
+   "missed_vs_batch": 212,
+   "side_output": 212,
+   "late_refires": 0,
+   "duplicates_dropped": 112,
+   "sink_writes": 8703,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 87,
+   "peak_dedupe_keys": 5099,
+   "seconds": 1.97
+  },
+  "15": {
+   "counted": 22500,
+   "missed_vs_batch": 201,
+   "side_output": 201,
+   "late_refires": 10,
+   "duplicates_dropped": 112,
+   "sink_writes": 8714,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 87,
+   "peak_dedupe_keys": 5099,
+   "seconds": 1.96
+  },
+  "60": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 16,
+   "duplicates_dropped": 112,
+   "sink_writes": 8723,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.06
+  },
+  "180": {
+   "counted": 22561,
+   "missed_vs_batch": 140,
+   "side_output": 140,
+   "late_refires": 49,
+   "duplicates_dropped": 112,
+   "sink_writes": 8772,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 325,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.51
+  }
+ },
+ "dedupe_ttl": {
+  "0.01": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 16,
+   "duplicates_dropped": 112,
+   "sink_writes": 8723,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 26,
+   "seconds": 0.83
+  },
+  "0.25": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 16,
+   "duplicates_dropped": 112,
+   "sink_writes": 8723,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 373,
+   "seconds": 0.86
+  },
+  "1": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 16,
+   "duplicates_dropped": 112,
+   "sink_writes": 8723,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 1514,
+   "seconds": 0.9
+  },
+  "24": {
+   "counted": 22509,
+   "missed_vs_batch": 192,
+   "side_output": 192,
+   "late_refires": 16,
+   "duplicates_dropped": 112,
+   "sink_writes": 8723,
+   "freshness_p50": 45.0,
+   "freshness_p95": 70.0,
+   "freshness_max": 75.0,
+   "sla_breach_samples": 0,
+   "peak_open_windows": 170,
+   "peak_dedupe_keys": 5099,
+   "seconds": 2.11
+  }
+ },
+ "retry_gap_seconds": {
+  "count": 112,
+  "max": 19.607,
+  "p50": 10.668
+ },
+ "bad_record": {
+  "fail_and_restart": {
+   "restarts": 74,
+   "minutes_late": 79,
+   "windows_late": 11,
+   "records_kept_for_inspection": 1,
+   "worst_age_minutes": 90.0
+  },
+  "skip_silently": {
+   "restarts": 0,
+   "minutes_late": 0,
+   "windows_late": 0,
+   "records_kept_for_inspection": 0,
+   "worst_age_minutes": 25.0
+  },
+  "dead_letter": {
+   "restarts": 0,
+   "minutes_late": 0,
+   "windows_late": 0,
+   "records_kept_for_inspection": 1,
+   "worst_age_minutes": 25.0
+  }
+ },
+ "freshness_metric": {
+  "last_non_empty_window": {
+   "breach_samples": 191,
+   "p95": 65.0,
+   "max": 230.0,
+   "pages": 38
+  },
+  "published_completeness": {
+   "breach_samples": 0,
+   "p95": 20.0,
+   "max": 25.0,
+   "pages": 0
+  },
+  "note": "partner_clicks with the dead-letter topic on: no real incident, so every page is a false one"
+ },
+ "volume_rule": {
+  "2\u03c3": {
+   "holds": 29,
+   "caught_scraper": true,
+   "false_holds": 28
+  },
+  "3\u03c3": {
+   "holds": 13,
+   "caught_scraper": true,
+   "false_holds": 12
+  },
+  "2\u03c3 and \u00d72 (chosen)": {
+   "holds": 1,
+   "caught_scraper": true,
+   "false_holds": 0
+  },
+  "\u00d72 only": {
+   "holds": 1,
+   "caught_scraper": true,
+   "false_holds": 0
+  }
+ },
+ "alerting": {
+  "freshness_over_sla": 29,
+  "restarts_over_3_in_10_min": 3
+ },
+ "layout": {
+  "query": "revenue for one partner on one day",
+  "row_bytes_assumed": 48,
+  "rows": 984,
+  "no_partitioning": 47232,
+  "partition_by_day": 6747,
+  "partition_by_day_cluster_by_partner": 1125,
+  "note": "bytes = rows read \u00d7 row width; at this size BigQuery's 10 MB minimum dominates, so read the ratios"
+ },
+ "engines": {
+  "Python reference": {
+   "seconds": 2.33,
+   "identical": true
+  },
+  "Java twin (JDK)": {
+   "seconds": 0.73,
+   "identical": true
+  },
+  "Apache Flink 1.20 (MiniCluster)": {
+   "seconds": 3.54,
+   "identical": true
+  },
+  "PySpark batch (both topics)": {
+   "seconds": 12.2,
+   "identical": true
+  }
+ },
+ "seconds": 30.5
+}

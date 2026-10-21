@@ -69,16 +69,23 @@ class Poison(Exception):
 class Job:
     """One topic's job. Call run(); read sink, emits, late, dlq and the timeline afterwards."""
 
-    def __init__(self, topic_name: str, dlq: bool = True):
+    def __init__(self, topic_name: str, dlq: bool = True, *, watermark: str = "active_min", ooo_min: int | None = None,
+                 lateness_min: int | None = None, dedupe_ttl_h: float | None = None):
+        """The keyword arguments are for benchmarks.py, which re-runs the week under the alternatives to each choice:
+        watermark "active_min" (min over active partitions, the default), "min_all" (no idleness) or "global_max"
+        (max over all partitions, as one global clock does); out-of-orderness, allowed lateness and dedupe TTL overrides."""
         self.t = topic(topic_name)
         self.name, self.dlq_enabled = topic_name, dlq
+        self.wm_mode = watermark
+        self.ttl = (dedupe_ttl_h * 60 * MIN) if dedupe_ttl_h is not None else DEDUPE_TTL
+        self.peak = {"open_windows": 0, "dedupe_keys": 0}
         prod = self.t["product"]
         self.windowed = "window_minutes" in prod
         self.ooo = 0
         if self.windowed:
             self.size = prod["window_minutes"] * MIN
-            self.ooo = prod["out_of_orderness_minutes"] * MIN
-            self.lateness = prod["allowed_lateness_minutes"] * MIN
+            self.ooo = (ooo_min if ooo_min is not None else prod["out_of_orderness_minutes"]) * MIN
+            self.lateness = (lateness_min if lateness_min is not None else prod["allowed_lateness_minutes"]) * MIN
             self.group_by = prod["group_by"]
             self.sum_field = next((m for m, how in prod["measures"].items() if how == "sum"), None)
         self.s = State()
@@ -102,6 +109,10 @@ class Job:
 
     # ---------- the operator ----------
     def _watermark(self, now: int) -> int:
+        if self.wm_mode == "global_max":    # one clock for the topic: the newest event anywhere
+            return max(self.s.wm, max(self.s.part_max.values()) - self.ooo) if self.s.part_max else self.s.wm
+        if self.wm_mode == "min_all":       # every partition counts, quiet or not: a quiet one holds everything back
+            return max(self.s.wm, min(self.s.part_max.values()) - self.ooo) if self.s.part_max else self.s.wm
         active = [self.s.part_max[p] for p, seen in self.s.part_seen.items() if now - seen < IDLE]
         if active:
             wm = min(active) - self.ooo
@@ -137,7 +148,9 @@ class Job:
     def _tick(self, now: int):
         self._advance(now)
         if now % (60 * MIN) == 0:
-            self.s.seen = {k: v for k, v in self.s.seen.items() if now - v < DEDUPE_TTL}
+            self.s.seen = {k: v for k, v in self.s.seen.items() if now - v < self.ttl}
+            self.peak["open_windows"] = max(self.peak["open_windows"], len(self.s.windows))
+            self.peak["dedupe_keys"] = max(self.peak["dedupe_keys"], len(self.s.seen))
         self.s.last_tick = now
 
     def _process(self, rec: Record, now: int):

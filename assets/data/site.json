@@ -1,108 +1,108 @@
 {
  "run": {
-  "seconds": 29.4,
+  "seconds": 58.5,
   "tasks": [
    {
     "key": "generate",
     "label": "Simulate a week of Kafka topics",
     "start_s": 0.0,
-    "duration_s": 0.62
+    "duration_s": 0.7
    },
    {
     "key": "stream_page_views",
     "label": "Stream job: page_views (TaskManager lost at 09:17)",
-    "start_s": 0.84,
-    "duration_s": 2.33
+    "start_s": 0.91,
+    "duration_s": 2.27
    },
    {
     "key": "replay_check",
     "label": "Same job, no crash: is the sink identical?",
-    "start_s": 3.16,
-    "duration_s": 2.19
+    "start_s": 3.18,
+    "duration_s": 2.08
    },
    {
     "key": "stream_partner_clicks",
     "label": "Stream job: partner_clicks (poison pill, crash loop, fix)",
-    "start_s": 5.36,
-    "duration_s": 0.18
+    "start_s": 5.27,
+    "duration_s": 0.15
    },
    {
     "key": "stream_reviews",
     "label": "Stream job: reviews (latest version wins, tombstones)",
-    "start_s": 5.55,
-    "duration_s": 2.3
+    "start_s": 5.43,
+    "duration_s": 2.0
    },
    {
     "key": "batch_page_views",
     "label": "Nightly batch: page_views",
-    "start_s": 7.85,
+    "start_s": 7.42,
     "duration_s": 0.12
    },
    {
     "key": "batch_partner_clicks",
     "label": "Nightly batch: partner_clicks",
-    "start_s": 7.97,
+    "start_s": 7.54,
     "duration_s": 0.01
    },
    {
     "key": "reconcile_page_views",
     "label": "Reconcile stream with batch: page_views",
-    "start_s": 7.98,
+    "start_s": 7.55,
     "duration_s": 0.02
    },
    {
     "key": "reconcile_partner_clicks",
     "label": "Reconcile stream with batch: partner_clicks",
-    "start_s": 7.99,
+    "start_s": 7.58,
     "duration_s": 0.0
    },
    {
     "key": "volume_check",
     "label": "Volume check: hold anomalous hours",
-    "start_s": 8.0,
+    "start_s": 7.58,
     "duration_s": 0.0
    },
    {
     "key": "gold_page_views",
     "label": "Gold: page views without the bots",
-    "start_s": 8.07,
+    "start_s": 7.66,
     "duration_s": 0.12
    },
    {
     "key": "render_sql",
     "label": "Render Snowflake and BigQuery SQL from the contract",
-    "start_s": 8.22,
-    "duration_s": 0.0
+    "start_s": 7.83,
+    "duration_s": 0.01
    },
    {
     "key": "load_check",
     "label": "Load, check quality, apply erasure",
-    "start_s": 8.25,
-    "duration_s": 0.06
+    "start_s": 7.86,
+    "duration_s": 0.18
    },
    {
     "key": "incident",
     "label": "Write the incident record and postmortem",
-    "start_s": 8.32,
+    "start_s": 8.05,
     "duration_s": 0.0
    },
    {
     "key": "java_twin",
     "label": "Java twin of the page_views job: same windows?",
-    "start_s": 8.4,
-    "duration_s": 1.78
+    "start_s": 8.13,
+    "duration_s": 3.02
    },
    {
     "key": "flink",
     "label": "Apache Flink 1.20 on a MiniCluster: same windows?",
-    "start_s": 10.18,
-    "duration_s": 6.95
+    "start_s": 11.16,
+    "duration_s": 14.18
    },
    {
     "key": "spark_batch",
     "label": "PySpark batch: same windows as the plain-Python batch?",
-    "start_s": 17.13,
-    "duration_s": 12.24
+    "start_s": 25.34,
+    "duration_s": 33.16
    }
   ],
   "week": [
@@ -10588,31 +10588,31 @@
    "late_updates": 16
   },
   "emits": 8723,
-  "millis": 731,
+  "millis": 917,
   "java": "openjdk version \"21.0.12.1\" 2026-08-18"
  },
  "flink": {
   "location_views_hourly": {
-   "firings": 8723,
-   "read": 22813,
    "late_dropped": 192,
    "duplicates": 112,
    "dead_letters": 0,
+   "firings": 8723,
+   "read": 22813,
    "windows": 8707,
    "events_in_windows": 22509,
-   "millis": 3538,
+   "millis": 6900,
    "dead_letter_records": [],
    "identical_to_python": true
   },
   "partner_revenue_15m": {
-   "firings": 986,
-   "read": 1247,
    "late_dropped": 0,
    "duplicates": 0,
    "dead_letters": 1,
+   "firings": 986,
+   "read": 1247,
    "windows": 984,
    "events_in_windows": 1246,
-   "millis": 1194,
+   "millis": 1261,
    "dead_letter_records": [
     "partition 3 offset 171: not JSON: JsonEOFException"
    ],
@@ -10633,7 +10633,7 @@
    "bad_records": 1,
    "identical": true
   },
-  "seconds": 12.2,
+  "seconds": 32.4,
   "version": "3.5.4"
  }
 }

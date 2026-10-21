@@ -20,4 +20,6 @@ fi
 echo "\$ python -m nexus.pipeline" >> "$LOG"
 # Spark's start-up chatter and progress bars are left out of the kept log
 python -m nexus.pipeline 2>&1 | sed '/JAVA_TOOL/d; / WARN /d; /\[Stage /d; /default log level/d; /setLogLevel/d' | tee -a "$LOG"
+echo "\$ python -m nexus.benchmarks   # every decision re-run against its alternatives" >> "$LOG"
+python -m nexus.benchmarks 2>&1 | tail -1 | tee -a "$LOG"
 cp "$LOG" assets/data/build_log.txt
