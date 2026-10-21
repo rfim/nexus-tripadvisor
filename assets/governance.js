@@ -51,6 +51,14 @@
     `<text x="109" y="92" text-anchor="middle" class="flink-label" style="fill:#c3caff">KAFKA</text><text x="350" y="92" text-anchor="middle" class="flink-label" style="fill:#9cc0b7">RAW</text>
      <text x="621" y="92" text-anchor="middle" class="flink-label" style="fill:#34e0a1">GOLD</text><text x="882" y="92" text-anchor="middle" class="flink-label" style="fill:#ffd27a">GOVERNANCE</text>
      <text x="1098" y="138" text-anchor="middle" class="flink-label" style="fill:#a9d0ff">WAREHOUSE</text>
+     <g transform="translate(1012,150)" aria-hidden="true">
+       <g transform="translate(42,22)"><path d="M18 0 L34 9 L34 27 L18 36 L2 27 L2 9 Z" fill="#4285f4"/>
+         <circle cx="16" cy="16" r="7" fill="none" stroke="#fff" stroke-width="2.6"/><path d="M21 21 L27 27" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+         <path d="M13 19 V15 M16 19 V12 M19 19 V16" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></g>
+       <text x="87" y="45" text-anchor="middle" style="font:600 14px Inter,system-ui,sans-serif;fill:#7f9c92">+</text>
+       <g transform="translate(118,40)" stroke="#29b5e8" stroke-width="2.6" stroke-linecap="round" fill="none">
+         ${[0, 60, 120].map((r) => `<g transform="rotate(${r})"><path d="M0 -17 V17"/><path d="M-5 -12 L0 -8 L5 -12 M-5 12 L0 8 L5 12"/></g>`).join("")}</g>
+</g>
      <g transform="translate(1012,150)"><text x="86" y="124" text-anchor="middle" style="font:500 10.5px var(--mono);fill:#a9d0ff">BigQuery: day partitions</text>
        <text x="86" y="140" text-anchor="middle" style="font:500 10.5px var(--mono);fill:#cde3dd">Snowflake: masking policy</text>
        <text x="86" y="156" text-anchor="middle" style="font:500 10.5px var(--mono);fill:#9cc0b7">same MERGE · same key</text></g>`;

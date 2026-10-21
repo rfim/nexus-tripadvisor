@@ -30,7 +30,7 @@ def test_repository_links_point_at_real_paths():
 
 def test_local_assets_exist():
     for page in PAGES:
-        for ref in re.findall(r'(?:src|href)="((?:assets|flink|warehouse)/[^"#]+)"', (ROOT / page).read_text()):
+        for ref in re.findall(r'(?:src|href)="((?:assets|flink|warehouse)/[^"#?]+)', (ROOT / page).read_text()):
             assert (ROOT / ref).exists(), (page, ref)
 
 
