@@ -30,7 +30,8 @@
 
   const style = document.createElement("style");
   style.textContent = `.ti{display:inline-block;width:1.05em;height:1.05em;vertical-align:-.17em;margin-right:.32em;flex:none}
-    .ti + .ti{margin-left:-.12em}`;
+    .ti + .ti{margin-left:-.12em}
+    h1 .ti,h2 .ti{width:.62em;height:.62em;vertical-align:.08em;margin-right:.22em}`;
   document.head.appendChild(style);
 
   // which words mean which icon; the first match in the text wins its place, at most two icons per label
