@@ -310,3 +310,8 @@ pre,.trace,.wirelog{max-width:100%;overflow-wrap:anywhere}
 .logo-chip img{display:block;width:56px;height:auto}
 @media (max-width:520px){.built-in{padding-left:.5rem;margin-left:.15rem;flex-direction:column;align-items:flex-start;gap:.15rem}.built-in small{font-size:.62rem}.logo-chip img{width:44px}}
 .brand-mark{flex:none}
+/* ide-scroll-fix: one row that fits the box, so the file list and the code each scroll inside it */
+.ide{grid-template-rows:minmax(0,1fr)}
+.tree,.ide-main,.editor{min-height:0}
+.tree{overscroll-behavior:contain}
+@media (max-width:980px){.ide{grid-template-rows:auto}}
